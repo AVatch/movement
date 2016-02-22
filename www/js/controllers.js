@@ -2,7 +2,18 @@ angular.module('movement.controllers', [])
 
 .controller('VenuesCtrl', function($scope, uiGmapGoogleMapApi) {
     $scope.loading = false;
-    
+    $scope.mapOptions = {
+        disableDoubleClickZoom: true,
+        draggable: false,
+        scaleControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        scrollwheel: false,
+        rotateControl: false,
+        panControl: false,
+        overviewMapControl: false,
+        mapTypeControl: false        
+    };
     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
     
 })
