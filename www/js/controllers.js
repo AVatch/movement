@@ -3,7 +3,9 @@ angular.module('starter.controllers', [])
 .controller('VenuesCtrl', function($scope) {})
 
 .controller('VenuesDetailCtrl', function($scope, $stateParams) {
-  
+    $scope.venue = {
+        title: "Some Place"
+    };
 })
 
 .controller('ActivityCtrl', function($scope) {
