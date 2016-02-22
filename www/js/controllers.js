@@ -1,7 +1,9 @@
-angular.module('starter.controllers', [])
+angular.module('movement.controllers', [])
 
 .controller('VenuesCtrl', function($scope) {
-    $scope.loading = true;
+    $scope.loading = false;
+    
+    $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
     
 })
 

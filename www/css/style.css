@@ -13,3 +13,7 @@
 .full-height{
     height: 80vh;
 }
+
+.angular-google-map-container { 
+    height: 400px; 
+}

@@ -1,11 +1,11 @@
-// Ionic Starter App
+// Ionic Movement App
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('movement', ['ionic', 'starter.controllers', 'starter.services'])
+angular.module('movement', ['ionic', 'uiGmapgoogle-maps', 'movement.controllers', 'movement.services'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -21,6 +21,15 @@ angular.module('movement', ['ionic', 'starter.controllers', 'starter.services'])
       StatusBar.styleDefault();
     }
   });
+})
+
+// Configure Google Maps
+.config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        key: 'AIzaSyBiTGJkXnuwIHMbg0keDrhP--hBClpNMAA', // yolo
+        v: '3.20', //defaults to latest 3.X anyhow
+        libraries: 'weather,geometry,visualization'
+    });
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
