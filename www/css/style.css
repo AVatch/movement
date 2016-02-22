@@ -17,3 +17,10 @@
 .angular-google-map-container { 
     height: 400px; 
 }
+
+.no-padding{
+    padding:0px;
+}
+.pull-right{
+    float:right;
+}

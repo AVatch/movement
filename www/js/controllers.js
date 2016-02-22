@@ -1,6 +1,6 @@
 angular.module('movement.controllers', [])
 
-.controller('VenuesCtrl', function($scope) {
+.controller('VenuesCtrl', function($scope, uiGmapGoogleMapApi) {
     $scope.loading = false;
     
     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };

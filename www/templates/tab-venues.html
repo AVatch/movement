@@ -3,7 +3,29 @@
     
         <ion-spinner ng-if="loading" class="full-height flexcontainer-center" icon="spiral"></ion-spinner>
         
-        <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+        <ion-list>
+        
+            <ion-item class="no-padding">
+                
+                <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>        
+                
+                <div class="row">
+                    <div class="col">
+                        Some Venue Name
+                    </div>
+                    <div class="col">
+                        <button class="button button-small button-positive pull-right">
+                            Sign Guestbook (23)
+                        </button>
+                    </div>    
+                </div>
+                
+                
+            </ion-item>
+            
+        </ion-list>
+        
+        
         
     </ion-content>
 </ion-view>
