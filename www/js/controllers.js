@@ -1,8 +1,12 @@
 angular.module('starter.controllers', [])
 
-.controller('VenuesCtrl', function($scope) {})
+.controller('VenuesCtrl', function($scope) {
+    $scope.loading = true;
+    
+})
 
 .controller('VenuesDetailCtrl', function($scope, $stateParams) {
+    $scope.loading = true;
     $scope.venue = {
         title: "Some Place"
     };
@@ -16,6 +20,8 @@ angular.module('starter.controllers', [])
   //
   //$scope.$on('$ionicView.enter', function(e) {
   //});
+  
+  $scope.loading = true;
 
 })
 
