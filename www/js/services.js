@@ -355,15 +355,45 @@ angular.module('movement.services', [])
     //
     //     "clientTally": 0 // <-- Adding this to do trivial clustering on client
     // }
+    
+    // Sample user reveal object
+    // {
+    //     "id": 129,
+    //     "foursquare_id": "4fdf4038e4b044d93c4fae68",
+    //     "userDeviceId": "05467641-893B-4A8B-9E14-D811BA2D71C9",
+    //     "userName": "Praveen",
+    //     "revealedAt": "2016-02-17T23:06:32.169493Z"
+    // },
+    
+    function getRevealedUsers( foursquareId ){
+        var deferred = $q.defer();
+        
+        $http({
+                url: API_URL + '/locations/revealedusers',
+                method: 'GET',
+                params: { locationId: foursquareId } 
+            }).then(function(r){
+                var now = new Date();
+                var msg = "[" + now.toString() + "]: Got revealed users";
+                Utility.logEvent(msg);
+                deferred.resolve(r.data);
+            }, function(e){
+                var now = new Date();
+                var msg = "[" + now.toString() + "]: Error getting revealed users " + JSON.stringify(e);
+                Utility.logEvent(msg);
+                deferred.reject();
+            })
+            
+        
+        return deferred.promise;   
+    }
+    
        
     function getCachedVenues(){
         return MovementStore.get('venues') || [];
     }
     function addVenue( venue ){
-        
-        console.log("Adding Venue");
-        console.log(JSON.stringify(venue));
-        
+
         var venues = getCachedVenues();
         var indx = -1;
                 
@@ -384,7 +414,7 @@ angular.module('movement.services', [])
             venues[i].clientTally += 1;
         }
         
-        MovementStore.set('venues', venues);  
+        MovementStore.set('venues', venues);
     };
     function getVenue( venueId ){
         var venues = getCachedVenues();
