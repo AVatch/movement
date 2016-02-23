@@ -139,7 +139,7 @@ angular.module('movement.controllers', [])
                 stationaryRadius: 50,
                 distanceFilter: 50,
                 disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
-                locationUpdateInterval: 5000,
+                locationUpdateInterval: 60000, // every minute
                 minimumActivityRecognitionConfidence: 80,   // 0-100%.  Minimum activity-confidence for a state-change 
                 fastestLocationUpdateInterval: 5000,
                 activityRecognitionInterval: 10000,
