@@ -108,15 +108,145 @@ angular.module('movement.services', [])
 })
 
 
-.factory('GeoTracking', function(MovementStore){
+.factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Utility){
+    var bgGeo = null;
+    
+    function logCoords(coord){
+        var coords = MovementStore.get('coords') || [];
+        coords.push(coord);
+        MovementStore.set('coords', coords);
+    }
+    
+    function initBGGroTracking(){
+        var deferred = $q.defer();
+        
+        // initialize the background geo tracking
+        $ionicPlatform.ready(function(){
+            console.log("Platform is ready");
+            var now = new Date();
+            var msg = "[" + now.toString() + "]: IonicPlatform is ready";
+            Utility.logEvent(msg);
+        
+            if(window.cordova && window.BackgroundGeolocation){
+                console.log("Cordova and BackgroundGeolocation found");
+                var now = new Date();
+                var msg = "[" + now.toString() + "]: Cordova and BackgroundGeolocation found";
+                Utility.logEvent(msg);
+                
+                // Get a reference to the plugin.
+                bgGeo = window.BackgroundGeolocation;
+                
+                var callbackFn = function(location, taskId) {
+                    var coords = location.coords;
+                    var lat    = coords.latitude;
+                    var lng    = coords.longitude;
+                    
+                    
+                    // log the events
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
+                    Utility.logEvent(msg);
+                    
+                    // store the coords in cache
+                    logCoords(coords);
+
+                    // Simulate doing some extra work with a bogus setTimeout.  This could perhaps be an Ajax request to your server.
+                    // The point here is that you must execute bgGeo.finish after all asynchronous operations within the callback are complete.
+                    setTimeout(function() {
+                        bgGeo.finish(taskId); // <-- execute #finish when your work in callbackFn is complete
+                    }, 1000);
+                };
+                
+                var failureFn = function(error) {
+                    console.log('BackgroundGeoLocation error');
+                    console.log( JSON.stringify(error) );
+                };
+                
+                // BackgroundGeoLocation is highly configurable.
+                bgGeo.configure(callbackFn, failureFn, {
+                    // Geolocation config
+                    desiredAccuracy: 0,
+                    stationaryRadius: 50,
+                    distanceFilter: 50,
+                    disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
+                    locationUpdateInterval: 60000, // every minute
+                    minimumActivityRecognitionConfidence: 80,   // 0-100%.  Minimum activity-confidence for a state-change 
+                    fastestLocationUpdateInterval: 5000,
+                    activityRecognitionInterval: 10000,
+                    stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
+                    stopTimeout: 2,  // Wait x miutes to turn off location system after stop-detection
+                    activityType: 'AutomotiveNavigation',
+
+                    // Application config
+                    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+                    forceReloadOnLocationChange: false,  // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a new location is recorded (WARNING: possibly distruptive to user) 
+                    forceReloadOnMotionChange: false,    // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when device changes stationary-state (stationary->moving or vice-versa) --WARNING: possibly distruptive to user) 
+                    forceReloadOnGeofence: false,        // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a geofence crossing occurs --WARNING: possibly distruptive to user) 
+                    stopOnTerminate: false,              // <-- [Android] Allow the background-service to run headless when user closes the app.
+                    startOnBoot: true,                   // <-- [Android] Auto start background-service in headless mode when device is powered-up.
+
+                    // // HTTP / SQLite config
+                    // url: 'http://posttestserver.com/post.php?dir=cordova-background-geolocation',
+                    // method: 'POST',
+                    // batchSync: true,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
+                    // autoSync: true,         // <-- [Default: true] Set true to sync each location to server as it arrives.
+                    // maxDaysToPersist: 1,    // <-- Maximum days to persist a location in plugin's SQLite database when HTTP fails
+                    // headers: {
+                    //     "X-FOO": "bar"
+                    // },
+                    // params: {
+                    //     "auth_token": "maybe_your_server_authenticates_via_token_YES?"
+                    // }
+                });
+
+                // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
+                // bgGeo.start();
+
+                // If you wish to turn OFF background-tracking, call the #stop method.
+                // bgGeo.stop()
+                deferred.resolve();
+            }
+            
+        });
+        
+        return deferred.promise;
+    }
+    
+    
+    
     return{
-        logCoord: function(coord){
-            var coords = MovementStore.get('coords') || [];
-            coords.push(coord);
-            MovementStore.set('coords', coords);
-        },
         getLoggedCoords: function(){
             return MovementStore.get('coords') || [];
+        },
+        startBGGeoTracking: function(){
+            var deferred = $q.defer();
+            
+            initBGGroTracking().then(function(){
+                
+                console.log('initing')
+                console.log(JSON.stringify(bgGeo));
+                
+                bgGeo.start();
+                
+                console.log('inited')
+                console.log(JSON.stringify(bgGeo));
+                
+                MovementStore.set('tracking', true);
+                deferred.resolve();
+            }, function(){
+                deferred.reject();
+            })
+            
+            return deferred.promise;
+        },
+        stopBGGeoTracking: function(){
+            if(bgGeo){
+                bgGeo.stop();
+                MovementStore.set('tracking', false);
+            }
+        },
+        isTrackingEnabled: function(){
+            return MovementStore.get('tracking') || false;
         }
     };
 })
