@@ -39,8 +39,8 @@ angular.module('movement.controllers', [])
         mapTypeControl: false        
     };
     $scope.markerOptions = {
-        icon: '/img/marker.png',
-        scale: 2
+        // icon: '/img/marker.png',
+        // scale: 2
     };
 
 
