@@ -58,6 +58,9 @@ angular.module('movement.services', [])
     
     
     return {
+        isAuthenticated: function(){
+            return MovementStore.get('authenticated') || false;
+        },
         register: function(user){
             var deferred = $q.defer();
             

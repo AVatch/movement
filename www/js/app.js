@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'movement.controllers', 'movement.services'])
 
-.run(function($ionicPlatform) {
+.run(function($rootScope, $ionicPlatform, $urlRouter, $state, Accounts) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -21,6 +21,18 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
       StatusBar.styleDefault();
     }
   });
+  
+   // check if the user is authenticated
+  $rootScope.$on('$locationChangeSuccess', function(evt) {
+     // Halt state change from even starting
+     evt.preventDefault();
+     // Verify the user has a session token
+     if( Accounts.isAuthenticated() ){
+        $urlRouter.sync();
+     }else{
+        $state.go('register');
+     }
+   });
 })
 
 .constant('API_URL', 'http://54.152.112.50:3000')
