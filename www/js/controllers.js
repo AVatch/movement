@@ -184,6 +184,34 @@ angular.module('movement.controllers', [])
 
 .controller('SettingsCtrl', function($scope, $ionicPopup, GeoTracking) {
     $scope.geoSettings = GeoTracking.getBGGeoSettings();
+    $scope.trackingEnabled = GeoTracking.isTrackingEnabled();
+    
+    $scope.toggleTracking = function(){
+        
+        if($scope.trackingEnabled){
+            // stop
+            GeoTracking.stopBGGeoTracking()
+                .then(function(){
+                    $ionicPopup.alert({
+                        title: 'Success',
+                        template: 'Background tracking stopped'
+                    });
+                    $scope.trackingEnabled = GeoTracking.isTrackingEnabled();
+                });
+        }else{
+            // start
+            GeoTracking.startBGGeoTracking()
+                .then(function(){
+                    $ionicPopup.alert({
+                        title: 'Success',
+                        template: 'Background tracking started'
+                    });
+                    $scope.trackingEnabled = GeoTracking.isTrackingEnabled();
+                });
+            
+        }
+        
+    };
     
     $scope.updateBGGeoSettings = function(){
         GeoTracking.updateBGGeoSettings($scope.geoSettings);

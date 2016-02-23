@@ -270,10 +270,15 @@ angular.module('movement.services', [])
             return deferred.promise;
         },
         stopBGGeoTracking: function(){
+            var deferred = $q.defer();
+            
             if(bgGeo){
                 bgGeo.stop();
                 MovementStore.set('tracking', false);
+                deferred.resolve();
             }
+            
+            return deferred.promise;
         },
         isTrackingEnabled: function(){
             return MovementStore.get('tracking') || false;
