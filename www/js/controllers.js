@@ -182,14 +182,24 @@ angular.module('movement.controllers', [])
 
 })
 
-.controller('SettingsCtrl', function($scope, GeoTracking) {
+.controller('SettingsCtrl', function($scope, $ionicPopup, GeoTracking) {
     $scope.geoSettings = GeoTracking.getBGGeoSettings();
     
     $scope.updateBGGeoSettings = function(){
         GeoTracking.updateBGGeoSettings($scope.geoSettings);
+        $scope.geoSettings = GeoTracking.getBGGeoSettings();
+        $ionicPopup.alert({
+            title: 'Success',
+            template: 'Configuration was updated'
+        });
     };
     $scope.resetBGGeoSettings = function(){
         GeoTracking.resetBGGeoSettings();
+        $scope.geoSettings = GeoTracking.getBGGeoSettings();
+        $ionicPopup.alert({
+            title: 'Success',
+            template: 'Configuration was reset'
+        });
     };
 })
 
