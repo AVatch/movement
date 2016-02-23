@@ -119,8 +119,13 @@ angular.module('movement.controllers', [])
                         
                         // reveal userself to the server
                         
-                        // translate to the next state
-                        $state.go('tab.venue-detail', { venueId: venue.foursquare_id } );
+                        Venues.revealVisit(venue)
+                            .then(function(){
+                                // translate to the next state
+                                $state.go('tab.venue-detail', { venueId: venue.foursquare_id } );        
+                            }, function(){
+                               Utility.raiseAlert('Sorry there was an issue'); 
+                            });
                         return true;
                     }
                 }

@@ -523,7 +523,34 @@ angular.module('movement.services', [])
                     locationId: venue.foursquare_id,
                     deviceId: Utility.getDeviceId()
                 }
-            })
+            }).then(function(){
+                
+                var venues = getCachedVenues();
+                var indx = -1;
+                for( var i=0; i<venues.length; i++ ){
+                    if( venues[i].foursquare_id == venue.foursquare_id){
+                        indx = i;
+                    }
+                }
+                if(indx != -1){
+                    
+                    venues[indx].signed = true;
+                    MovementStore.set('venues', venues);
+                    
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]: Revealed location for venue " + JSON.stringify(venue);
+                    Utility.logEvent(msg);
+                }
+                
+                
+                deferred.resolve()
+                
+            }, function(){
+                var now = new Date();
+                var msg = "[" + now.toString() + "]: Failed to reveal location for venue " + JSON.stringify(venue);
+                Utility.logEvent(msg);
+                deferred.reject()                
+            });
         
         return deferred.promise;
     }
