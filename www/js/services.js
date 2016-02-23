@@ -139,7 +139,7 @@ angular.module('movement.services', [])
     }
     
     function resetBGGeoSettings(){
-        MovementStore.remove('geoSettings');
+        return MovementStore.remove('geoSettings');
     }
     
     function initBGGeoTracking(){

@@ -182,8 +182,15 @@ angular.module('movement.controllers', [])
 
 })
 
-.controller('SettingsCtrl', function($scope) {
-  
+.controller('SettingsCtrl', function($scope, GeoTracking) {
+    $scope.geoSettings = GeoTracking.getBGGeoSettings();
+    
+    $scope.updateBGGeoSettings = function(){
+        GeoTracking.updateBGGeoSettings($scope.geoSettings);
+    };
+    $scope.resetBGGeoSettings = function(){
+        GeoTracking.resetBGGeoSettings();
+    };
 })
 
 .controller('AboutCtrl', function($scope) {

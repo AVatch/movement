@@ -7,14 +7,93 @@
         </a>
     </div>
     
-    <!--desiredAccuracy-->
-    <!--stationaryRadius-->
-    <!--distanceFilter-->
-    <!--locationUpdateInterval-->
-    <!--minimumActivityRecognitionConfidence-->
-    <!--fastestLocationUpdateInterval-->
-    <!--activityRecognitionInterval-->
-    <!--debug-->
+    <div class="list">
+        <ion-item class="item-divider">Background GeoLocation</ion-item>
+        <li class="item item-toggle">
+            Enable Tracking
+            <label class="toggle toggle-positive">
+                <input type="checkbox">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </li>
+        <ion-item class="item-divider">Background GeoLocation Configuration</ion-item>
+        <label class="item item-input">
+            <span class="input-label">desiredAccuracy</span>
+            <input type="text" ng-model="geoSettings.desiredAccuracy">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">stationaryRadius</span>
+            <input type="text" ng-model="geoSettings.stationaryRadius">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">distanceFilter</span>
+            <input type="text" ng-model="geoSettings.distanceFilter">
+        </label>
+        <li class="item item-toggle">
+            disableElasticity
+            <label class="toggle toggle-positive">
+                <input type="checkbox" ng-model="geoSettings.disableElasticity">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </li>
+        <label class="item item-input">
+            <span class="input-label">locationUpdateInterval</span>
+            <input type="text" ng-model="geoSettings.locationUpdateInterval">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">minimumActivityRecognitionConfidence</span>
+            <input type="text" ng-model="geoSettings.minimumActivityRecognitionConfidence">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">fastestLocationUpdateInterval</span>
+            <input type="text" ng-model="geoSettings.fastestLocationUpdateInterval">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">activityRecognitionInterval</span>
+            <input type="text" ng-model="geoSettings.activityRecognitionInterval">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">stopDetectionDelay</span>
+            <input type="text" ng-model="geoSettings.stopDetectionDelay">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">stopTimeout</span>
+            <input type="text" ng-model="geoSettings.stopTimeout">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">activityType</span>
+            <input type="text" ng-model="geoSettings.activityType">
+        </label>
+        <li class="item item-toggle">
+            Debug
+            <label class="toggle toggle-positive">
+                <input type="checkbox" ng-model="geoSettings.debug">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </li>
+
+    </div>
+    
+    
+    <div class="row">
+        <button class="button button-block button-energized"
+                ng-click="updateBGGeoSettings()">
+            Update Configuration
+        </button>
+    </div>
+    
+    <div class="row">
+        <button class="button button-block button-assertive"
+                ng-click="resetBGGeoSettings">
+            Reset Configuration
+        </button>
+    </div>
     
   </ion-content>
 </ion-view>
