@@ -38,10 +38,24 @@ angular.module('movement.controllers', [])
         overviewMapControl: false,
         mapTypeControl: false        
     };
+    $scope.markerOptions = {
+        icon: '/img/marker.png',
+        scale: 2
+    };
 
 
     // setup maps
     $scope.maps = [];
+    
+    $scope.maps.push({
+                center: {
+                    latitude: 40.7238180,
+                    longitude: -73.9786810
+                },
+                zoom: 15,
+                name: "Some Venue"
+            })
+    
     var initMaps = function(){
         
         var now = new Date();
