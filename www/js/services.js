@@ -1,7 +1,15 @@
 angular.module('movement.services', [])
 
+.factory('MovementStore', function(store) {
+  return store.getNamespacedStore('movement');
+})
+
 .factory('Utility', function($ionicPopup){
     return {
+        getDeviceId: function(){
+            // for now return random number
+            return Math.floor(Math.random()*1000);
+        },
         raiseAlert: function(msg){
             var alertPopup = $ionicPopup.alert({
                 title: 'Something went wrong!',
@@ -16,27 +24,53 @@ angular.module('movement.services', [])
     }
 })
 
-.factory('Accounts', function($q, $http, API_URL, Utility){
+.factory('Accounts', function($q, $http, API_URL, Utility, MovementStore){
     
     
     return {
         register: function(user){
+            var deferred = $q.defer();
             
+            // do some basic validation, could defer to form validation if necessary
             if(user.firstName === '' && user.lastName === '' && user.email === ''){
                 Utility.raiseAlert("Please enter all the information.")
+                deferred.reject();    
             }else if( !Utility.validateEmail(user.email) ){
                 Utility.raiseAlert("Please enter a valid email.")
+                deferred.reject();
             }
             
-            console.log(user);
-            console.log(API_URL);
+            // turn the user obj to the format the server expects
+            var newUser = {
+                fullname: user.firstName + ' ' + user.lastName,
+                emailId: user.email,
+                deviceId: Utility.getDeviceId()
+            };
+            
+            
+            
+            // passed validation, go ahead and register
+            $http({
+                url: API_URL + '/users/register/',
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                data: newUser 
+            }).then(function(r){
+                console.log(r);
+            }, function(e){
+                console.log("There was an error");
+                console.log(e);
+            })
+            
+            return deferred.promise;
         }
     };
+
 })
 
 
 
-.factory('Chats', function() {
+.factory('Venues', function() {
   // Might use a resource here that returns a JSON array
 
   // Some fake testing data

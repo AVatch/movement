@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('movement', ['ionic', 'uiGmapgoogle-maps', 'movement.controllers', 'movement.services'])
+angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'movement.controllers', 'movement.services'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
