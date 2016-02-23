@@ -4,7 +4,7 @@ angular.module('movement.services', [])
   return store.getNamespacedStore('movement');
 })
 
-.factory('Utility', function($ionicPopup){
+.factory('Utility', function($ionicPopup, MovementStore){
     function makeid(){
         var text = "";
         var MAX_SIZE = 500;
@@ -31,6 +31,25 @@ angular.module('movement.services', [])
             // REF: http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
             var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(email);
+        },
+        logEvent: function(msg){
+            var logs = MovementStore.get('logs');
+            if(!logs){
+                console.log("logs not found creating them");
+                MovementStore.set('logs', []);
+                logs = [];
+            }
+            logs.push(msg);
+            MovementStore.set('logs', logs);
+        },
+        retrieveLogEvents: function(){
+            var logs = MovementStore.get('logs');
+            if(!logs){
+                console.log("logs not found creating them");
+                MovementStore.set('logs', []);
+                logs = [];
+            };
+            return logs;
         }
     }
 })
