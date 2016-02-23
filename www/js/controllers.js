@@ -19,13 +19,13 @@ angular.module('movement.controllers', [])
     $scope.logs = Utility.retrieveLogEvents();
 })
 
-.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, uiGmapGoogleMapApi, Utility, GeoTracking) {
+.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, uiGmapGoogleMapApi, uiGmapIsReady, Utility, GeoTracking) {
     
     var now = new Date();
     var msg = "[" + now.toString() + "]: Enetered the VenuesCtrl";
     Utility.logEvent(msg);
     
-    $scope.loading = false;
+    $scope.loading = true;
     $scope.mapOptions = {
         disableDoubleClickZoom: true,
         draggable: false,
@@ -74,6 +74,11 @@ angular.module('movement.controllers', [])
             })
         }
     }; initMaps();
+    // Figure out when the maps are ready
+    uiGmapIsReady.promise(1).then(function(instances) {
+        console.log('maps are loaded');
+        $scope.loading = false;
+    });    
 
 
 
