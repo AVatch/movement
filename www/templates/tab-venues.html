@@ -5,15 +5,19 @@
         
         <ion-list>
         
-            <ion-item class="no-padding">
+            <ion-item ng-if="maps.length==0">No Venues yet</ion-item>
+            
+            <ion-item class="no-padding" ng-repeat="venue in maps">
                 
-                <ui-gmap-google-map center='map.center' 
-                                    zoom='map.zoom'
-                                    options='mapOptions'></ui-gmap-google-map>        
-
+                <ui-gmap-google-map center='venue.center' 
+                                    zoom='venue.zoom'
+                                    options='mapOptions'>
+                    <ui-gmap-marker coords="venue.center" idkey="$index"></ui-gmap-marker>
+                </ui-gmap-google-map>        
+                
                 <div class="row">
                     <div class="col">
-                        Some Venue Name
+                        {{ venue.name }}
                     </div>
                     <div class="col">
                         <button class="button button-small button-positive pull-right"

@@ -19,7 +19,7 @@ angular.module('movement.controllers', [])
     $scope.logs = Utility.retrieveLogEvents();
 })
 
-.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, uiGmapGoogleMapApi, Utility) {
+.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, uiGmapGoogleMapApi, Utility, GeoTracking) {
     
     var now = new Date();
     var msg = "[" + now.toString() + "]: Enetered the VenuesCtrl";
@@ -38,7 +38,31 @@ angular.module('movement.controllers', [])
         overviewMapControl: false,
         mapTypeControl: false        
     };
-    $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+
+
+    // setup maps
+    $scope.maps = [{ center: { latitude: 45, longitude: -73 }, zoom: 8, name: "Some Venue" }];
+    var initMaps = function(){
+        
+        var now = new Date();
+        var msg = "[" + now.toString() + "]: Initializing Maps";
+        Utility.logEvent(msg);
+        
+        var coords = GeoTracking.getLoggedCoords();
+        for(var i=0; i<coords.length; i++){
+            $scope.maps.push({
+                center: {
+                    latitude: coords[i].latitde,
+                    longitude: coords[i].longitude
+                },
+                zoom: 8,
+                name: "Some Venue"
+            })
+        }
+    }; initMaps();
+
+
+
 
     $scope.showPopup = function(){
         $ionicPopup.show({
@@ -92,6 +116,9 @@ angular.module('movement.controllers', [])
                 var now = new Date();
                 var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
                 Utility.logEvent(msg);
+                
+                // store the coords in cache
+                GeoTracking.logCoord(coords);
 
                 // Simulate doing some extra work with a bogus setTimeout.  This could perhaps be an Ajax request to your server.
                 // The point here is that you must execute bgGeo.finish after all asynchronous operations within the callback are complete.

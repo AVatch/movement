@@ -108,6 +108,20 @@ angular.module('movement.services', [])
 })
 
 
+.factory('GeoTracking', function(MovementStore){
+    return{
+        logCoord: function(coord){
+            var coords = MovementStore.get('coords') || [];
+            coords.push(coord);
+            MovementStore.set('coords', coords);
+        },
+        getLoggedCoords: function(){
+            return MovementStore.get('coords') || [];
+        }
+    };
+})
+
+
 
 .factory('Venues', function() {
   // Might use a resource here that returns a JSON array
