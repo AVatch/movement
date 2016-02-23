@@ -59,14 +59,14 @@ angular.module('movement.controllers', [])
     $scope.maps = [];
     
     // dummy point for debuging
-    $scope.maps.push({
-                center: {
-                    latitude: 40.7238180,
-                    longitude: -73.9786810
-                },
-                zoom: 15,
-                name: "Some Venue"
-            })
+    // $scope.maps.push({
+    //             center: {
+    //                 latitude: 40.7238180,
+    //                 longitude: -73.9786810
+    //             },
+    //             zoom: 15,
+    //             name: "Some Venue"
+    //         })
     
     var initMaps = function(){
         
@@ -106,6 +106,7 @@ angular.module('movement.controllers', [])
     $scope.doRefresh = function(){
         $timeout(function(){
             // pretend were requesting
+            initMaps();
         },1000).finally(function(){
             $scope.$broadcast('scroll.refreshComplete');
         })
