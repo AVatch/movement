@@ -74,11 +74,12 @@ angular.module('movement.controllers', [])
         var msg = "[" + now.toString() + "]: Initializing Maps";
         Utility.logEvent(msg);
         
-        // var coords = GeoTracking.getLoggedCoords();
+        $scope.maps = [];
         var cachedVenues = Venues.all();
-        
         // for now only show at most 25 venues in the array
         for(var i=0; i<Math.min(cachedVenues.length, 25); i++){
+            
+            
             $scope.maps.push({
                 center: {
                     latitude: cachedVenues[i].lat, 

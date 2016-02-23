@@ -360,6 +360,10 @@ angular.module('movement.services', [])
         return MovementStore.get('venues') || [];
     }
     function addVenue( venue ){
+        
+        console.log("Adding Venue");
+        console.log(JSON.stringify(venue));
+        
         var venues = getCachedVenues();
         var indx = -1;
                 
@@ -371,10 +375,12 @@ angular.module('movement.services', [])
         
         if( indx === -1){
             // venue is not logged, add it
+            console.log("Venue is not previously added, so lets append it");
             venue.clientTally = 1;
             venues.push(venue);
         }else{
             // venue is logged, just increment tally
+            console.log("Venue is already in cache, lets increment it");
             venues[i].clientTally += 1;
         }
         
