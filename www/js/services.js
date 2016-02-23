@@ -14,7 +14,20 @@ angular.module('movement.services', [])
         return text;
     }
     
+    function compare(a,b) {
+        if (a.clientTally < b.clientTally){
+            return -1;
+        }
+        else if (a.clientTally > b.clientTally){
+            return 1;
+        }
+        else{ 
+            return 0;
+        }
+    }
+    
     return {
+        compare: compare,
         getDeviceId: function(){
             // for now return random number
             // return Math.floor(Math.random()*500);

@@ -10,6 +10,7 @@
     
     <ion-list ng-show="!loading">
         <ion-item class="item-divider">Revealed Guestbook</ion-item>
+        <ion-item ng-if="visitors.length==0">No One yet</ion-item>
         <ion-item ng-repeat="visitor in visitors">{{ visitor.userName }}</ion-item>    
     </ion-list>
     

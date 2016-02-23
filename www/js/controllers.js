@@ -54,7 +54,6 @@ angular.module('movement.controllers', [])
         // scale: 2
     };
 
-
     // setup maps
     $scope.maps = [];
     var initMaps = function(){
@@ -65,6 +64,10 @@ angular.module('movement.controllers', [])
         
         $scope.maps = []; // clear maps for now
         var cachedVenues = Venues.all();
+        
+        // first sort by tallycount
+        cachedVenues = cachedVenues.sort(Utility.compare);
+        
         // for now only show at most 25 venues in the array
         for(var i=0; i<Math.min(cachedVenues.length, 25); i++){    
             $scope.maps.push({
