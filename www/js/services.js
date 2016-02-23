@@ -1,5 +1,41 @@
 angular.module('movement.services', [])
 
+.factory('Utility', function($ionicPopup){
+    return {
+        raiseAlert: function(msg){
+            var alertPopup = $ionicPopup.alert({
+                title: 'Something went wrong!',
+                template: msg
+            });            
+        },
+        validateEmail: function(email){
+            // REF: http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+    }
+})
+
+.factory('Accounts', function($q, $http, API_URL, Utility){
+    
+    
+    return {
+        register: function(user){
+            
+            if(user.firstName === '' && user.lastName === '' && user.email === ''){
+                Utility.raiseAlert("Please enter all the information.")
+            }else if( !Utility.validateEmail(user.email) ){
+                Utility.raiseAlert("Please enter a valid email.")
+            }
+            
+            console.log(user);
+            console.log(API_URL);
+        }
+    };
+})
+
+
+
 .factory('Chats', function() {
   // Might use a resource here that returns a JSON array
 

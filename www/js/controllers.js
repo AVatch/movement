@@ -1,7 +1,14 @@
 angular.module('movement.controllers', [])
 
-.controller('RegisterCtrl', function($scope, $state){
-    
+.controller('RegisterCtrl', function($scope, $state, Accounts){
+    $scope.user = {
+        firstName: '',
+        lastName: '',
+        email: ''
+    };
+    $scope.register = function(){
+        Accounts.register($scope.user);
+    };
 })
 
 .controller('AuthenticateCtrl', function($scope, $state){

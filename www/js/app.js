@@ -23,6 +23,8 @@ angular.module('movement', ['ionic', 'uiGmapgoogle-maps', 'movement.controllers'
   });
 })
 
+.constant('API_URL', 'http://54.152.112.50:3000')
+
 // Configure Google Maps
 .config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
