@@ -83,7 +83,13 @@ angular.module('movement.services', [])
             $http({
                 url: API_URL + '/users/register/',
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function(obj) {
+                    var str = [];
+                    for(var p in obj)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
                 data: newUser 
             }).then(function(r){
                 
