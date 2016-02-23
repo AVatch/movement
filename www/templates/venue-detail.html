@@ -9,6 +9,7 @@
     </ion-refresher>
     
     <ion-list ng-show="!loading">
+        <ion-item class="item-divider">Revealed Guestbook</ion-item>
         <ion-item ng-repeat="visitor in visitors">{{ visitor.name }}</ion-item>    
     </ion-list>
     
