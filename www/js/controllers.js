@@ -93,7 +93,7 @@ angular.module('movement.controllers', [])
         },1000).finally(function(){
             $scope.$broadcast('scroll.refreshComplete');
         })
-    }
+    };
 
 
     $scope.showPopup = function(){
@@ -214,10 +214,30 @@ angular.module('movement.controllers', [])
     
 })
 
-.controller('VenuesDetailCtrl', function($scope, $stateParams) {
+.controller('VenuesDetailCtrl', function($scope, $stateParams, $timeout) {
     $scope.loading = true;
     $scope.venue = {
         title: "Some Place"
+    };
+    $scope.visitors = [{
+        name: "adrian vatchinsky"
+    },
+    {
+        name: "biggie smalls"
+    }];
+    
+    // pretend were http-ing
+    $timeout(function(){
+        $scope.loading = false;
+    }, 1000);
+    
+    // refresh visitor
+    $scope.doRefresh = function(){
+        $timeout(function(){
+            // pretend were requesting
+        },1000).finally(function(){
+            $scope.$broadcast('scroll.refreshComplete');
+        })
     };
 })
 

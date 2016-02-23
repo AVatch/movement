@@ -3,5 +3,14 @@
     
     <ion-spinner ng-if="loading" class="full-height flexcontainer-center" icon="spiral"></ion-spinner>
     
+    <ion-refresher
+        pulling-text="Pull to refresh..."
+        on-refresh="doRefresh()">
+    </ion-refresher>
+    
+    <ion-list ng-show="!loading">
+        <ion-item ng-repeat="visitor in visitors">{{ visitor.name }}</ion-item>    
+    </ion-list>
+    
   </ion-content>
 </ion-view>
