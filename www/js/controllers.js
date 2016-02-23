@@ -22,6 +22,7 @@ angular.module('movement.controllers', [])
     
     $scope.doRefresh = function(){
         $scope.logs = Utility.retrieveLogEvents();
+        $scope.$broadcast('scroll.refreshComplete');
     };
 })
 
