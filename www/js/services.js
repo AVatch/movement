@@ -405,8 +405,6 @@ angular.module('movement.services', [])
         return MovementStore.get('venues') || [];
     }
     function addVenue( venue ){
-        venue.signed = false;
-
         var venues = getCachedVenues();
         var indx = -1;
                 
@@ -419,6 +417,7 @@ angular.module('movement.services', [])
         if( indx === -1){
             // venue is not logged, add it
             console.log("Venue is not previously added, so lets append it");
+            venue.signed = false;
             venue.clientTally = 1;
             venues.push(venue);
             
