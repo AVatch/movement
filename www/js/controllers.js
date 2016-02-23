@@ -190,6 +190,7 @@ angular.module('movement.controllers', [])
         
         if($scope.trackingEnabled){
             // stop
+            console.log("Stopping traccking");
             GeoTracking.stopBGGeoTracking()
                 .then(function(){
                     $ionicPopup.alert({
@@ -200,6 +201,7 @@ angular.module('movement.controllers', [])
                 });
         }else{
             // start
+            console.log("Starting traccking");
             GeoTracking.startBGGeoTracking()
                 .then(function(){
                     $ionicPopup.alert({
@@ -231,6 +233,4 @@ angular.module('movement.controllers', [])
     };
 })
 
-.controller('AboutCtrl', function($scope) {
-  
-});
+.controller('AboutCtrl', function($scope) {});

@@ -252,15 +252,8 @@ angular.module('movement.services', [])
             var deferred = $q.defer();
             
             initBGGeoTracking().then(function(){
-                
-                console.log('initing')
-                console.log(JSON.stringify(bgGeo));
-                
                 bgGeo.start();
-                
-                console.log('inited')
-                console.log(JSON.stringify(bgGeo));
-                
+
                 MovementStore.set('tracking', true);
                 deferred.resolve();
             }, function(){
@@ -271,12 +264,20 @@ angular.module('movement.services', [])
         },
         stopBGGeoTracking: function(){
             var deferred = $q.defer();
+
+            $ionicPlatform.ready(function(){
+               if(window.cordova && window.BackgroundGeolocation){ 
+                    var bgGeo = window.BackgroundGeolocation;
+
+                    bgGeo.stop();
+                    MovementStore.set('tracking', false);
+                    deferred.resolve();
+                           
+               }else{
+                   deferred.reject();
+               } 
+            });
             
-            if(bgGeo){
-                bgGeo.stop();
-                MovementStore.set('tracking', false);
-                deferred.resolve();
-            }
             
             return deferred.promise;
         },
