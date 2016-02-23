@@ -5,10 +5,21 @@ angular.module('movement.services', [])
 })
 
 .factory('Utility', function($ionicPopup){
+    function makeid(){
+        var text = "";
+        var MAX_SIZE = 500;
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for( var i=0; i < MAX_SIZE; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
+    
     return {
         getDeviceId: function(){
             // for now return random number
-            return Math.floor(Math.random()*1000);
+            // return Math.floor(Math.random()*500);
+            // Cant believe i need to be doing this..
+            return makeid()
         },
         raiseAlert: function(msg){
             var alertPopup = $ionicPopup.alert({
@@ -48,7 +59,7 @@ angular.module('movement.services', [])
             };
             
             
-            
+            console.log(newUser);
             // passed validation, go ahead and register
             $http({
                 url: API_URL + '/users/register/',
@@ -56,7 +67,16 @@ angular.module('movement.services', [])
                 headers: {'Content-Type': 'application/json'},
                 data: newUser 
             }).then(function(r){
+                
                 console.log(r);
+                
+                if(r.data.status === 'failed'){
+                    Utility.raiseAlert("Sorry there was an error creating your account.")
+                    deferred.reject();
+                }else{
+                    MovementStore.set('userObj', r.data);
+                }
+                
             }, function(e){
                 console.log("There was an error");
                 console.log(e);
