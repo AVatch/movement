@@ -41,7 +41,7 @@ angular.module('movement.controllers', [])
 
 
     // setup maps
-    $scope.maps = [{ center: { latitude: 45, longitude: -73 }, zoom: 8, name: "Some Venue" },{ center: { latitude: 45, longitude: -72 }, zoom: 8, name: "Some other Venue" }];
+    $scope.maps = [];
     var initMaps = function(){
         
         var now = new Date();
@@ -49,13 +49,13 @@ angular.module('movement.controllers', [])
         Utility.logEvent(msg);
         
         var coords = GeoTracking.getLoggedCoords();
-        for(var i=0; i<coords.length; i++){
+        for(var i=0; i<Math.min(coords.length, 5); i++){
             $scope.maps.push({
                 center: {
                     latitude: coords[i].latitude,
                     longitude: coords[i].longitude
                 },
-                zoom: 8,
+                zoom: 15,
                 name: "Some Venue"
             })
         }
