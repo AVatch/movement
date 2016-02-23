@@ -7,7 +7,10 @@ angular.module('movement.controllers', [])
         email: ''
     };
     $scope.register = function(){
-        Accounts.register($scope.user);
+        Accounts.register($scope.user)
+            .then(function(){
+                $state.go('tab.venue');
+            }, function(){ })
     };
 })
 
@@ -189,7 +192,7 @@ angular.module('movement.controllers', [])
 
 })
 
-.controller('SettingsCtrl', function($scope, $ionicPopup, GeoTracking) {
+.controller('SettingsCtrl', function($scope, $state, $ionicPopup, GeoTracking, Accounts) {
     $scope.geoSettings = GeoTracking.getBGGeoSettings();
     $scope.trackingEnabled = GeoTracking.isTrackingEnabled();
     
@@ -238,6 +241,11 @@ angular.module('movement.controllers', [])
             template: 'Configuration was reset'
         });
     };
+    
+    $scope.logout = function(){
+        Accounts.logout();
+        $state.go('register');
+    }
 })
 
 .controller('AboutCtrl', function($scope) {});

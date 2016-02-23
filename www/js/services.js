@@ -58,6 +58,9 @@ angular.module('movement.services', [])
     
     
     return {
+        logout: function(){
+            return MovementStore.set('authenticated', false);
+        },
         isAuthenticated: function(){
             return MovementStore.get('authenticated') || false;
         },
@@ -95,14 +98,26 @@ angular.module('movement.services', [])
                 },
                 data: newUser 
             }).then(function(r){
-                
                 console.log(r);
+                var now = new Date();
+                var msg = "[" + now.toString() + "]:  Registering User " + JSON.stringify(r);
                 
-                if(r.data.status === 'failed'){
+                
+                console.log(r.data.status == 'success');
+                
+                if(r.data.status == 'success'){
+                    console.log('hi');
+                    MovementStore.set('authenticated', true);
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]:  Registered User";
+                    Utility.logEvent(msg);
+                    deferred.resolve();
+                }else{
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]:  Failed registering the user";
+                    Utility.logEvent(msg);
                     Utility.raiseAlert("Sorry there was an error creating your account.")
                     deferred.reject();
-                }else{
-                    MovementStore.set('userObj', r.data);
                 }
                 
             }, function(e){
@@ -321,48 +336,52 @@ angular.module('movement.services', [])
 
 
 
-.factory('Venues', function() {
+.factory('Venues', function($q, MovementStore, Utility) {
   // Might use a resource here that returns a JSON array
 
-  // Some fake testing data
   var chats = [{
     id: 0,
     name: 'Ben Sparrow',
     lastText: 'You on your way?',
     face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
   }];
+  
+  var venues = MovementStore.get('venues') || [];
 
   return {
     all: function() {
-      return chats;
+      return venues;
     },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
+    remove: function(venue) {
+      venues.splice(venues.indexOf(venue), 1);
     },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
+    get: function(venueId) {
+      for (var i = 0; i < venues.length; i++) {
+        if (venues[i].id === parseInt(venueId)) {
+          return venues[i];
+        }
+      }
+      return null;
+    }
+  };
+})
+
+
+.factory('Activity', function($q, MovementStore, Utility){
+  
+  var activities = MovementStore.get('activities') || [];
+
+  return {
+    all: function() {
+      return activities;
+    },
+    remove: function(activity) {
+      activities.splice(activities.indexOf(activity), 1);
+    },
+    get: function(activityId) {
+      for (var i = 0; i < activities.length; i++) {
+        if (activities[i].id === parseInt(activityId)) {
+          return activities[i];
         }
       }
       return null;
