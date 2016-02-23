@@ -183,8 +183,11 @@ angular.module('movement.services', [])
                 };
                 
                 var failureFn = function(error) {
-                    console.log('BackgroundGeoLocation error');
-                    console.log( JSON.stringify(error) );
+                    // log the events
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]:  BG Callback Error: " + JSON.stringify(error);
+                    Utility.logEvent(msg);
+                    deferred.reject();
                 };
                 
                 // BackgroundGeoLocation is highly configurable.
