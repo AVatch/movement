@@ -29,7 +29,8 @@ angular.module('movement.controllers', [])
     };
 })
 
-.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, $timeout, uiGmapGoogleMapApi, uiGmapIsReady, Utility, GeoTracking) {
+.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, 
+    $timeout, uiGmapGoogleMapApi, uiGmapIsReady, Venues, Utility, GeoTracking) {
     
     var now = new Date();
     var msg = "[" + now.toString() + "]: Enetered the VenuesCtrl";
@@ -73,15 +74,20 @@ angular.module('movement.controllers', [])
         var msg = "[" + now.toString() + "]: Initializing Maps";
         Utility.logEvent(msg);
         
-        var coords = GeoTracking.getLoggedCoords();
-        for(var i=0; i<Math.min(coords.length, 5); i++){
+        // var coords = GeoTracking.getLoggedCoords();
+        var cachedVenues = Venues.all();
+        
+        // for now only show at most 25 venues in the array
+        for(var i=0; i<Math.min(cachedVenues.length, 25); i++){
             $scope.maps.push({
                 center: {
-                    latitude: coords[Math.floor(Math.random() * coords.length)].latitude,
-                    longitude: coords[Math.floor(Math.random() * coords.length)].longitude
+                    latitude: cachedVenues[i].lat, 
+                    longitude: cachedVenues[i].lng
                 },
                 zoom: 15,
-                name: "Some Venue"
+                name: cachedVenues[i].name,
+                totalVisits: cachedVenues[i].totalVisits,
+                totalReveals: cachedVenues[i].totalReveals
             })
         }
     }; initMaps();
