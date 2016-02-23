@@ -3,7 +3,7 @@
     
     <ion-list>
         <ion-item ng-if="logs.length==0">No Logs</ion-item>
-        <ion-item class="item-text-wrap" ng-repeat="log in logs track by $index">{{ log }}</ion-item>    
+        <ion-item class="item-text-wrap" ng-repeat="log in logs | reverse track by $index">{{ log }}</ion-item>    
     </ion-list>
     
   </ion-content>

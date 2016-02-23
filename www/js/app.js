@@ -124,4 +124,10 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/tab/venues');
 
-});
+})
+
+.filter('reverse', function() {
+  return function(items) {
+    return items.slice().reverse();
+  };
+});;

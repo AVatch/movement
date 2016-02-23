@@ -7,7 +7,7 @@
         
             <ion-item ng-if="maps.length==0">No Venues yet</ion-item>
             
-            <ion-item class="no-padding" ng-repeat="venue in maps">
+            <ion-item class="no-padding" ng-repeat="venue in maps | reverse">
                 
                 <ui-gmap-google-map center='venue.center' 
                                     zoom='venue.zoom'
