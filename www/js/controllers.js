@@ -20,6 +20,11 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, uiGmapGoogleMapApi, Utility) {
+    
+    var now = new Date();
+    var msg = "[" + now.toString() + "]: Enetered the VenuesCtrl";
+    Utility.logEvent(msg);
+    
     $scope.loading = false;
     $scope.mapOptions = {
         disableDoubleClickZoom: true,
@@ -77,8 +82,10 @@ angular.module('movement.controllers', [])
                 var lng    = coords.longitude;
                 
                 
+                // log the events
                 var now = new Date();
                 var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
+                Utility.logEvent(msg);
 
                 // Simulate doing some extra work with a bogus setTimeout.  This could perhaps be an Ajax request to your server.
                 // The point here is that you must execute bgGeo.finish after all asynchronous operations within the callback are complete.
