@@ -57,29 +57,16 @@ angular.module('movement.controllers', [])
 
     // setup maps
     $scope.maps = [];
-    
-    // dummy point for debuging
-    // $scope.maps.push({
-    //             center: {
-    //                 latitude: 40.7238180,
-    //                 longitude: -73.9786810
-    //             },
-    //             zoom: 15,
-    //             name: "Some Venue"
-    //         })
-    
     var initMaps = function(){
         
         var now = new Date();
         var msg = "[" + now.toString() + "]: Initializing Maps";
         Utility.logEvent(msg);
         
-        $scope.maps = [];
+        $scope.maps = []; // clear maps for now
         var cachedVenues = Venues.all();
         // for now only show at most 25 venues in the array
-        for(var i=0; i<Math.min(cachedVenues.length, 25); i++){
-            
-            
+        for(var i=0; i<Math.min(cachedVenues.length, 25); i++){    
             $scope.maps.push({
                 center: {
                     latitude: cachedVenues[i].lat, 
@@ -125,12 +112,7 @@ angular.module('movement.controllers', [])
                     text: '<b>Sign</b>',
                     type: 'button-positive',
                     onTap: function(e) {
-                        if ( false ) {
-                            //don't allow the user to close unless he enters wifi password
-                            e.preventDefault();
-                        } else {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             ]
