@@ -132,7 +132,7 @@ angular.module('movement.services', [])
 })
 
 
-.factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Utility){
+.factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Venues, Utility){
     var bgGeo = null;
     
     function logCoords(coord){
@@ -207,11 +207,15 @@ angular.module('movement.services', [])
                     // store the coords in cache
                     logCoords(coords);
 
-                    // Simulate doing some extra work with a bogus setTimeout.  This could perhaps be an Ajax request to your server.
-                    // The point here is that you must execute bgGeo.finish after all asynchronous operations within the callback are complete.
-                    setTimeout(function() {
-                        bgGeo.finish(taskId); // <-- execute #finish when your work in callbackFn is complete
-                    }, 1000);
+                    // Translate the coords to some venue
+                    Venues.lookupCoords({
+                        lat: lat,
+                        lng: lng
+                    }).then(function(){
+                        bgGeo.finish(taskId);
+                    }, function(e){
+                        bgGeo.finish(taskId);
+                    });
                 };
                 
                 var failureFn = function(error) {
@@ -336,38 +340,86 @@ angular.module('movement.services', [])
 
 
 
-.factory('Venues', function($q, MovementStore, Utility) {
-  // Might use a resource here that returns a JSON array
-
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }];
-  
-  var venues = MovementStore.get('venues') || [];
-
-  return {
-    all: function() {
-      return venues;
-    },
-    remove: function(venue) {
-      venues.splice(venues.indexOf(venue), 1);
-    },
-    add: function(venue) {
-      venues.push(venue);
-      MovementStore.set('venues', venues);
-    },
-    get: function(venueId) {
-      for (var i = 0; i < venues.length; i++) {
-        if (venues[i].id === parseInt(venueId)) {
-          return venues[i];
-        }
-      }
-      return null;
+.factory('Venues', function($q, $http, MovementStore, Utility, API_URL) {
+    
+    // Sample venue object
+    // {
+    //     "id": 215,
+    //     "lat": 40.7237137446873,
+    //     "lng": -73.978681,
+    //     "foursquare_id": "4ca0d958e9a7ef3be3085416",
+    //     "name": "Edi & The Wolf",
+    //     "category": "German Restaurants",
+    //     "totalVisits": 0,
+    //     "totalReveals": 0,
+    //
+    //     "clientTally": 0 // <-- Adding this to do trivial clustering on client
+    // }
+       
+    function getCachedVenues(){
+        return MovementStore.get('venues') || [];
     }
-  };
+    function addVenue( venue ){
+        var venues = getCachedVenues();
+        venue.clientTally += 1;
+        venues.push(venue);
+        MovementStore.set('venues', venues);  
+    };
+    function getVenue( venueId ){
+        var venues = getCachedVenues();
+        for (var i = 0; i < venues.length; i++) {
+                if (venues[i].id === parseInt(venueId)) {
+                    return venues[i];
+                }
+            }
+        return null;
+    };
+    
+    function lookupCoords( coords ) {
+        var deferred = $q.defer();
+        
+        $http({
+                url: API_URL + '/locations/translate/',
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function(obj) {
+                    var str = [];
+                    for(var p in obj)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
+                data: coords 
+            }).then(function(r){
+                
+                var translatedVenue = r.data[0];
+                var cachedVenue = getVenue(translatedVenue.id);
+                if( cachedVenue === null ){
+                    translatedVenue.clientTally = 0;
+                }
+                
+                addVenue(translatedVenue);
+                
+                var now = new Date();
+                var msg = "[" + now.toString() + "]: Translated the following venue " + JSON.stringify(translatedVenue);
+                Utility.logEvent(msg);
+                deferred.resolve();
+                
+            }, function(e){
+                var now = new Date();
+                var msg = "[" + now.toString() + "]:  Error translating coordinates " + JSON.stringify(e);
+                Utility.logEvent(msg);
+                deferred.reject();
+            })
+        
+        return deferred.promise;  
+    };
+    
+    return {
+        all: getCachedVenues,
+        add: addVenue,
+        get: getVenue,
+        lookupCoords: lookupCoords
+    };
 })
 
 
