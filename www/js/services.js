@@ -117,7 +117,32 @@ angular.module('movement.services', [])
         MovementStore.set('coords', coords);
     }
     
-    function initBGGroTracking(){
+    function getBGGeoSettings(){
+        return MovementStore.get('geoSettings') || {
+            desiredAccuracy: 0,
+            stationaryRadius: 50,
+            distanceFilter: 50,
+            disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
+            locationUpdateInterval: 60000, // every minute
+            minimumActivityRecognitionConfidence: 80,   // 0-100%.  Minimum activity-confidence for a state-change 
+            fastestLocationUpdateInterval: 5000,
+            activityRecognitionInterval: 10000,
+            stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
+            stopTimeout: 2,  // Wait x miutes to turn off location system after stop-detection
+            activityType: 'AutomotiveNavigation',
+            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. 
+        };
+    }
+    
+    function updateBGGeoSettings(settings){
+        return MovementStore.set('geoSettings', settings);
+    }
+    
+    function resetBGGeoSettings(){
+        MovementStore.remove('geoSettings');
+    }
+    
+    function initBGGeoTracking(){
         var deferred = $q.defer();
         
         // initialize the background geo tracking
@@ -163,22 +188,24 @@ angular.module('movement.services', [])
                 };
                 
                 // BackgroundGeoLocation is highly configurable.
+                var geoSettings = getBGGeoSettings();
+                
                 bgGeo.configure(callbackFn, failureFn, {
                     // Geolocation config
-                    desiredAccuracy: 0,
-                    stationaryRadius: 50,
-                    distanceFilter: 50,
-                    disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
-                    locationUpdateInterval: 60000, // every minute
-                    minimumActivityRecognitionConfidence: 80,   // 0-100%.  Minimum activity-confidence for a state-change 
-                    fastestLocationUpdateInterval: 5000,
-                    activityRecognitionInterval: 10000,
-                    stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
-                    stopTimeout: 2,  // Wait x miutes to turn off location system after stop-detection
-                    activityType: 'AutomotiveNavigation',
+                    desiredAccuracy: geoSettings.desiredAccuracy,
+                    stationaryRadius: geoSettings.stationaryRadius,
+                    distanceFilter: geoSettings.distanceFilter,
+                    disableElasticity: geoSettings.disableElasticity,
+                    locationUpdateInterval: geoSettings.locationUpdateInterval,
+                    minimumActivityRecognitionConfidence: geoSettings.minimumActivityRecognitionConfidence, 
+                    fastestLocationUpdateInterval: geoSettings.fastestLocationUpdateInterval,
+                    activityRecognitionInterval: geoSettings.activityRecognitionInterval,
+                    stopDetectionDelay: geoSettings.stopDetectionDelay,
+                    stopTimeout: geoSettings.stopTimeout,
+                    activityType: geoSettings.activityType,
 
                     // Application config
-                    debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
+                    debug: geoSettings.debug, // <-- enable this hear sounds for background-geolocation life-cycle.
                     forceReloadOnLocationChange: false,  // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a new location is recorded (WARNING: possibly distruptive to user) 
                     forceReloadOnMotionChange: false,    // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when device changes stationary-state (stationary->moving or vice-versa) --WARNING: possibly distruptive to user) 
                     forceReloadOnGeofence: false,        // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a geofence crossing occurs --WARNING: possibly distruptive to user) 
@@ -221,7 +248,7 @@ angular.module('movement.services', [])
         startBGGeoTracking: function(){
             var deferred = $q.defer();
             
-            initBGGroTracking().then(function(){
+            initBGGeoTracking().then(function(){
                 
                 console.log('initing')
                 console.log(JSON.stringify(bgGeo));
@@ -247,7 +274,10 @@ angular.module('movement.services', [])
         },
         isTrackingEnabled: function(){
             return MovementStore.get('tracking') || false;
-        }
+        },
+        getBGGeoSettings: getBGGeoSettings,
+        updateBGGeoSettings: updateBGGeoSettings,
+        resetBGGeoSettings: resetBGGeoSettings 
     };
 })
 
