@@ -117,7 +117,7 @@ angular.module('movement.services', [])
         MovementStore.set('coords', coords);
     }
     
-    function getBGGeoSettings(){
+    function getBGGeoSettings(){        
         return MovementStore.get('geoSettings') || {
             desiredAccuracy: 0,
             stationaryRadius: 50,
@@ -135,10 +135,18 @@ angular.module('movement.services', [])
     }
     
     function updateBGGeoSettings(settings){
+        var now = new Date();
+        var msg = "[" + now.toString() + "]:  Updating the BG Geo Configuration";
+        Utility.logEvent(msg);
+        
         return MovementStore.set('geoSettings', settings);
     }
     
     function resetBGGeoSettings(){
+        var now = new Date();
+        var msg = "[" + now.toString() + "]:  Resetting the BG Geo Configuration";
+        Utility.logEvent(msg);
+        
         return MovementStore.remove('geoSettings');
     }
     
@@ -228,12 +236,6 @@ angular.module('movement.services', [])
                     //     "auth_token": "maybe_your_server_authenticates_via_token_YES?"
                     // }
                 });
-
-                // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
-                // bgGeo.start();
-
-                // If you wish to turn OFF background-tracking, call the #stop method.
-                // bgGeo.stop()
                 deferred.resolve();
             }
             
@@ -251,10 +253,19 @@ angular.module('movement.services', [])
         startBGGeoTracking: function(){
             var deferred = $q.defer();
             
+            var now = new Date();
+            var msg = "[" + now.toString() + "]:  Starting BG Geo Tracking Service";
+            Utility.logEvent(msg);
+            
             initBGGeoTracking().then(function(){
                 bgGeo.start();
 
                 MovementStore.set('tracking', true);
+                
+                var now = new Date();
+                var msg = "[" + now.toString() + "]:  Started BG Geo Tracking Service";
+                Utility.logEvent(msg);
+                
                 deferred.resolve();
             }, function(){
                 deferred.reject();
@@ -264,6 +275,10 @@ angular.module('movement.services', [])
         },
         stopBGGeoTracking: function(){
             var deferred = $q.defer();
+            
+            var now = new Date();
+            var msg = "[" + now.toString() + "]:  Stopping BG Geo Tracking Service";
+            Utility.logEvent(msg);
 
             $ionicPlatform.ready(function(){
                if(window.cordova && window.BackgroundGeolocation){ 
@@ -271,6 +286,11 @@ angular.module('movement.services', [])
 
                     bgGeo.stop();
                     MovementStore.set('tracking', false);
+                    
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]:  Stopped BG Geo Tracking Service";
+                    Utility.logEvent(msg);
+                    
                     deferred.resolve();
                            
                }else{
