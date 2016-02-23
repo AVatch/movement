@@ -19,7 +19,7 @@ angular.module('movement.controllers', [])
     $scope.logs = Utility.retrieveLogEvents();
 })
 
-.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, uiGmapGoogleMapApi, uiGmapIsReady, Utility, GeoTracking) {
+.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, $timeout, uiGmapGoogleMapApi, uiGmapIsReady, Utility, GeoTracking) {
     
     var now = new Date();
     var msg = "[" + now.toString() + "]: Enetered the VenuesCtrl";
@@ -47,6 +47,7 @@ angular.module('movement.controllers', [])
     // setup maps
     $scope.maps = [];
     
+    // dummy point for debuging
     $scope.maps.push({
                 center: {
                     latitude: 40.7238180,
@@ -75,10 +76,14 @@ angular.module('movement.controllers', [])
         }
     }; initMaps();
     // Figure out when the maps are ready
-    uiGmapIsReady.promise(1).then(function(instances) {
-        console.log('maps are loaded');
+    // uiGmapIsReady.promise(1).then(function(instances) {
+    //     console.log('maps are loaded');
+    //     $scope.loading = false;
+    // });
+    // patchjob for now
+    $timeout(function(){
         $scope.loading = false;
-    });    
+    }, 5000);
 
 
 
