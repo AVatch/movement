@@ -114,10 +114,7 @@ angular.module('movement.services', [])
                 console.log(r);
                 var now = new Date();
                 var msg = "[" + now.toString() + "]:  Registering User " + JSON.stringify(r);
-                
-                
-                console.log(r.data.status == 'success');
-                
+               
                 if(r.data.status == 'success'){
                     console.log('hi');
                     MovementStore.set('authenticated', true);
@@ -211,14 +208,15 @@ angular.module('movement.services', [])
                     var lat    = coords.latitude;
                     var lng    = coords.longitude;
                     
-                    
                     // log the events
                     var now = new Date();
                     var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
                     Utility.logEvent(msg);
                     
-                    // store the coords in cache
-                    logCoords(coords);
+                    // store the coords in cache only if the person is moving
+                    if(!location.is_moving){
+                        logCoords(coords);
+                    }
 
                     // Translate the coords to some venue
                     Venues.lookupCoords({
@@ -367,6 +365,7 @@ angular.module('movement.services', [])
     //     "totalReveals": 0,
     //
     //     "clientTally": 0 // <-- Adding this to do trivial clustering on client
+    //     "signed": true/false <-- signed
     // }
     
     // Sample user reveal object
@@ -406,6 +405,7 @@ angular.module('movement.services', [])
         return MovementStore.get('venues') || [];
     }
     function addVenue( venue ){
+        venue.signed = false;
 
         var venues = getCachedVenues();
         var indx = -1;
@@ -421,6 +421,34 @@ angular.module('movement.services', [])
             console.log("Venue is not previously added, so lets append it");
             venue.clientTally = 1;
             venues.push(venue);
+            
+            // since this is the first time the user has been to a venue increment
+            // venue visits on server
+            // log_visit
+            $http({
+                url: API_URL + '/locations/log/',
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function(obj) {
+                    var str = [];
+                    for(var p in obj)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
+                data: {
+                    venueId: venue.foursquare_id
+                } 
+            }, function(s){
+                var now = new Date();
+                var msg = "[" + now.toString() + "]:  Logged a visit for venue " + JSON.stringify(venue);
+                Utility.logEvent(msg);
+            }, function(e){
+                var now = new Date();
+                var msg = "[" + now.toString() + "]:  Error posting to the log " + JSON.stringify(e);
+                Utility.logEvent(msg);
+            })
+            
+            
         }else{
             // venue is logged, just increment tally
             console.log("Venue is already in cache, lets increment it");
