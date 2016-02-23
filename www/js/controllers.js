@@ -86,6 +86,14 @@ angular.module('movement.controllers', [])
     }, 5000);
 
 
+    // refresh venue list
+    $scope.doRefresh = function(){
+        $timeout(function(){
+            // pretend were requesting
+        },1000).finally(function(){
+            $scope.$broadcast('scroll.refreshComplete');
+        })
+    }
 
 
     $scope.showPopup = function(){

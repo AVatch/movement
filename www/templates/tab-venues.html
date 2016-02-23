@@ -2,7 +2,10 @@
     <ion-content>
     
         <ion-spinner ng-if="loading" class="full-height flexcontainer-center" icon="spiral"></ion-spinner>
-        
+        <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="doRefresh()">
+        </ion-refresher>
         <ion-list>
         
             <ion-item ng-if="maps.length==0">No Venues yet</ion-item>
