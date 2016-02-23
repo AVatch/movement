@@ -1,6 +1,6 @@
 angular.module('movement.controllers', [])
 
-.controller('VenuesCtrl', function($scope, uiGmapGoogleMapApi) {
+.controller('VenuesCtrl', function($scope, $ionicPopup, uiGmapGoogleMapApi) {
     $scope.loading = false;
     $scope.mapOptions = {
         disableDoubleClickZoom: true,
@@ -15,6 +15,29 @@ angular.module('movement.controllers', [])
         mapTypeControl: false        
     };
     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
+    
+    $scope.showPopup = function(){
+        $ionicPopup.show({
+            template: '<p>See visitors allows you to reveal your identity to other people who have also visited this venue. Your identity will only be visible to other people who choose to reveal their identity. Do you want to continue?</p>',
+            title: 'Do you want to reveal your identity?',
+            scope: $scope,
+            buttons: [
+                { text: 'Cancel' },
+                {
+                    text: '<b>Sign</b>',
+                    type: 'button-positive',
+                    onTap: function(e) {
+                        if ( false ) {
+                            //don't allow the user to close unless he enters wifi password
+                            e.preventDefault();
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+            ]
+        });
+    };
     
 })
 
