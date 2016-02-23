@@ -361,17 +361,32 @@ angular.module('movement.services', [])
     }
     function addVenue( venue ){
         var venues = getCachedVenues();
-        venue.clientTally += 1;
-        venues.push(venue);
+        var indx = -1;
+                
+        for (var i = 0; i < venues.length; i++) {
+            if (venues[i].foursquare_id == venue.foursquare_id) {
+                indx = i;
+            }
+        }
+        
+        if( indx === -1){
+            // venue is not logged, add it
+            venue.clientTally = 1;
+            venues.push(venue);
+        }else{
+            // venue is logged, just increment tally
+            venues[i].clientTally += 1;
+        }
+        
         MovementStore.set('venues', venues);  
     };
     function getVenue( venueId ){
         var venues = getCachedVenues();
         for (var i = 0; i < venues.length; i++) {
-                if (venues[i].id === parseInt(venueId)) {
-                    return venues[i];
-                }
+            if (venues[i].foursquare_id == venueId) {
+                return venues[i];
             }
+        }
         return null;
     };
     
@@ -392,7 +407,7 @@ angular.module('movement.services', [])
             }).then(function(r){
                 
                 var translatedVenue = r.data[0];
-                var cachedVenue = getVenue(translatedVenue.id);
+                var cachedVenue = getVenue(translatedVenue.foursquare_id); // for now
                 if( cachedVenue === null ){
                     translatedVenue.clientTally = 0;
                 }
