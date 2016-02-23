@@ -69,9 +69,15 @@ angular.module('movement.controllers', [])
     // initialize the background geo tracking
     $ionicPlatform.ready(function(){
         console.log("Platform is ready");
+        var now = new Date();
+        var msg = "[" + now.toString() + "]: IonicPlatform is ready";
+        Utility.logEvent(msg);
        
         if(window.cordova && window.BackgroundGeolocation){
             console.log("Cordova and BackgroundGeolocation found");
+            var now = new Date();
+            var msg = "[" + now.toString() + "]: Cordova and BackgroundGeolocation found";
+            Utility.logEvent(msg);
             
             // Get a reference to the plugin.
             var bgGeo = window.BackgroundGeolocation;
@@ -122,18 +128,18 @@ angular.module('movement.controllers', [])
                 stopOnTerminate: false,              // <-- [Android] Allow the background-service to run headless when user closes the app.
                 startOnBoot: true,                   // <-- [Android] Auto start background-service in headless mode when device is powered-up.
 
-                // HTTP / SQLite config
-                url: 'http://posttestserver.com/post.php?dir=cordova-background-geolocation',
-                method: 'POST',
-                batchSync: true,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
-                autoSync: true,         // <-- [Default: true] Set true to sync each location to server as it arrives.
-                maxDaysToPersist: 1,    // <-- Maximum days to persist a location in plugin's SQLite database when HTTP fails
-                headers: {
-                    "X-FOO": "bar"
-                },
-                params: {
-                    "auth_token": "maybe_your_server_authenticates_via_token_YES?"
-                }
+                // // HTTP / SQLite config
+                // url: 'http://posttestserver.com/post.php?dir=cordova-background-geolocation',
+                // method: 'POST',
+                // batchSync: true,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
+                // autoSync: true,         // <-- [Default: true] Set true to sync each location to server as it arrives.
+                // maxDaysToPersist: 1,    // <-- Maximum days to persist a location in plugin's SQLite database when HTTP fails
+                // headers: {
+                //     "X-FOO": "bar"
+                // },
+                // params: {
+                //     "auth_token": "maybe_your_server_authenticates_via_token_YES?"
+                // }
             });
 
             // Turn ON the background-geolocation system.  The user will be tracked whenever they suspend the app.
