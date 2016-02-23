@@ -41,7 +41,7 @@ angular.module('movement.controllers', [])
 
 
     // setup maps
-    $scope.maps = [{ center: { latitude: 45, longitude: -73 }, zoom: 8, name: "Some Venue" }];
+    $scope.maps = [{ center: { latitude: 45, longitude: -73 }, zoom: 8, name: "Some Venue" },{ center: { latitude: 45, longitude: -72 }, zoom: 8, name: "Some other Venue" }];
     var initMaps = function(){
         
         var now = new Date();
@@ -52,7 +52,7 @@ angular.module('movement.controllers', [])
         for(var i=0; i<coords.length; i++){
             $scope.maps.push({
                 center: {
-                    latitude: coords[i].latitde,
+                    latitude: coords[i].latitude,
                     longitude: coords[i].longitude
                 },
                 zoom: 8,
