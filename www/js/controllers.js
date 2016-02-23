@@ -52,8 +52,8 @@ angular.module('movement.controllers', [])
         for(var i=0; i<Math.min(coords.length, 5); i++){
             $scope.maps.push({
                 center: {
-                    latitude: coords[i].latitude,
-                    longitude: coords[i].longitude
+                    latitude: coords[Math.floor(Math.random() * coords.length)].latitude,
+                    longitude: coords[Math.floor(Math.random() * coords.length)].longitude
                 },
                 zoom: 15,
                 name: "Some Venue"
