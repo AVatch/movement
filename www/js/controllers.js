@@ -1,5 +1,13 @@
 angular.module('movement.controllers', [])
 
+.controller('RegisterCtrl', function($scope, $state){
+    
+})
+
+.controller('AuthenticateCtrl', function($scope, $state){
+    
+})
+
 .controller('VenuesCtrl', function($scope, $ionicPopup, uiGmapGoogleMapApi) {
     $scope.loading = false;
     $scope.mapOptions = {

@@ -49,6 +49,17 @@ angular.module('movement', ['ionic', 'uiGmapgoogle-maps', 'movement.controllers'
 
   // Each tab has its own nav history stack:
 
+  .state('register', {
+    url: '/register',
+    templateUrl: 'templates/register.html',
+    controller: 'RegisterCtrl'
+  })
+  .state('authenticate', {
+    url: '/authenticate',
+    templateUrl: 'templates/authenticate.html',
+    controller: 'AuthenticateCtrl'
+  })
+
   .state('tab.dash', {
     url: '/venues',
     views: {
