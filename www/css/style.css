@@ -24,3 +24,7 @@
 .pull-right{
     float:right;
 }
+
+a.button-block {
+    width: 100%;
+}
