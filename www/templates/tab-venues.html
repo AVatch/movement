@@ -23,10 +23,16 @@
                         {{ venue.name }}
                     </div>
                     <div class="col">
-                        <button class="button button-small button-positive pull-right"
+                        <button ng-show="!venue.signed" class="button button-small button-positive pull-right"
                                 ng-click="showPopup(venue)">
-                            Sign Guestbook ({{ venue.totalReveals }})
+                            <span>Sign Guestbook ({{ venue.totalReveals }})</span>
+                            
                         </button>
+                        <a ng-show="venue.signed" class="button button-small button-positive pull-right"
+                           ui-sref="tab.venue-detail( { venueId: venue.foursquare_id } )">
+                            <span>View Guestbook ({{ venue.totalReveals }})</span>
+                        </a>
+                        
                     </div>    
                 </div>
                 
