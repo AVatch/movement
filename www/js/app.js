@@ -56,13 +56,14 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
     templateUrl: 'templates/register.html',
     controller: 'RegisterCtrl'
   })
+  
   .state('authenticate', {
     url: '/authenticate',
     templateUrl: 'templates/authenticate.html',
     controller: 'AuthenticateCtrl'
   })
 
-  .state('tab.dash', {
+  .state('tab.venue', {
     url: '/venues',
     views: {
       'tab-venues': {
@@ -99,6 +100,15 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
         controller: 'SettingsCtrl'
       }
     }
+  })
+  .state('tab.logs', {
+    url: '/settings/logs',
+    views: {
+        'tab-settings': {
+          templateUrl: 'templates/logs.html',
+          controller: 'LogCtrl'
+        }
+      }
   })
   
   .state('tab.about', {

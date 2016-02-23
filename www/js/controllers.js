@@ -15,6 +15,10 @@ angular.module('movement.controllers', [])
     
 })
 
+.controller('LogCtrl', function($scope, Utility){
+    $scope.logs = Utility.retrieveLogEvents();
+})
+
 .controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, uiGmapGoogleMapApi, Utility) {
     $scope.loading = false;
     $scope.mapOptions = {
@@ -30,9 +34,7 @@ angular.module('movement.controllers', [])
         mapTypeControl: false        
     };
     $scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 8 };
-    
-    Utility.logEvent("first log")
-    
+
     $scope.showPopup = function(){
         $ionicPopup.show({
             template: '<p>See visitors allows you to reveal your identity to other people who have also visited this venue. Your identity will only be visible to other people who choose to reveal their identity. Do you want to continue?</p>',
