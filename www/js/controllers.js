@@ -29,7 +29,7 @@ angular.module('movement.controllers', [])
     };
 })
 
-.controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, 
+.controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
     $timeout, uiGmapGoogleMapApi, uiGmapIsReady, Venues, Utility, GeoTracking) {
     
     var now = new Date();
@@ -73,6 +73,7 @@ angular.module('movement.controllers', [])
                     longitude: cachedVenues[i].lng
                 },
                 zoom: 15,
+                foursquare_id: cachedVenues[i].foursquare_id,
                 name: cachedVenues[i].name,
                 totalVisits: cachedVenues[i].totalVisits,
                 totalReveals: cachedVenues[i].totalReveals
@@ -101,7 +102,7 @@ angular.module('movement.controllers', [])
     };
 
 
-    $scope.showPopup = function(){
+    $scope.showPopup = function( venue ){
         $ionicPopup.show({
             template: '<p>See visitors allows you to reveal your identity to other people who have also visited this venue. Your identity will only be visible to other people who choose to reveal their identity. Do you want to continue?</p>',
             title: 'Do you want to reveal your identity?',
@@ -112,6 +113,11 @@ angular.module('movement.controllers', [])
                     text: '<b>Sign</b>',
                     type: 'button-positive',
                     onTap: function(e) {
+                        
+                        // reveal userself to the server
+                        
+                        // translate to the next state
+                        $state.go('tab.venue-detail', { venueId: venue.foursquare_id } );
                         return true;
                     }
                 }
@@ -142,30 +148,24 @@ angular.module('movement.controllers', [])
     
 })
 
-.controller('VenuesDetailCtrl', function($scope, $stateParams, $timeout) {
+.controller('VenuesDetailCtrl', function($scope, $stateParams, $timeout, Venues) {
     $scope.loading = true;
-    $scope.venue = {
-        title: "Some Place"
-    };
-    $scope.visitors = [{
-        name: "adrian vatchinsky"
-    },
-    {
-        name: "biggie smalls"
-    }];
-    
-    // pretend were http-ing
-    $timeout(function(){
-        $scope.loading = false;
-    }, 1000);
-    
-    // refresh visitor
+    $scope.venue = Venues.get( $stateParams.venueId );
+    $scope.visitors = [];
+    function getVisitors( ){
+        $scope.visitors = [];
+        Venues.getRevealedUsers( $stateParams.venueId )
+            .then(function(r){
+                $scope.visitors = r;
+                $scope.$broadcast('scroll.refreshComplete');
+                $scope.loading = false;
+            }, function(e){
+                $scope.$broadcast('scroll.refreshComplete');
+             });
+    } getVisitors();
+
     $scope.doRefresh = function(){
-        $timeout(function(){
-            // pretend were requesting
-        },1000).finally(function(){
-            $scope.$broadcast('scroll.refreshComplete');
-        })
+        getVisitors();
     };
 })
 

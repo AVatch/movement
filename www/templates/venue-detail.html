@@ -1,4 +1,4 @@
-<ion-view view-title="{{ venue.title }}">
+<ion-view view-title="{{ venue.name }}">
   <ion-content>
     
     <ion-spinner ng-if="loading" class="full-height flexcontainer-center" icon="spiral"></ion-spinner>
@@ -10,7 +10,7 @@
     
     <ion-list ng-show="!loading">
         <ion-item class="item-divider">Revealed Guestbook</ion-item>
-        <ion-item ng-repeat="visitor in visitors">{{ visitor.name }}</ion-item>    
+        <ion-item ng-repeat="visitor in visitors">{{ visitor.userName }}</ion-item>    
     </ion-list>
     
   </ion-content>

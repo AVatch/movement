@@ -469,7 +469,8 @@ angular.module('movement.services', [])
         all: getCachedVenues,
         add: addVenue,
         get: getVenue,
-        lookupCoords: lookupCoords
+        lookupCoords: lookupCoords,
+        getRevealedUsers: getRevealedUsers
     };
 })
 
