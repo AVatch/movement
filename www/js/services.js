@@ -355,6 +355,10 @@ angular.module('movement.services', [])
     remove: function(venue) {
       venues.splice(venues.indexOf(venue), 1);
     },
+    add: function(venue) {
+      venues.push(venue);
+      MovementStore.set('venues', venues);
+    },
     get: function(venueId) {
       for (var i = 0; i < venues.length; i++) {
         if (venues[i].id === parseInt(venueId)) {
@@ -377,6 +381,10 @@ angular.module('movement.services', [])
     },
     remove: function(activity) {
       activities.splice(activities.indexOf(activity), 1);
+    },
+    add: function(activity) {
+      activities.push(activity);
+      MovementStore.set('activities', activities);
     },
     get: function(activityId) {
       for (var i = 0; i < activities.length; i++) {
