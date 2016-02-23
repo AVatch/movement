@@ -2,6 +2,10 @@
   <ion-content>
     
     <ion-list>
+        <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="doRefresh()">
+        </ion-refresher>
         <ion-item ng-if="logs.length==0">No Logs</ion-item>
         <ion-item class="item-text-wrap" ng-repeat="log in logs | reverse track by $index">{{ log }}</ion-item>    
     </ion-list>

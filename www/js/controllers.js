@@ -16,7 +16,13 @@ angular.module('movement.controllers', [])
 })
 
 .controller('LogCtrl', function($scope, Utility){
-    $scope.logs = Utility.retrieveLogEvents();
+    $scope.$on('$ionicView.enter', function(e) {
+        $scope.logs = Utility.retrieveLogEvents();
+    });
+    
+    $scope.doRefresh = function(){
+        $scope.logs = Utility.retrieveLogEvents();
+    };
 })
 
 .controller('VenuesCtrl', function($scope, $ionicPopup, $ionicPlatform, $timeout, uiGmapGoogleMapApi, uiGmapIsReady, Utility, GeoTracking) {
