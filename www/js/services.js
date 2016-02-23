@@ -4,13 +4,16 @@ angular.module('movement.services', [])
   return store.getNamespacedStore('movement');
 })
 
-.factory('Utility', function($ionicPopup, MovementStore){
+.factory('Utility', function($ionicPopup, $ionicPlatform, MovementStore){
     function makeid(){
         var text = "";
         var MAX_SIZE = 500;
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         for( var i=0; i < MAX_SIZE; i++ )
             text += possible.charAt(Math.floor(Math.random() * possible.length));
+        
+        MovementStore.set('deviceId', text);
+        
         return text;
     }
     
@@ -29,10 +32,7 @@ angular.module('movement.services', [])
     return {
         compare: compare,
         getDeviceId: function(){
-            // for now return random number
-            // return Math.floor(Math.random()*500);
-            // Cant believe i need to be doing this..
-            return makeid()
+            return MovementStore.get('deviceId') || makeid();
         },
         raiseAlert: function(msg){
             var alertPopup = $ionicPopup.alert({
@@ -506,12 +506,35 @@ angular.module('movement.services', [])
         return deferred.promise;  
     };
     
+    function revealVisit( venue ){
+        var deferred = $q.defer();
+        
+        $http({
+                url: API_URL + '/locations/reveal/',
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                transformRequest: function(obj) {
+                    var str = [];
+                    for(var p in obj)
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    return str.join("&");
+                },
+                data: {
+                    locationId: venue.foursquare_id,
+                    deviceId: Utility.getDeviceId()
+                }
+            })
+        
+        return deferred.promise;
+    }
+    
     return {
         all: getCachedVenues,
         add: addVenue,
         get: getVenue,
         lookupCoords: lookupCoords,
-        getRevealedUsers: getRevealedUsers
+        getRevealedUsers: getRevealedUsers,
+        revealVisit: revealVisit 
     };
 })
 
