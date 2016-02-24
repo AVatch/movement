@@ -69,7 +69,7 @@ angular.module('movement.controllers', [])
         cachedVenues = cachedVenues.sort(Utility.compare);
         
         // for now only show at most 25 venues in the array
-        for(var i=0; i<Math.min(cachedVenues.length, 25); i++){    
+        for(var i=0; i<Math.min(cachedVenues.length, 10); i++){    
             $scope.maps.push({
                 center: {
                     latitude: cachedVenues[i].lat, 
