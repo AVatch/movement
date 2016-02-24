@@ -76,6 +76,7 @@ angular.module('movement.controllers', [])
                     longitude: cachedVenues[i].lng
                 },
                 zoom: 15,
+                signed: cachedVenues[i].signed,
                 foursquare_id: cachedVenues[i].foursquare_id,
                 name: cachedVenues[i].name,
                 totalVisits: cachedVenues[i].totalVisits,

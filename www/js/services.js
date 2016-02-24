@@ -537,7 +537,7 @@ angular.module('movement.services', [])
                     MovementStore.set('venues', venues);
                     
                     var now = new Date();
-                    var msg = "[" + now.toString() + "]: Revealed location for venue " + JSON.stringify(venue);
+                    var msg = "[" + now.toString() + "]: Revealed location for venue " + JSON.stringify(venues[indx]);
                     Utility.logEvent(msg);
                 }
                 
