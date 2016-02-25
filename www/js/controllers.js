@@ -108,11 +108,11 @@ angular.module('movement.controllers', [])
 
     $scope.showPopup = function( venue ){
         $ionicPopup.show({
-            template: '<p>See visitors allows you to reveal your identity to other people who have also visited this venue. Your identity will only be visible to other people who choose to reveal their identity. Do you want to continue?</p>',
-            title: 'Do you want to reveal your identity?',
+            template: '<p>When you sign the guestbook, your signature will only be visible to other people who also signed. And then you can see who\'s worthy of talking to at CSCW... Ready to sign?</p>',
+            title: 'Cool! Let\'s see who\'s been there?',
             scope: $scope,
             buttons: [
-                { text: 'Cancel' },
+                { text: 'Not Now' },
                 {
                     text: '<b>Sign</b>',
                     type: 'button-positive',

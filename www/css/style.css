@@ -29,5 +29,22 @@ a.button-block {
     width: 100%;
 }
 .about{
-    text-align: center;
+    text-align: left;
+    padding:6%;
 }
+
+.button.button-positive{
+  background-color: #63D4CF;
+}
+
+ .button.button-positive.active, .button.button-positive.activated{
+  background-color: #63D4CF;
+}
+
+.tab-item.tab-item-active, .tab-item.active, .tab-item.activated {
+    color: #63D4CF !important;
+}
+.settingsText{
+  padding: 6%;
+}
+
