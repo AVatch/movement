@@ -48,3 +48,18 @@ a.button-block {
   padding: 6%;
 }
 
+.venue-title{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: normal;
+    font-family: "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+    line-height: 1.2;
+    color: #000;
+}
+.venue-visits{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #666;
+    font-size: 14px;
+}

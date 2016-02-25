@@ -20,17 +20,18 @@
                 
                 <div class="row">
                     <div class="col">
-                        {{ venue.name }}
+                        <h2 class="venue-title">{{ venue.name }}</h2>
+                        <p class="venue-visits">{{ venue.totalVisits }} Visits</p>
                     </div>
                     <div class="col">
                         <button ng-show="!venue.signed" class="button button-small button-positive pull-right"
                                 ng-click="showPopup(venue)">
-                            <span>Sign Guestbook ({{ venue.totalReveals }})</span>
+                            <span>Sign Guestbook ({{ venue.totalReveals + 1 }})</span>
                             
                         </button>
                         <a ng-show="venue.signed" class="button button-small button-positive pull-right"
                            ui-sref="tab.venue-detail( { venueId: venue.foursquare_id } )">
-                            <span>View Guestbook ({{ venue.totalReveals }})</span>
+                            <span>View Guestbook ({{ venue.totalReveals + 1}})</span>
                         </a>
                         
                     </div>    
