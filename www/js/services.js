@@ -424,7 +424,7 @@ angular.module('movement.services', [])
             }
         }
         
-        if( indx === -1 && CATEGORY_BLACK_LIST.indexOf(venues[i].category) === -1 ){
+        if( indx === -1 && CATEGORY_BLACK_LIST.indexOf(venue.category) === -1 ){
             // venue is not logged, add it
             console.log("Venue is not previously added, so lets append it");
             venue.signed = false;
