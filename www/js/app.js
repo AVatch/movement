@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'movement.controllers', 'movement.services'])
 
-.run(function($rootScope, $ionicPlatform, $urlRouter, $state, Accounts) {
+.run(function($rootScope, $ionicPlatform, $urlRouter, $state, Accounts, GeoTracking) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -21,6 +21,18 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
       StatusBar.styleDefault();
     }
   });
+  
+  
+  // PATCH JOB <-- Toggle the tracking when app starts
+  if( GeoTracking.isTrackingEnabled() ){
+      GeoTracking.stopBGGeoTracking()
+        .then(function(){
+            GeoTracking.startBGGeoTracking()
+        }, function(){ 
+            // pass 
+        })
+  }
+  
   
    // check if the user is authenticated
   $rootScope.$on('$locationChangeSuccess', function(evt) {
