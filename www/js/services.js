@@ -377,6 +377,16 @@ angular.module('movement.services', [])
     //     "revealedAt": "2016-02-17T23:06:32.169493Z"
     // },
     
+    var CATEGORY_BLACK_LIST = [
+        'City',
+        'County',
+        'Country',
+        'Neighborhood',
+        'State',
+        'Town',
+        'Village'
+    ]
+    
     function getRevealedUsers( foursquareId ){
         var deferred = $q.defer();
         
@@ -414,7 +424,7 @@ angular.module('movement.services', [])
             }
         }
         
-        if( indx === -1){
+        if( indx === -1 && CATEGORY_BLACK_LIST.indexOf(venues[i].category) === -1 ){
             // venue is not logged, add it
             console.log("Venue is not previously added, so lets append it");
             venue.signed = false;
