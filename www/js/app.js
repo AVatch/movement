@@ -23,15 +23,15 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
   });
   
   
-  // PATCH JOB <-- Toggle the tracking when app starts
-  if( GeoTracking.isTrackingEnabled() ){
-      GeoTracking.stopBGGeoTracking()
-        .then(function(){
-            GeoTracking.startBGGeoTracking()
-        }, function(){ 
-            // pass 
-        })
-  }
+//   // PATCH JOB <-- Toggle the tracking when app starts
+//   if( GeoTracking.isTrackingEnabled() ){
+//       GeoTracking.stopBGGeoTracking()
+//         .then(function(){
+//             GeoTracking.startBGGeoTracking()
+//         }, function(){ 
+//             // pass 
+//         })
+//   }
   
   
    // check if the user is authenticated

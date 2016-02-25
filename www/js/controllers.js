@@ -153,6 +153,16 @@ angular.module('movement.controllers', [])
             .then(function(){
                 GeoTracking.startBGGeoTracking()
             });
+    }else{
+        // PATCH JOB <-- Toggle the tracking when app starts
+  
+      GeoTracking.stopBGGeoTracking()
+        .then(function(){
+            GeoTracking.startBGGeoTracking()
+        }, function(){ 
+            // pass 
+        })
+  
     }
     
 })
