@@ -69,19 +69,33 @@ angular.module('movement.controllers', [])
         cachedVenues = cachedVenues.sort(Utility.compare);
         
         // for now only show at most 25 venues in the array
-        for(var i=0; i<Math.min(cachedVenues.length, 15); i++){    
+        var max = 15;
+        var showMap = true;
+        for(var i=0; i< cachedVenues.length; i++){
+            if(i > max) 
+            {
+              //quick hack to solve the map loading issue. For
+              //more than 20 venues, we just show an empty div instead of a
+              //map. hopefully people will just think it's taking a while to load
+              //or something...
+              showMap = false;
+            }
             $scope.maps.push({
-                center: {
-                    latitude: cachedVenues[i].lat, 
-                    longitude: cachedVenues[i].lng
-                },
-                zoom: 15,
-                signed: cachedVenues[i].signed,
-                foursquare_id: cachedVenues[i].foursquare_id,
-                name: cachedVenues[i].name,
-                totalVisits: cachedVenues[i].totalVisits,
-                totalReveals: cachedVenues[i].totalReveals
-            })
+              center: {
+                  latitude: cachedVenues[i].lat, 
+                  longitude: cachedVenues[i].lng
+              },
+              zoom: 15,
+              signed: cachedVenues[i].signed,
+              foursquare_id: cachedVenues[i].foursquare_id,
+              name: cachedVenues[i].name,
+              totalVisits: cachedVenues[i].totalVisits,
+              totalReveals: cachedVenues[i].totalReveals,
+              show:showMap
+          })
+            
+            
+            
         }
     }; initMaps();
     // Figure out when the maps are ready

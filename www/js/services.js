@@ -18,10 +18,10 @@ angular.module('movement.services', [])
     }
     
     function compare(a,b) {
-        if (a.clientTally < b.clientTally){
+        if (a.totalVisits > b.totalVisits){
             return -1;
         }
-        else if (a.clientTally > b.clientTally){
+        else if (a.totalVisits < b.totalVisits){
             return 1;
         }
         else{ 
@@ -216,17 +216,20 @@ angular.module('movement.services', [])
                     // store the coords in cache only if the person is moving
                     if(!location.is_moving){
                         logCoords(coords);
+                        
+                     
                     }
+                    
+                     // Translate the coords to some venue
+                      Venues.lookupCoords({
+                          lat: lat,
+                          lng: lng
+                      }).then(function(){
+                          bgGeo.finish(taskId);
+                      }, function(e){
+                      });
 
-                    // Translate the coords to some venue
-                    Venues.lookupCoords({
-                        lat: lat,
-                        lng: lng
-                    }).then(function(){
-                        bgGeo.finish(taskId);
-                    }, function(e){
-                        bgGeo.finish(taskId);
-                    });
+                   
                 };
                 
                 var failureFn = function(error) {
@@ -384,7 +387,15 @@ angular.module('movement.services', [])
         'Neighborhood',
         'State',
         'Town',
-        'Village'
+        'Village',
+        'Counties',
+        'Cities',
+        'Neighborhoods',
+        'Countries',
+        'Towns',
+        'Villiages',
+        'States'
+        
     ]
     
     function getRevealedUsers( foursquareId ){
@@ -396,7 +407,7 @@ angular.module('movement.services', [])
                 params: { locationId: foursquareId } 
             }).then(function(r){
                 var now = new Date();
-                var msg = "[" + now.toString() + "]: Got revealed users";
+                var msg = "[" + now.toString() + "]: Got revealed users ";
                 Utility.logEvent(msg);
                 deferred.resolve(r.data);
             }, function(e){

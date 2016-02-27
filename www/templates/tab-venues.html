@@ -9,29 +9,36 @@
         <ion-list>
         
             <ion-item ng-if="maps.length==0">No Venues yet</ion-item>
-            
+              
             <ion-item ng-show="!loading" class="no-padding" ng-repeat="venue in maps">
-                
-                <ui-gmap-google-map center='venue.center' 
+               
+                <ui-gmap-google-map ng-if="venue.show" center='venue.center' 
                                     zoom='venue.zoom'
                                     options='mapOptions'>
                     <ui-gmap-marker coords="venue.center" idkey="$index" options="markerOptions"></ui-gmap-marker>
-                </ui-gmap-google-map>        
+                </ui-gmap-google-map>
+                
+                <div ng-if="!venue.show" class="map-trick-div"></div>
                 
                 <div class="row">
                     <div class="col">
                         <h2 class="venue-title">{{ venue.name }}</h2>
-                        <p class="venue-visits">{{ venue.totalVisits }} Visitors</p>
+                       <!-- <p class="venue-visits">{{ venue.totalVisits }} Other Visitors</p>
+                        <p ng-show="!venue.signed" class="venue-visits">{{ venue.totalReveals }} Guestbook Signatures</p>
+                        <p ng-show="venue.signed" class="venue-visits">{{ venue.totalReveals + 1}} Guestbook Signatures</p>-->
                     </div>
                     <div class="col">
-                        <button ng-show="!venue.signed" class="button button-small button-positive pull-right"
+                        <button ng-show="!venue.signed" class="button button-positive pull-right"
                                 ng-click="showPopup(venue)">
-                            <span>Sign Guestbook ({{ venue.totalReveals + 1 }})</span>
+                             <span>Sign Guestbook ({{ venue.totalReveals }})</span>
+                           
+                             
                             
                         </button>
-                        <a ng-show="venue.signed" class="button button-small button-positive pull-right"
+                        <a ng-show="venue.signed" class="button button-positive pull-right"
                            ui-sref="tab.venue-detail( { venueId: venue.foursquare_id } )">
-                            <span>View Guestbook ({{ venue.totalReveals + 1}})</span>
+                              <span>View Guestbook ({{ venue.totalReveals + 1}})</span>
+                               
                         </a>
                         
                     </div>    
