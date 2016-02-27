@@ -66,7 +66,8 @@ angular.module('movement.controllers', [])
         var cachedVenues = Venues.all();
         
         // first sort by tallycount
-        cachedVenues = cachedVenues.sort(Utility.compare);
+        //cachedVenues = cachedVenues.sort(Utility.compare);
+        cachedVenues.reverse();
         
         // for now only show at most 25 venues in the array
         var max = 15;

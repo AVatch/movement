@@ -30,14 +30,14 @@
                     <div class="col">
                         <button ng-show="!venue.signed" class="button button-positive pull-right"
                                 ng-click="showPopup(venue)">
-                             <span>Sign Guestbook ({{ venue.totalReveals }})</span>
+                             <span>Sign Guestbook</span>
                            
                              
                             
                         </button>
                         <a ng-show="venue.signed" class="button button-positive pull-right"
                            ui-sref="tab.venue-detail( { venueId: venue.foursquare_id } )">
-                              <span>View Guestbook ({{ venue.totalReveals + 1}})</span>
+                              <span>View Guestbook </span>
                                
                         </a>
                         
