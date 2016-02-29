@@ -213,11 +213,9 @@ angular.module('movement.services', [])
                     var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
                     Utility.logEvent(msg);
                     
-                    // store the coords in cache only if the person is moving
+                    // store the coords in cache only if the person is not moving
                     if(!location.is_moving){
                         logCoords(coords);
-                        
-                     
                     }
                     
                      // Translate the coords to some venue
@@ -228,7 +226,6 @@ angular.module('movement.services', [])
                           bgGeo.finish(taskId);
                       }, function(e){
                       });
-
                    
                 };
                 
@@ -472,7 +469,7 @@ angular.module('movement.services', [])
         }else{
             // venue is logged, just increment tally
             console.log("Venue is already in cache, lets increment it");
-            venues[i].clientTally += 1;
+            venues[indx].clientTally += 1;
         }
         
         MovementStore.set('venues', venues);

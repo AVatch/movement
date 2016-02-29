@@ -81,19 +81,28 @@ angular.module('movement.controllers', [])
               //or something...
               showMap = false;
             }
-            $scope.maps.push({
-              center: {
-                  latitude: cachedVenues[i].lat, 
-                  longitude: cachedVenues[i].lng
-              },
-              zoom: 15,
-              signed: cachedVenues[i].signed,
-              foursquare_id: cachedVenues[i].foursquare_id,
-              name: cachedVenues[i].name,
-              totalVisits: cachedVenues[i].totalVisits,
-              totalReveals: cachedVenues[i].totalReveals,
-              show:showMap
-          })
+            
+            if( cachedVenues[i].clientTally > 5){
+                
+                // only add venues with a clientTally > 5 
+                // as a quick fix for geo location
+                // being too sensitive.
+                
+                $scope.maps.push({
+                    center: {
+                        latitude: cachedVenues[i].lat, 
+                        longitude: cachedVenues[i].lng
+                    },
+                    zoom: 15,
+                    signed: cachedVenues[i].signed,
+                    foursquare_id: cachedVenues[i].foursquare_id,
+                    name: cachedVenues[i].name,
+                    totalVisits: cachedVenues[i].totalVisits,
+                    totalReveals: cachedVenues[i].totalReveals,
+                    show:showMap
+                });
+            }
+            
             
             
             
