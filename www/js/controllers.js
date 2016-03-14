@@ -110,14 +110,6 @@ angular.module('movement.controllers', [])
                     onTap: function(e) {
                         
                         // reveal userself to the server
-                        
-                        Venues.revealVisit(venue)
-                            .then(function(){
-                                // translate to the next state
-                                $state.go('tab.venue-detail', { venueId: venue.foursquare_id } );        
-                            }, function(){
-                               Utility.raiseAlert('Sorry there was an issue'); 
-                            });
                         return true;
                     }
                 }
