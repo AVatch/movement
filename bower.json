@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "angular-google-maps": "^2.3.2",
-    "a0-angular-storage": "^0.0.13"
+    "a0-angular-storage": "^0.0.13",
+    "ion-sticky": "^1.0.4"
   }
 }

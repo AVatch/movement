@@ -39,52 +39,17 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
-    $timeout, uiGmapGoogleMapApi, uiGmapIsReady, Venues, Utility, GeoTracking) {
-    
-    var now = new Date();
-    var msg = "[" + now.toString() + "]: Enetered the VenuesCtrl";
-    Utility.logEvent(msg);
+    uiGmapGoogleMapApi, Venues, Utility, GeoTracking) {
     
     $scope.loading = true;
-    $scope.mapOptions = {
-        disableDoubleClickZoom: true,
-        draggable: false,
-        scaleControl: false,
-        zoomControl: false,
-        streetViewControl: false,
-        scrollwheel: false,
-        rotateControl: false,
-        panControl: false,
-        overviewMapControl: false,
-        mapTypeControl: false        
-    };
     $scope.markerOptions = {
         // icon: '/img/marker.png',
         // scale: 2
     };
     
-    
-    $scope.venues = [];
-    Venues.loadVenues([1,2,3,4,5,6,7,8,9,10])
-        .then(function(v){
-            console.log("loaded");
-            console.log(v);
-            $scope.venues = v;
-            
-            initMap();
-            
-        }, function(e){
-            console.log(e);
-        });
-    
-    $scope.removeVenue = function( venue ){
-      $scope.venues = $scope.venues.filter(function(obj){
-         return venue.id != obj.id; 
-      });
-    };
-    
+
     $scope.mapCtrl = {};
-    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 10 };
+    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15 };
     // ref: https://snazzymaps.com/style/25/blue-water
     var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
     $scope.mapOptions = { 
@@ -100,15 +65,35 @@ angular.module('movement.controllers', [])
             console.log(maps)
         });
     };
+    
+    
+    $scope.venues = [];
+    var loadVenues = function(){
+        Venues.loadVenues([1,2,3,4,5,6,7,8,9,10])
+            .then(function(v){
+                console.log("loaded");
+                console.log(v);
+                $scope.venues = v;
+                
+                initMap();
+                $scope.$broadcast('scroll.refreshComplete');
+                
+            }, function(e){
+                console.log(e);
+            });    
+    };loadVenues();
+    
+    
+    $scope.removeVenue = function( venue ){
+      $scope.venues = $scope.venues.filter(function(obj){
+         return venue.id != obj.id; 
+      });
+    };
 
 
     // refresh venue list
     $scope.doRefresh = function(){
-        $timeout(function(){
-
-        },1000).finally(function(){
-            $scope.$broadcast('scroll.refreshComplete');
-        })
+        loadVenues();
     };
 
 
