@@ -71,6 +71,8 @@ angular.module('movement.controllers', [])
             console.log(v);
             $scope.venues = v;
             
+            initMap();
+            
         }, function(e){
             console.log(e);
         });
@@ -80,77 +82,23 @@ angular.module('movement.controllers', [])
          return venue.id != obj.id; 
       });
     };
-
-    // setup maps
-    // $scope.maps = [];
-    // var initMaps = function(){
-        
-    //     var now = new Date();
-    //     var msg = "[" + now.toString() + "]: Initializing Maps";
-    //     Utility.logEvent(msg);
-        
-    //     $scope.maps = []; // clear maps for now
-    //     var cachedVenues = Venues.all();
-        
-    //     // first sort by tallycount
-    //     //cachedVenues = cachedVenues.sort(Utility.compare);
-    //     cachedVenues.reverse();
-        
-    //     // for now only show at most 25 venues in the array
-    //     var max = 15;
-    //     var showMap = true;
-    //     for(var i=0; i< cachedVenues.length; i++){
-    //         if(i > max) 
-    //         {
-    //           //quick hack to solve the map loading issue. For
-    //           //more than 20 venues, we just show an empty div instead of a
-    //           //map. hopefully people will just think it's taking a while to load
-    //           //or something...
-    //           showMap = false;
-    //         }
-            
-    //         if( cachedVenues[i].clientTally > 5){
-                
-    //             // only add venues with a clientTally > 5 
-    //             // as a quick fix for geo location
-    //             // being too sensitive.
-                
-    //             $scope.maps.push({
-    //                 center: {
-    //                     latitude: cachedVenues[i].lat, 
-    //                     longitude: cachedVenues[i].lng
-    //                 },
-    //                 zoom: 15,
-    //                 signed: cachedVenues[i].signed,
-    //                 foursquare_id: cachedVenues[i].foursquare_id,
-    //                 name: cachedVenues[i].name,
-    //                 totalVisits: cachedVenues[i].totalVisits,
-    //                 totalReveals: cachedVenues[i].totalReveals,
-    //                 show:showMap
-    //             });
-    //         }
-            
-            
-            
-            
-    //     }
-    // }; initMaps();
-    // Figure out when the maps are ready
-    // uiGmapIsReady.promise(1).then(function(instances) {
-    //     console.log('maps are loaded');
-    //     $scope.loading = false;
-    // });
-    // patchjob for now
-    // $timeout(function(){
-    //     $scope.loading = false;
-    // }, 5000);
+    
+    $scope.mapCtrl = {};
+    $scope.mapObj = {center: {latitude: 51.219053, longitude: 4.404418 }, zoom: 14 };
+    $scope.mapOptions = {scrollwheel: false};
+    var initMap = function( ){
+        console.log('initializing maps');
+        uiGmapGoogleMapApi.then(function(maps) {
+            console.log('here are the maps');
+            console.log(maps)
+        });
+    };
 
 
     // refresh venue list
     $scope.doRefresh = function(){
         $timeout(function(){
-            // pretend were requesting
-            initMaps();
+
         },1000).finally(function(){
             $scope.$broadcast('scroll.refreshComplete');
         })
