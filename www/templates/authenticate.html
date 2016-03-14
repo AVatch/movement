@@ -1,4 +1,4 @@
-<ion-view view-title="Movements">
+<!--<ion-view view-title="Movements">
   <ion-content>
     
     <div class="list">
@@ -22,4 +22,48 @@
     
     
   </ion-content>
+</ion-view>-->
+
+<ion-view view-title="Welcome!">
+<ion-slides options="options" slider="slider" ng-show="!loading">
+    
+    <ion-slide-page>
+        
+        <ion-content scroll="false" class="has-header">
+            
+            
+            
+            <div class="list">
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Username</span>
+                    <input ng-model="user.username" type="text" placeholder="Last Name">
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Password</span>
+                    <input ng-model="user.password" type="password" placeholder="password">
+                </label>
+            </div>
+            
+            <div class="row">
+                <button class="button button-block button-positive"
+                        ng-click="authenticate()">
+                    Sign in
+                </button>
+            </div>
+            
+            
+            
+        </ion-content>
+        
+    </ion-slide-page>
+    
+    <ion-slide-page>
+        
+        <ion-content scroll="false">
+            Signup
+        </ion-content>
+        
+    </ion-slide-page>
+    
+</ion-slides>
 </ion-view>

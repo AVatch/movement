@@ -1,11 +1,9 @@
 // Ionic Movement App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
-angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'movement.controllers', 'movement.services'])
+angular.module('movement', ['ionic', 
+                            'angular-storage', 
+                            'uiGmapgoogle-maps', 
+                            'movement.controllers', 
+                            'movement.services'])
 
 .run(function($rootScope, $ionicPlatform, $urlRouter, $state, Accounts, GeoTracking) {
   $ionicPlatform.ready(function() {
@@ -20,19 +18,7 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-  });
-  
-  
-//   // PATCH JOB <-- Toggle the tracking when app starts
-//   if( GeoTracking.isTrackingEnabled() ){
-//       GeoTracking.stopBGGeoTracking()
-//         .then(function(){
-//             GeoTracking.startBGGeoTracking()
-//         }, function(){ 
-//             // pass 
-//         })
-//   }
-  
+  });  
   
    // check if the user is authenticated
   $rootScope.$on('$locationChangeSuccess', function(evt) {
@@ -42,12 +28,12 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
      if( Accounts.isAuthenticated() ){
         $urlRouter.sync();
      }else{
-        $state.go('register');
+        $state.go('authenticate');
      }
    });
 })
 
-.constant('API_URL', 'http://54.152.112.50:3000')
+.constant('API_URL', 'https://5d31e39e.ngrok.com/api/v1')
 
 // Configure Google Maps
 .config(function(uiGmapGoogleMapApiProvider) {
@@ -68,81 +54,70 @@ angular.module('movement', ['ionic', 'angular-storage', 'uiGmapgoogle-maps', 'mo
 
   // setup an abstract state for the tabs directive
     .state('tab', {
-    url: '/tab',
-    abstract: true,
-    templateUrl: 'templates/tabs.html'
-  })
-
-  // Each tab has its own nav history stack:
-
-  .state('register', {
-    url: '/register',
-    templateUrl: 'templates/register.html',
-    controller: 'RegisterCtrl'
-  })
-  
-  .state('authenticate', {
-    url: '/authenticate',
-    templateUrl: 'templates/authenticate.html',
-    controller: 'AuthenticateCtrl'
-  })
-
-  .state('tab.venue', {
-    url: '/venues',
-    views: {
-      'tab-venues': {
-        templateUrl: 'templates/tab-venues.html',
-        controller: 'VenuesCtrl'
-      }
-    }
-  })
-  .state('tab.venue-detail', {
-      url: '/venues/:venueId',
-      views: {
-        'tab-venues': {
-          templateUrl: 'templates/venue-detail.html',
-          controller: 'VenuesDetailCtrl'
-        }
-      }
+        url: '/tab',
+        abstract: true,
+        templateUrl: 'templates/tabs.html'
     })
 
-  .state('tab.activity', {
-      url: '/activity',
-      views: {
-        'tab-activity': {
-          templateUrl: 'templates/tab-activity.html',
-          controller: 'ActivityCtrl'
+    // Each tab has its own nav history stack:
+    .state('register', {
+        url: '/register',
+        templateUrl: 'templates/register.html',
+        controller: 'RegisterCtrl'
+    })
+  
+    .state('authenticate', {
+        url: '/authenticate',
+        templateUrl: 'templates/authenticate.html',
+        controller: 'AuthenticateCtrl'
+    })
+
+    .state('tab.venue', {
+        url: '/venues',
+        views: {
+            'tab-venues': {
+                templateUrl: 'templates/tab-venues.html',
+                controller: 'VenuesCtrl'
+            }
         }
-      }
+    })
+    .state('tab.venue-detail', {
+        url: '/venues/:venueId',
+        views: {
+            'tab-venues': {
+                templateUrl: 'templates/venue-detail.html',
+                controller: 'VenuesDetailCtrl'
+            }
+        }
     })
 
   .state('tab.settings', {
-    url: '/settings',
-    views: {
-      'tab-settings': {
-        templateUrl: 'templates/tab-settings.html',
-        controller: 'SettingsCtrl'
-      }
-    }
+        url: '/settings',
+        views: {
+            'tab-settings': {
+                templateUrl: 'templates/tab-settings.html',
+                controller: 'SettingsCtrl'
+            }
+        }
   })
   .state('tab.logs', {
-    url: '/settings/logs',
-    views: {
-        'tab-settings': {
-          templateUrl: 'templates/logs.html',
-          controller: 'LogCtrl'
+        url: '/settings/logs',
+        views: {
+            'tab-settings': {
+                templateUrl: 'templates/logs.html',
+                controller: 'LogCtrl'
+            }
         }
-      }
   })
   
   .state('tab.about', {
-    url: '/about',
-    views: {
-      'tab-about': {
-        templateUrl: 'templates/tab-about.html',
-        controller: 'AboutCtrl'
-      }
-    }
+        url: '/about',
+        views: {
+            'tab-about': {
+                templateUrl: 'templates/tab-about.html',
+                controller: 'AboutCtrl'
+            }
+        }
   });
 
   // if none of the above states are matched, use this as the fallback

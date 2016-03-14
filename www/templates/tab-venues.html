@@ -1,52 +1,22 @@
 <ion-view view-title="Venues">
-    <ion-content>
-    
-        <ion-spinner ng-if="loading" class="full-height flexcontainer-center" icon="spiral"></ion-spinner>
+    <ion-content class="has-header">
+
         <ion-refresher
             pulling-text="Pull to refresh..."
             on-refresh="doRefresh()">
         </ion-refresher>
         <ion-list>
         
-            <ion-item ng-if="maps.length==0">No Venues yet</ion-item>
-              
-            <ion-item ng-show="!loading" class="no-padding" ng-repeat="venue in maps">
-               
-                <ui-gmap-google-map ng-if="venue.show" center='venue.center' 
-                                    zoom='venue.zoom'
-                                    options='mapOptions'>
-                    <ui-gmap-marker coords="venue.center" idkey="$index" options="markerOptions"></ui-gmap-marker>
-                </ui-gmap-google-map>
-                
-                <div ng-if="!venue.show" class="map-trick-div"></div>
-                
-                <div class="row">
-                    <div class="col">
-                        <h2 class="venue-title">{{ venue.name }}</h2>
-                       <!-- <p class="venue-visits">{{ venue.totalVisits }} Other Visitors</p>
-                        <p ng-show="!venue.signed" class="venue-visits">{{ venue.totalReveals }} Guestbook Signatures</p>
-                        <p ng-show="venue.signed" class="venue-visits">{{ venue.totalReveals + 1}} Guestbook Signatures</p>-->
-                    </div>
-                    <div class="col">
-                        <button ng-show="!venue.signed" class="button button-positive pull-right"
-                                ng-click="showPopup(venue)">
-                             <span>Sign Guestbook</span>
-                           
-                             
-                            
-                        </button>
-                        <a ng-show="venue.signed" class="button button-positive pull-right"
-                           ui-sref="tab.venue-detail( { venueId: venue.foursquare_id } )">
-                              <span>View Guestbook </span>
-                               
-                        </a>
-                        
-                    </div>    
-                </div>
-                
-                
+            <ion-item ng-repeat="venue in venues">
+                <h2>{{ venue.name }}</h2>
+                <p>{{ venue.total_visits }}</p>
+                <ion-option-button class="button-assertive" 
+                                   ng-click="removeVenue(venue)">
+                    No
+                </ion-option-button>
             </ion-item>
             
+                          
         </ion-list>
         
         

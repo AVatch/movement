@@ -14,8 +14,17 @@ angular.module('movement.controllers', [])
     };
 })
 
-.controller('AuthenticateCtrl', function($scope, $state){
+.controller('AuthenticateCtrl', function($scope, $state, Accounts){
     
+    $scope.slider;
+    $scope.user = { username: '', password: '' };
+    
+    $scope.authenticate = function(){
+          Accounts.authenticate($scope.user)
+            .then(function(){
+                $state.go('tab.venue');
+            })
+    };
 })
 
 .controller('LogCtrl', function($scope, Utility){
@@ -53,70 +62,88 @@ angular.module('movement.controllers', [])
         // icon: '/img/marker.png',
         // scale: 2
     };
+    
+    
+    $scope.venues = [];
+    Venues.loadVenues([1,2,3,4,5,6,7,8,9,10])
+        .then(function(v){
+            console.log("loaded");
+            console.log(v);
+            $scope.venues = v;
+            
+        }, function(e){
+            console.log(e);
+        });
+    
+    $scope.removeVenue = function( venue ){
+      $scope.venues = $scope.venues.filter(function(obj){
+         return venue.id != obj.id; 
+      });
+    };
 
     // setup maps
-    $scope.maps = [];
-    var initMaps = function(){
+    // $scope.maps = [];
+    // var initMaps = function(){
         
-        var now = new Date();
-        var msg = "[" + now.toString() + "]: Initializing Maps";
-        Utility.logEvent(msg);
+    //     var now = new Date();
+    //     var msg = "[" + now.toString() + "]: Initializing Maps";
+    //     Utility.logEvent(msg);
         
-        $scope.maps = []; // clear maps for now
-        var cachedVenues = Venues.all();
+    //     $scope.maps = []; // clear maps for now
+    //     var cachedVenues = Venues.all();
         
-        // first sort by tallycount
-        //cachedVenues = cachedVenues.sort(Utility.compare);
-        cachedVenues.reverse();
+    //     // first sort by tallycount
+    //     //cachedVenues = cachedVenues.sort(Utility.compare);
+    //     cachedVenues.reverse();
         
-        // for now only show at most 25 venues in the array
-        var max = 15;
-        var showMap = true;
-        for(var i=0; i< cachedVenues.length; i++){
-            if(i > max) 
-            {
-              //quick hack to solve the map loading issue. For
-              //more than 20 venues, we just show an empty div instead of a
-              //map. hopefully people will just think it's taking a while to load
-              //or something...
-              showMap = false;
-            }
+    //     // for now only show at most 25 venues in the array
+    //     var max = 15;
+    //     var showMap = true;
+    //     for(var i=0; i< cachedVenues.length; i++){
+    //         if(i > max) 
+    //         {
+    //           //quick hack to solve the map loading issue. For
+    //           //more than 20 venues, we just show an empty div instead of a
+    //           //map. hopefully people will just think it's taking a while to load
+    //           //or something...
+    //           showMap = false;
+    //         }
             
-            if( cachedVenues[i].clientTally > 5){
+    //         if( cachedVenues[i].clientTally > 5){
                 
-                // only add venues with a clientTally > 5 
-                // as a quick fix for geo location
-                // being too sensitive.
+    //             // only add venues with a clientTally > 5 
+    //             // as a quick fix for geo location
+    //             // being too sensitive.
                 
-                $scope.maps.push({
-                    center: {
-                        latitude: cachedVenues[i].lat, 
-                        longitude: cachedVenues[i].lng
-                    },
-                    zoom: 15,
-                    signed: cachedVenues[i].signed,
-                    foursquare_id: cachedVenues[i].foursquare_id,
-                    name: cachedVenues[i].name,
-                    totalVisits: cachedVenues[i].totalVisits,
-                    totalReveals: cachedVenues[i].totalReveals,
-                    show:showMap
-                });
-            }
+    //             $scope.maps.push({
+    //                 center: {
+    //                     latitude: cachedVenues[i].lat, 
+    //                     longitude: cachedVenues[i].lng
+    //                 },
+    //                 zoom: 15,
+    //                 signed: cachedVenues[i].signed,
+    //                 foursquare_id: cachedVenues[i].foursquare_id,
+    //                 name: cachedVenues[i].name,
+    //                 totalVisits: cachedVenues[i].totalVisits,
+    //                 totalReveals: cachedVenues[i].totalReveals,
+    //                 show:showMap
+    //             });
+    //         }
             
             
             
             
-        }
-    }; initMaps();
+    //     }
+    // }; initMaps();
     // Figure out when the maps are ready
     // uiGmapIsReady.promise(1).then(function(instances) {
     //     console.log('maps are loaded');
     //     $scope.loading = false;
     // });
     // patchjob for now
-    $timeout(function(){
-        $scope.loading = false;
-    }, 5000);
+    // $timeout(function(){
+    //     $scope.loading = false;
+    // }, 5000);
 
 
     // refresh venue list
@@ -159,35 +186,34 @@ angular.module('movement.controllers', [])
     };
     
     
-    var showTrackingPermissionPopup = function(){
-        return $ionicPopup.show({
-            template: '<p>You will be asked to allow background tracking</p>',
-            title: 'We are about to ask you for permissions',
-            scope: $scope,
-            buttons: [
-                {
-                    text: '<b>Ok</b>',
-                    type: 'button-positive'
-                }
-            ]
-        });
-    };
-    if(!GeoTracking.isTrackingEnabled()){
-        showTrackingPermissionPopup()
-            .then(function(){
-                GeoTracking.startBGGeoTracking()
-            });
-    }else{
-        // PATCH JOB <-- Toggle the tracking when app starts
+    // var showTrackingPermissionPopup = function(){
+    //     return $ionicPopup.show({
+    //         template: '<p>You will be asked to allow background tracking</p>',
+    //         title: 'We are about to ask you for permissions',
+    //         scope: $scope,
+    //         buttons: [
+    //             {
+    //                 text: '<b>Ok</b>',
+    //                 type: 'button-positive'
+    //             }
+    //         ]
+    //     });
+    // };
+    // if(!GeoTracking.isTrackingEnabled()){
+    //     showTrackingPermissionPopup()
+    //         .then(function(){
+    //             GeoTracking.startBGGeoTracking()
+    //         });
+    // }else{
+    //     // PATCH JOB <-- Toggle the tracking when app starts
+    //   GeoTracking.stopBGGeoTracking()
+    //     .then(function(){
+    //         GeoTracking.startBGGeoTracking()
+    //     }, function(){ 
+    //         // pass 
+    //     })
   
-      GeoTracking.stopBGGeoTracking()
-        .then(function(){
-            GeoTracking.startBGGeoTracking()
-        }, function(){ 
-            // pass 
-        })
-  
-    }
+    // }
     
 })
 

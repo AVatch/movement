@@ -69,13 +69,33 @@ angular.module('movement.services', [])
 
 .factory('Accounts', function($q, $http, API_URL, Utility, MovementStore){
     
-    
     return {
+        getToken: function( ){
+            return MovementStore.get('token');
+        },
         logout: function(){
             return MovementStore.set('authenticated', false);
         },
         isAuthenticated: function(){
             return MovementStore.get('authenticated') || false;
+        },
+        authenticate: function( credentials ){
+            var deferred = $q.defer();
+            
+            $http({
+                url: API_URL + '/api-token-auth',
+                method: 'POST',
+                data: credentials
+            })
+            .then(function(r){
+                MovementStore.set('token', r.data.token )
+                MovementStore.set('authenticated', true )
+                deferred.resolve();
+            }, function(e){
+                deferred.reject(e);
+            });
+
+            return deferred.promise;
         },
         register: function(user){
             var deferred = $q.defer();
@@ -351,234 +371,38 @@ angular.module('movement.services', [])
 
 
 
-.factory('Venues', function($q, $http, MovementStore, Utility, API_URL) {
-    
-    // Sample venue object
-    // {
-    //     "id": 215,
-    //     "lat": 40.7237137446873,
-    //     "lng": -73.978681,
-    //     "foursquare_id": "4ca0d958e9a7ef3be3085416",
-    //     "name": "Edi & The Wolf",
-    //     "category": "German Restaurants",
-    //     "totalVisits": 0,
-    //     "totalReveals": 0,
-    //
-    //     "clientTally": 0 // <-- Adding this to do trivial clustering on client
-    //     "signed": true/false <-- signed
-    // }
-    
-    // Sample user reveal object
-    // {
-    //     "id": 129,
-    //     "foursquare_id": "4fdf4038e4b044d93c4fae68",
-    //     "userDeviceId": "05467641-893B-4A8B-9E14-D811BA2D71C9",
-    //     "userName": "Praveen",
-    //     "revealedAt": "2016-02-17T23:06:32.169493Z"
-    // },
-    
-    var CATEGORY_BLACK_LIST = [
-        'City',
-        'County',
-        'Country',
-        'Neighborhood',
-        'State',
-        'Town',
-        'Village',
-        'Counties',
-        'Cities',
-        'Neighborhoods',
-        'Countries',
-        'Towns',
-        'Villiages',
-        'States'
-        
-    ]
-    
-    function getRevealedUsers( foursquareId ){
-        var deferred = $q.defer();
-        
-        $http({
-                url: API_URL + '/locations/revealedusers',
-                method: 'GET',
-                params: { locationId: foursquareId } 
-            }).then(function(r){
-                var now = new Date();
-                var msg = "[" + now.toString() + "]: Got revealed users ";
-                Utility.logEvent(msg);
-                deferred.resolve(r.data);
-            }, function(e){
-                var now = new Date();
-                var msg = "[" + now.toString() + "]: Error getting revealed users " + JSON.stringify(e);
-                Utility.logEvent(msg);
-                deferred.reject();
-            })
-            
-        
-        return deferred.promise;   
-    }
-    
-       
+.factory('Venues', function($q, $http, MovementStore, Utility, Accounts, API_URL) {
+           
     function getCachedVenues(){
         return MovementStore.get('venues') || [];
     }
-    function addVenue( venue ){
-        var venues = getCachedVenues();
-        var indx = -1;
-                
-        for (var i = 0; i < venues.length; i++) {
-            if (venues[i].foursquare_id == venue.foursquare_id) {
-                indx = i;
-            }
-        }
-        
-        if( indx === -1 && CATEGORY_BLACK_LIST.indexOf(venue.category) === -1 ){
-            // venue is not logged, add it
-            console.log("Venue is not previously added, so lets append it");
-            venue.signed = false;
-            venue.clientTally = 1;
-            venues.push(venue);
-            
-            // since this is the first time the user has been to a venue increment
-            // venue visits on server
-            // log_visit
-            $http({
-                url: API_URL + '/locations/log/',
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function(obj) {
-                    var str = [];
-                    for(var p in obj)
-                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                },
-                data: {
-                    venueId: venue.foursquare_id
-                } 
-            }, function(s){
-                var now = new Date();
-                var msg = "[" + now.toString() + "]:  Logged a visit for venue " + JSON.stringify(venue);
-                Utility.logEvent(msg);
-            }, function(e){
-                var now = new Date();
-                var msg = "[" + now.toString() + "]:  Error posting to the log " + JSON.stringify(e);
-                Utility.logEvent(msg);
-            })
-            
-            
-        }else{
-            // venue is logged, just increment tally
-            console.log("Venue is already in cache, lets increment it");
-            venues[indx].clientTally += 1;
-        }
-        
-        MovementStore.set('venues', venues);
-    };
-    function getVenue( venueId ){
-        var venues = getCachedVenues();
-        for (var i = 0; i < venues.length; i++) {
-            if (venues[i].foursquare_id == venueId) {
-                return venues[i];
-            }
-        }
-        return null;
-    };
     
-    function lookupCoords( coords ) {
+    function loadVenues( locationIds ){
         var deferred = $q.defer();
         
-        $http({
-                url: API_URL + '/locations/translate/',
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function(obj) {
-                    var str = [];
-                    for(var p in obj)
-                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                },
-                data: coords 
-            }).then(function(r){
-                
-                var translatedVenue = r.data[0];
-                var cachedVenue = getVenue(translatedVenue.foursquare_id); // for now
-                if( cachedVenue === null ){
-                    translatedVenue.clientTally = 0;
-                }
-                
-                addVenue(translatedVenue);
-                
-                var now = new Date();
-                var msg = "[" + now.toString() + "]: Translated the following venue " + JSON.stringify(translatedVenue);
-                Utility.logEvent(msg);
-                deferred.resolve();
-                
-            }, function(e){
-                var now = new Date();
-                var msg = "[" + now.toString() + "]:  Error translating coordinates " + JSON.stringify(e);
-                Utility.logEvent(msg);
-                deferred.reject();
-            })
-        
-        return deferred.promise;  
-    };
-    
-    function revealVisit( venue ){
-        var deferred = $q.defer();
-        
-        $http({
-                url: API_URL + '/locations/reveal/',
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function(obj) {
-                    var str = [];
-                    for(var p in obj)
-                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                },
-                data: {
-                    locationId: venue.foursquare_id,
-                    deviceId: Utility.getDeviceId()
-                }
-            }).then(function(){
-                
-                var venues = getCachedVenues();
-                var indx = -1;
-                for( var i=0; i<venues.length; i++ ){
-                    if( venues[i].foursquare_id == venue.foursquare_id){
-                        indx = i;
-                    }
-                }
-                if(indx != -1){
-                    
-                    venues[indx].signed = true;
-                    MovementStore.set('venues', venues);
-                    
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]: Revealed location for venue " + JSON.stringify(venues[indx]);
-                    Utility.logEvent(msg);
-                }
-                
-                
-                deferred.resolve()
-                
-            }, function(){
-                var now = new Date();
-                var msg = "[" + now.toString() + "]: Failed to reveal location for venue " + JSON.stringify(venue);
-                Utility.logEvent(msg);
-                deferred.reject()                
-            });
+        $http({            
+            url: API_URL + '/locations',
+            method: 'GET',
+            headers: { Authorization: 'Token ' + Accounts.getToken() },
+            params:{ ids: locationIds.join() } 
+        })
+        .then(function(s){
+            deferred.resolve(s.data);
+        }, function(e){
+            deferred.reject(e);
+        })
         
         return deferred.promise;
     }
     
     return {
+        loadVenues: loadVenues,
         all: getCachedVenues,
-        add: addVenue,
-        get: getVenue,
-        lookupCoords: lookupCoords,
-        getRevealedUsers: getRevealedUsers,
-        revealVisit: revealVisit 
+        // add: addVenue,
+        // get: getVenue,
+        // lookupCoords: lookupCoords,
+        // getRevealedUsers: getRevealedUsers,
+        // revealVisit: revealVisit 
     };
 })
 
