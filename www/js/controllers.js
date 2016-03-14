@@ -84,8 +84,15 @@ angular.module('movement.controllers', [])
     };
     
     $scope.mapCtrl = {};
-    $scope.mapObj = {center: {latitude: 51.219053, longitude: 4.404418 }, zoom: 14 };
-    $scope.mapOptions = {scrollwheel: false};
+    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 10 };
+    // ref: https://snazzymaps.com/style/25/blue-water
+    var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
+    $scope.mapOptions = { 
+        scrollwheel: false,
+        disableDefaultUI: true,
+        styles: mapStyle 
+    };
+
     var initMap = function( ){
         console.log('initializing maps');
         uiGmapGoogleMapApi.then(function(maps) {
