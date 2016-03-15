@@ -370,9 +370,6 @@ angular.module('movement.services', [])
     function logVenue( coords ){
         var deferred = $q.defer();
         
-        console.log("LOGGING THE VENUE")
-        console.log(JSON.stringify(coords))
-        
         $http({            
             url: API_URL + '/locations',
             method: 'POST',
@@ -380,9 +377,7 @@ angular.module('movement.services', [])
             data: coords 
         })
         .then(function(s){
-            console.log("POINT CREATED");
-            console.log(JSON.stringify(s));
-            
+
             var venues = getCachedVenues();
             if( venues.indexOf(s.data.id) === -1 ){
                 venues.push(s.data.id);
@@ -418,14 +413,44 @@ angular.module('movement.services', [])
         return deferred.promise;
     }
     
+    function wasntThere( locationId ){
+        var deferred = $q.defer();
+        if( locationId ){
+            $http({            
+                url: API_URL + '/locations',
+                method: 'PUT',
+                headers: { Authorization: 'Token ' + Accounts.getToken() },
+                data:{ id: locationId } 
+            })
+            .then(function(s){
+                deferred.resolve(s.data);
+            }, function(e){
+                deferred.reject(e);
+            })    
+        }else{ deferred.reject(); }
+        
+        
+        return deferred.promise;
+    }
+    
     function retrieveVenues( ){
         return loadVenues( getCachedVenues( ) )
+    }
+    
+    function removeVenue( venueId ){
+        
+        wasntThere(venueId);
+        
+        var venues = getCachedVenues();
+        venues.splice( venues.indexOf(venueId), 1)
+        MovementStore.set('venues', venues);
     }
     
     return {
         loadVenues: loadVenues,
         logVenue: logVenue,
-        all: retrieveVenues 
+        all: retrieveVenues,
+        removeVenue: removeVenue
     };
 })
 

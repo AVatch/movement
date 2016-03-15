@@ -85,6 +85,7 @@ angular.module('movement.controllers', [])
     
     
     $scope.removeVenue = function( venue ){
+      Venues.removeVenue(venue.id);
       $scope.venues = $scope.venues.filter(function(obj){
          return venue.id != obj.id; 
       });
