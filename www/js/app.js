@@ -33,7 +33,7 @@ angular.module('movement', ['ionic',
    });
 })
 
-.constant('API_URL', 'https://5d31e39e.ngrok.com/api/v1')
+.constant('API_URL', 'http://52.23.168.18/api/v1')
 
 // Configure Google Maps
 .config(function(uiGmapGoogleMapApiProvider) {

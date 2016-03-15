@@ -49,7 +49,7 @@ angular.module('movement.controllers', [])
     
 
     $scope.mapCtrl = {};
-    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15 };
+    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
     // ref: https://snazzymaps.com/style/25/blue-water
     var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
     $scope.mapOptions = { 
@@ -61,6 +61,7 @@ angular.module('movement.controllers', [])
     var initMap = function( ){
         console.log('initializing maps');
         uiGmapGoogleMapApi.then(function(maps) {
+            $scope.mapObj.loading = false;
             console.log('here are the maps');
             console.log(maps)
         });
@@ -69,17 +70,17 @@ angular.module('movement.controllers', [])
     
     $scope.venues = [];
     var loadVenues = function(){
-        Venues.loadVenues([1,2,3,4,5,6,7,8,9,10])
+        $scope.venuesLoading = true;
+        Venues.all()
             .then(function(v){
-                console.log("loaded");
-                console.log(v);
                 $scope.venues = v;
+                $scope.venuesLoading = false;
                 
                 initMap();
                 $scope.$broadcast('scroll.refreshComplete');
                 
             }, function(e){
-                console.log(e);
+                $scope.venuesLoading = false;
             });    
     };loadVenues();
     

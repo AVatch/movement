@@ -66,3 +66,7 @@ a.button-block {
     color: #666;
     font-size: 14px;
 }
+
+.map-loader{
+    text-align: center;    
+}

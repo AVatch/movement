@@ -165,12 +165,6 @@ angular.module('movement.services', [])
 .factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Venues, Utility){
     var bgGeo = null;
     
-    function logCoords(coord){
-        var coords = MovementStore.get('coords') || [];
-        coords.push(coord);
-        MovementStore.set('coords', coords);
-    }
-    
     function getBGGeoSettings(){        
         return MovementStore.get('geoSettings') || {
             desiredAccuracy: 0,
@@ -224,6 +218,9 @@ angular.module('movement.services', [])
                 bgGeo = window.BackgroundGeolocation;
                 
                 var callbackFn = function(location, taskId) {
+                    
+                    console.log( JSON.stringify(location) );
+                    
                     var coords = location.coords;
                     var lat    = coords.latitude;
                     var lng    = coords.longitude;
@@ -234,18 +231,17 @@ angular.module('movement.services', [])
                     Utility.logEvent(msg);
                     
                     // store the coords in cache only if the person is not moving
-                    if(!location.is_moving){
-                        logCoords(coords);
-                    }
+                    // if(!location.is_moving){
+                    //     logCoords(coords);
+                    // }
                     
-                     // Translate the coords to some venue
-                      Venues.lookupCoords({
-                          lat: lat,
-                          lng: lng
-                      }).then(function(){
-                          bgGeo.finish(taskId);
-                      }, function(e){
-                      });
+                    // Translate the coords to some venue
+                    Venues.logVenue( { lat: lat, lng: lng } )
+                        .then(function(){
+                            bgGeo.finish(taskId);
+                        }, then(function(){
+                            bgGeo.finish(taskId);
+                        }));
                    
                 };
                 
@@ -306,9 +302,6 @@ angular.module('movement.services', [])
     
     
     return{
-        getLoggedCoords: function(){
-            return MovementStore.get('coords') || [];
-        },
         startBGGeoTracking: function(){
             var deferred = $q.defer();
             
@@ -377,17 +370,23 @@ angular.module('movement.services', [])
         return MovementStore.get('venues') || [];
     }
     
-    function loadVenues( locationIds ){
+    function logVenue( coords ){
         var deferred = $q.defer();
         
         $http({            
             url: API_URL + '/locations',
-            method: 'GET',
+            method: 'POST',
             headers: { Authorization: 'Token ' + Accounts.getToken() },
-            params:{ ids: locationIds.join() } 
+            data: coords 
         })
         .then(function(s){
-            deferred.resolve(s.data);
+            
+            var venues = getCachedVenues();
+            if( venues.indexOf(s.data.id) === -1 ){
+                venues.push(s.data.id);
+                MovementStore.set('venues', venues);    
+            }
+            deferred.resolve();
         }, function(e){
             deferred.reject(e);
         })
@@ -395,14 +394,34 @@ angular.module('movement.services', [])
         return deferred.promise;
     }
     
+    function loadVenues( locationIds ){
+        var deferred = $q.defer();
+        if( locationIds.length > 0 ){
+            $http({            
+                url: API_URL + '/locations',
+                method: 'GET',
+                headers: { Authorization: 'Token ' + Accounts.getToken() },
+                params:{ ids: locationIds.join() } 
+            })
+            .then(function(s){
+                deferred.resolve(s.data);
+            }, function(e){
+                deferred.reject(e);
+            })    
+        }else{ deferred.reject(); }
+        
+        
+        return deferred.promise;
+    }
+    
+    function retrieveVenues( ){
+        return loadVenues( getCachedVenues( ) )
+    }
+    
     return {
         loadVenues: loadVenues,
-        all: getCachedVenues,
-        // add: addVenue,
-        // get: getVenue,
-        // lookupCoords: lookupCoords,
-        // getRevealedUsers: getRevealedUsers,
-        // revealVisit: revealVisit 
+        logVenue: logVenue,
+        all: retrieveVenues 
     };
 })
 
