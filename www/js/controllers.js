@@ -39,7 +39,7 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
-    uiGmapGoogleMapApi, Venues, Utility, GeoTracking) {
+    $ionicScrollDelegate, uiGmapGoogleMapApi, Venues, Utility, GeoTracking) {
     
     $scope.loading = true;
     $scope.markerOptions = {
@@ -62,8 +62,6 @@ angular.module('movement.controllers', [])
         console.log('initializing maps');
         uiGmapGoogleMapApi.then(function(maps) {
             $scope.mapObj.loading = false;
-            console.log('here are the maps');
-            console.log(maps)
         });
     };
     
@@ -77,6 +75,7 @@ angular.module('movement.controllers', [])
                 $scope.venuesLoading = false;
                 
                 initMap();
+                $ionicScrollDelegate.resize()
                 $scope.$broadcast('scroll.refreshComplete');
                 
             }, function(e){

@@ -230,18 +230,15 @@ angular.module('movement.services', [])
                     var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
                     Utility.logEvent(msg);
                     
-                    // store the coords in cache only if the person is not moving
-                    // if(!location.is_moving){
-                    //     logCoords(coords);
-                    // }
-                    
-                    // Translate the coords to some venue
-                    Venues.logVenue( { lat: lat, lng: lng } )
-                        .then(function(){
-                            bgGeo.finish(taskId);
-                        }, then(function(){
-                            bgGeo.finish(taskId);
-                        }));
+                    if(!location.is_moving){    
+                        // Translate the coords to some venue
+                        Venues.logVenue( { lat: lat, lng: lng } )
+                            .then(function(){
+                                console.log("Translate done");
+                                bgGeo.finish(taskId);
+                            });
+                    }
+
                    
                 };
                 
@@ -373,6 +370,9 @@ angular.module('movement.services', [])
     function logVenue( coords ){
         var deferred = $q.defer();
         
+        console.log("LOGGING THE VENUE")
+        console.log(JSON.stringify(coords))
+        
         $http({            
             url: API_URL + '/locations',
             method: 'POST',
@@ -380,6 +380,8 @@ angular.module('movement.services', [])
             data: coords 
         })
         .then(function(s){
+            console.log("POINT CREATED");
+            console.log(JSON.stringify(s));
             
             var venues = getCachedVenues();
             if( venues.indexOf(s.data.id) === -1 ){
@@ -388,6 +390,8 @@ angular.module('movement.services', [])
             }
             deferred.resolve();
         }, function(e){
+            console.log("POITN FAILED")
+            
             deferred.reject(e);
         })
         
