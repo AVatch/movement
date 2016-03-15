@@ -80,6 +80,9 @@ angular.module('movement.controllers', [])
                 
             }, function(e){
                 $scope.venuesLoading = false;
+                $scope.$broadcast('scroll.refreshComplete');
+                var now = new Date();
+                var msg = "[" + now.toString() + "]:  Issue fetching venues " + JSON.stringify(e);
             });    
     };loadVenues();
     
