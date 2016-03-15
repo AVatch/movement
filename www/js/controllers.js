@@ -119,34 +119,34 @@ angular.module('movement.controllers', [])
     };
     
     
-    // var showTrackingPermissionPopup = function(){
-    //     return $ionicPopup.show({
-    //         template: '<p>You will be asked to allow background tracking</p>',
-    //         title: 'We are about to ask you for permissions',
-    //         scope: $scope,
-    //         buttons: [
-    //             {
-    //                 text: '<b>Ok</b>',
-    //                 type: 'button-positive'
-    //             }
-    //         ]
-    //     });
-    // };
-    // if(!GeoTracking.isTrackingEnabled()){
-    //     showTrackingPermissionPopup()
-    //         .then(function(){
-    //             GeoTracking.startBGGeoTracking()
-    //         });
-    // }else{
-    //     // PATCH JOB <-- Toggle the tracking when app starts
-    //   GeoTracking.stopBGGeoTracking()
-    //     .then(function(){
-    //         GeoTracking.startBGGeoTracking()
-    //     }, function(){ 
-    //         // pass 
-    //     })
+    var showTrackingPermissionPopup = function(){
+        return $ionicPopup.show({
+            template: '<p>You will be asked to allow background tracking</p>',
+            title: 'We are about to ask you for permissions',
+            scope: $scope,
+            buttons: [
+                {
+                    text: '<b>Ok</b>',
+                    type: 'button-positive'
+                }
+            ]
+        });
+    };
+    if(!GeoTracking.isTrackingEnabled()){
+        showTrackingPermissionPopup()
+            .then(function(){
+                GeoTracking.startBGGeoTracking()
+            });
+    }else{
+        // PATCH JOB <-- Toggle the tracking when app starts
+      GeoTracking.stopBGGeoTracking()
+        .then(function(){
+            GeoTracking.startBGGeoTracking()
+        }, function(){ 
+            // pass 
+        })
   
-    // }
+    }
     
 })
 
