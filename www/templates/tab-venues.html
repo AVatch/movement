@@ -10,10 +10,8 @@
                     control=mapCtrl
                     zoom=mapObj.zoom
                     options=mapOptions>
-                <ui-gmap-marker ng-repeat="venue in venues"
-                    idKey="venue.id"
-                    coords="{ latitude: venue.lat, longitude: venue.lng }">
-                </ui-gmap-marker>
+                <ui-gmap-marker coords="meMarker.center" idkey="meMarker.id" options="meMarker.options"></ui-gmap-marker>
+                <ui-gmap-markers models="venues" coords="'self'" icon="'icon'"></ui-gmap-markers>
             </ui-gmap-google-map>
         </div>
 

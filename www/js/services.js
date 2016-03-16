@@ -296,6 +296,34 @@ angular.module('movement.services', [])
         return deferred.promise;
     }
     
+    function getCurrentCoords(){
+        var deferred = $q.defer();
+        $ionicPlatform.ready(function(){
+            if(window.cordova && window.BackgroundGeolocation){ 
+                window.BackgroundGeolocation.getCurrentPosition(function(s){
+                    
+                    
+                    
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]:  Got coords " + JSON.stringify(s);
+                    Utility.logEvent(msg);
+                    
+                    deferred.resolve(s);
+                    
+                }, function(e){
+                    
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]:  Failed to get coords";
+                    Utility.logEvent(msg);
+                    
+                    deferred.reject(e);    
+                })
+                
+            }
+        });
+        return deferred.promise;
+    }
+    
     
     
     return{
@@ -353,6 +381,7 @@ angular.module('movement.services', [])
         isTrackingEnabled: function(){
             return MovementStore.get('tracking') || false;
         },
+        getCurrentCoords: getCurrentCoords,
         getBGGeoSettings: getBGGeoSettings,
         updateBGGeoSettings: updateBGGeoSettings,
         resetBGGeoSettings: resetBGGeoSettings 
