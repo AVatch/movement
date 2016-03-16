@@ -150,8 +150,13 @@ angular.module('movement.controllers', [])
         console.log("centering map");
         GeoTracking.getCurrentCoords()
             .then(function(location){
+                // center map
+                $scope.mapObj.center.latitude = location.coords.latitude;
+                $scope.mapObj.center.longitude = location.coords.longitude;
+                
+                // render you are here pin
                 $scope.meMarker.center.latitude = location.coords.latitude;
-                $scope.meMarker.center.latitude = location.coords.latitude;
+                $scope.meMarker.center.longitude = location.coords.longitude;
             })
         
     //     // PATCH JOB <-- Toggle the tracking when app starts
