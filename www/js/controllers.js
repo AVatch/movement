@@ -62,6 +62,7 @@ angular.module('movement.controllers', [])
     var initMap = function( ){
         console.log('initializing maps');
         uiGmapGoogleMapApi.then(function(maps) {
+            console.log("map was initiated");
             $scope.mapObj.loading = false;
         });
     };
@@ -157,16 +158,7 @@ angular.module('movement.controllers', [])
                 // render you are here pin
                 $scope.meMarker.center.latitude = location.coords.latitude;
                 $scope.meMarker.center.longitude = location.coords.longitude;
-            })
-        
-    //     // PATCH JOB <-- Toggle the tracking when app starts
-    //   GeoTracking.stopBGGeoTracking()
-    //     .then(function(){
-    //         GeoTracking.startBGGeoTracking()
-    //     }, function(){ 
-    //         // pass 
-    //     })
-  
+            })  
     }
     
 })

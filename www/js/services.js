@@ -230,8 +230,14 @@ angular.module('movement.services', [])
                     var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
                     Utility.logEvent(msg);
                     
+                    console.log("Is user moving");
+                    console.log(location.is_moving);
                     if(!location.is_moving){    
                         // Translate the coords to some venue
+                        
+                        
+                        console.log("About to log venue, since user is not moving");
+                        
                         Venues.logVenue( { lat: lat, lng: lng } )
                             .then(function(){
                                 console.log("Translate done");
@@ -406,9 +412,12 @@ angular.module('movement.services', [])
             data: coords 
         })
         .then(function(s){
-
+            
+            console.log("Got a venue");
+            
             var venues = getCachedVenues();
             if( venues.indexOf(s.data.id) === -1 ){
+                console.log("Logging Venue");
                 venues.push(s.data.id);
                 MovementStore.set('venues', venues);    
             }
