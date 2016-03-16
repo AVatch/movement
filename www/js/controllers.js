@@ -98,35 +98,44 @@ angular.module('movement.controllers', [])
     $scope.doRefresh = function(){
         loadVenues();
     };
-
+    
+    $scope.hasItBeenRevealed = function( venue ){
+        var intersection = Venues.getMyReveals().filter(function(obj){
+            return obj == venue.id;
+        });
+        return intersection.length > 0;
+    };
 
     $scope.showPopup = function( venue ){
-        $ionicPopup.show({
-            template: '<p>When you sign the guestbook, your signature will only be visible to other people who also signed. And then you can see who\'s worthy of talking to at CSCW... Ready to sign?</p>',
-            title: 'Cool! Let\'s see who\'s been there?',
-            scope: $scope,
-            buttons: [
-                { text: 'Not Now' },
-                {
-                    text: '<b>Sign</b>',
-                    type: 'button-positive',
-                    onTap: function(e) {
-                        
-                        // reveal userself to the server
-                        Venues.revealVenue( venue )
-                            .then(function(){
-                                $state.go('tab.venue-detail', {venueId: venue.id})
-                                return true;        
-                            }, function(e){
-                                return false;
-                            })
-                        
+        if( $scope.hasItBeenRevealed(venue) ){
+            $state.go('tab.venue-detail', {venueId: venue.id})
+        }else{        
+            $ionicPopup.show({
+                template: '<p>When you sign the guestbook, your signature will only be visible to other people who also signed. And then you can see who\'s worthy of talking to at CSCW... Ready to sign?</p>',
+                title: 'Cool! Let\'s see who\'s been there?',
+                scope: $scope,
+                buttons: [
+                    { text: 'Not Now' },
+                    {
+                        text: '<b>Sign</b>',
+                        type: 'button-positive',
+                        onTap: function(e) {
+                            
+                            // reveal userself to the server
+                            Venues.revealVenue( venue )
+                                .then(function(){
+                                    $state.go('tab.venue-detail', {venueId: venue.id})
+                                    return true;        
+                                }, function(e){
+                                    return false;
+                                })
+                            
+                        }
                     }
-                }
-            ]
-        });
+                ]
+            });
+        }
     };
-    
     
     var showTrackingPermissionPopup = function(){
         return $ionicPopup.show({
@@ -175,7 +184,6 @@ angular.module('movement.controllers', [])
     function loadVenue(){
         Venues.all()
             .then(function(venues){
-                console.log(venues)
                 $scope.venue = venues.filter(function(obj){
                     return obj.id == $stateParams.venueId;
                 });
@@ -183,6 +191,7 @@ angular.module('movement.controllers', [])
                     $scope.venue = $scope.venue[0];
                     Venues.getRevealedVenueDetails( $scope.venue )
                         .then(function(visitors){
+                            console.log(visitors)
                             $scope.visitors = visitors;
                             $scope.loading=false;
                         });

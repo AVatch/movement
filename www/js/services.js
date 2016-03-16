@@ -496,7 +496,7 @@ angular.module('movement.services', [])
         .then(function(s){
             var revealedVenues = MovementStore.get('revealed') || [];
             revealedVenues.push(venue.id);
-            MovementStore.set('revealed', revealed);
+            MovementStore.set('revealed', revealedVenues);
             deferred.resolve(s.data);
         }, function(e){
             console.log(e);
