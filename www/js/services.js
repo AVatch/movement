@@ -484,11 +484,60 @@ angular.module('movement.services', [])
         MovementStore.set('venues', venues);
     }
     
+    function revealVenue( venue ){
+        
+        var deferred = $q.defer();
+        
+        $http({            
+            url: API_URL + '/locations/' + venue.id + '/reveal',
+            method: 'POST',
+            headers: { Authorization: 'Token ' + Accounts.getToken() } 
+        })
+        .then(function(s){
+            var revealedVenues = MovementStore.get('revealed') || [];
+            revealedVenues.push(venue.id);
+            MovementStore.set('revealed', revealed);
+            deferred.resolve(s.data);
+        }, function(e){
+            console.log(e);
+            deferred.reject(e);
+        });
+        return deferred.promise;
+        
+    }
+    
+    function getRevealedVenueDetails( venue ){
+        
+        var deferred = $q.defer();
+        
+        $http({            
+            url: API_URL + '/locations/' + venue.id + '/reveal',
+            method: 'GET',
+            headers: { Authorization: 'Token ' + Accounts.getToken() } 
+        })
+        .then(function(s){
+            deferred.resolve(s.data);
+        }, function(e){
+            console.log(e);
+            deferred.reject(e);
+        })    
+
+        return deferred.promise;
+        
+    }
+    
+    function getMyReveals( ){
+        return MovementStore.get('revealed') || [];
+    }
+    
     return {
         loadVenues: loadVenues,
         logVenue: logVenue,
         all: retrieveVenues,
-        removeVenue: removeVenue
+        removeVenue: removeVenue,
+        revealVenue: revealVenue,
+        getRevealedVenueDetails: getRevealedVenueDetails,
+        getMyReveals: getMyReveals
     };
 })
 

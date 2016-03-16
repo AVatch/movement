@@ -40,13 +40,6 @@ angular.module('movement.controllers', [])
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
     $ionicScrollDelegate, uiGmapGoogleMapApi, Venues, Utility, GeoTracking) {
-    
-    $scope.loading = true;
-    $scope.markerOptions = {
-        // icon: '/img/marker.png',
-        // scale: 2
-    };
-    
 
     $scope.mapCtrl = {};
     $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
@@ -120,7 +113,14 @@ angular.module('movement.controllers', [])
                     onTap: function(e) {
                         
                         // reveal userself to the server
-                        return true;
+                        Venues.revealVenue( venue )
+                            .then(function(){
+                                $state.go('tab.venue-detail', {venueId: venue.id})
+                                return true;        
+                            }, function(e){
+                                return false;
+                            })
+                        
                     }
                 }
             ]
@@ -143,6 +143,9 @@ angular.module('movement.controllers', [])
     };
     
     $scope.$on('$ionicView.enter', function(e) {
+        // load venues on entering view
+        loadVenues();
+        
         if(!GeoTracking.isTrackingEnabled()){
             showTrackingPermissionPopup()
                 .then(function(){
@@ -166,25 +169,32 @@ angular.module('movement.controllers', [])
     
 })
 
-.controller('VenuesDetailCtrl', function($scope, $stateParams, $timeout, Venues) {
+.controller('VenuesDetailCtrl', function($scope, $stateParams, Venues) {
     $scope.loading = true;
-    $scope.venue = Venues.get( $stateParams.venueId );
-    $scope.visitors = [];
-    function getVisitors( ){
-        $scope.visitors = [];
-        Venues.getRevealedUsers( $stateParams.venueId )
-            .then(function(r){
-                $scope.visitors = r;
-                $scope.$broadcast('scroll.refreshComplete');
-                $scope.loading = false;
-            }, function(e){
-                $scope.$broadcast('scroll.refreshComplete');
-             });
-    } getVisitors();
+    
+    function loadVenue(){
+        Venues.all()
+            .then(function(venues){
+                console.log(venues)
+                $scope.venue = venues.filter(function(obj){
+                    return obj.id == $stateParams.venueId;
+                });
+                if($scope.venue.length>0){
+                    $scope.venue = $scope.venue[0];
+                    Venues.getRevealedVenueDetails( $scope.venue )
+                        .then(function(visitors){
+                            $scope.visitors = visitors;
+                            $scope.loading=false;
+                        });
+                };
+                 
+            });
+    }
+        
+    $scope.$on('$ionicView.enter', function(e) {
+        loadVenue();
+    });
 
-    $scope.doRefresh = function(){
-        getVisitors();
-    };
 })
 
 .controller('ActivityCtrl', function($scope) {
