@@ -130,9 +130,15 @@ angular.module('movement.controllers', [])
                             // reveal userself to the server
                             Venues.revealVenue( venue )
                                 .then(function(){
+                                    var now = new Date();
+                                    var msg = "[" + now.toString() + "]: Revealed venue";
+                                    Utility.logEvent(msg);
                                     $state.go('tab.venue-detail', {venueId: venue.id})
                                     return true;        
                                 }, function(e){
+                                    var now = new Date();
+                                    var msg = "[" + now.toString() + "]: Error revealing " + JSON.stringify(e);
+                                    Utility.logEvent(msg);
                                     return false;
                                 })
                             
