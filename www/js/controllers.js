@@ -53,11 +53,11 @@ angular.module('movement.controllers', [])
     };
 
     var initMap = function( ){
-        console.log('initializing maps');
-        uiGmapGoogleMapApi.then(function(maps) {
-            console.log("map was initiated");
-            $scope.mapObj.loading = false;
-        });
+        // console.log('initializing maps');
+        // uiGmapGoogleMapApi.then(function(maps) {
+        //     console.log("map was initiated");
+        //     $scope.mapObj.loading = false;
+        // });
     };
     
     
@@ -66,15 +66,20 @@ angular.module('movement.controllers', [])
         $scope.venuesLoading = true;
         Venues.all()
             .then(function(v){
+                console.log("Loaded all the venues");
+                $scope.venuesLoading = false;
+
                 $scope.venues = v.map(function(loc){
                    loc.latitude = loc.lat;
                    loc.longitude = loc.lng;
                    return loc; 
                 });
-                $scope.venuesLoading = false;
                 
+                var now = new Date();
+                var msg = "[" + now.toString() + "]: Loaded venues";
+                Utility.logEvent(msg);
+                                
                 initMap();
-                $ionicScrollDelegate.resize()
                 $scope.$broadcast('scroll.refreshComplete');
                 
             }, function(e){
@@ -82,8 +87,9 @@ angular.module('movement.controllers', [])
                 $scope.$broadcast('scroll.refreshComplete');
                 var now = new Date();
                 var msg = "[" + now.toString() + "]:  Issue fetching venues " + JSON.stringify(e);
+                Utility.logEvent(msg);
             });    
-    };loadVenues();
+    };
     
     
     $scope.removeVenue = function( venue ){
