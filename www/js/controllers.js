@@ -63,9 +63,11 @@ angular.module('movement.controllers', [])
     
     $scope.venues = [];
     var loadVenues = function(){
+        console.log("Starting to load venues");
         $scope.venuesLoading = true;
         Venues.all()
             .then(function(v){
+                
                 console.log("Loaded all the venues");
                 $scope.venuesLoading = false;
 
@@ -83,6 +85,8 @@ angular.module('movement.controllers', [])
                 $scope.$broadcast('scroll.refreshComplete');
                 
             }, function(e){
+                console.log("there was an error");
+                console.log(e);
                 $scope.venuesLoading = false;
                 $scope.$broadcast('scroll.refreshComplete');
                 var now = new Date();
@@ -102,6 +106,7 @@ angular.module('movement.controllers', [])
 
     // refresh venue list
     $scope.doRefresh = function(){
+        console.log("Do refresh");
         loadVenues();
     };
     
@@ -165,6 +170,7 @@ angular.module('movement.controllers', [])
     
     $scope.$on('$ionicView.enter', function(e) {
         // load venues on entering view
+        console.log("View init");
         loadVenues();
         
         if(!GeoTracking.isTrackingEnabled()){

@@ -234,8 +234,6 @@ angular.module('movement.services', [])
                     console.log(location.is_moving);
                     if(!location.is_moving){    
                         // Translate the coords to some venue
-                        
-                        
                         console.log("About to log venue, since user is not moving");
                         
                         Venues.logVenue( { lat: lat, lng: lng } )
@@ -402,6 +400,21 @@ angular.module('movement.services', [])
         return MovementStore.get('venues') || [];
     }
     
+    function logVisit( venueId ){
+        var deferred = $q.defer();   
+        $http({
+            url: API_URL + '/locations/' + venueId + '/visits',
+            method: 'POST',
+            headers: { Authorization: 'Token ' + Accounts.getToken() } 
+        })
+        .then(function(s){
+            deferred.resolve();
+        }, function(e){
+            deferred.reject(e);    
+        })
+        return deferred.promise;
+    }
+    
     function logVenue( coords ){
         var deferred = $q.defer();
         
@@ -419,6 +432,7 @@ angular.module('movement.services', [])
             if( venues.indexOf(s.data.id) === -1 ){
                 console.log("Logging Venue");
                 venues.push(s.data.id);
+                logVisit(s.data.id); // increment the total visit count
                 MovementStore.set('venues', venues);    
             }
             deferred.resolve();
@@ -433,7 +447,10 @@ angular.module('movement.services', [])
     
     function loadVenues( locationIds ){
         var deferred = $q.defer();
+        console.log("loading venues");
+        console.log(locationIds);
         if( locationIds.length > 0 ){
+            console.log("get it get it")
             $http({            
                 url: API_URL + '/locations',
                 method: 'GET',
@@ -441,11 +458,13 @@ angular.module('movement.services', [])
                 params:{ ids: locationIds.join() } 
             })
             .then(function(s){
+                console.log("Got everything")
                 deferred.resolve(s.data);
             }, function(e){
+                console.log("failed")
                 deferred.reject(e);
             })    
-        }else{ deferred.reject(); }
+        }else{ deferred.reject('Nothing cached'); }
         
         
         return deferred.promise;
@@ -472,7 +491,15 @@ angular.module('movement.services', [])
     }
     
     function retrieveVenues( ){
-        return loadVenues( getCachedVenues( ) )
+        console.log("retrieve venues");
+        var deferred = $q.defer();
+        loadVenues( getCachedVenues( ) )
+            .then(function(s){
+                deferred.resolve(s);
+            }, function(e){
+                deferred.reject(e);
+            });
+       return deferred.promise;
     }
     
     function removeVenue( venueId ){
