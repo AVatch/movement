@@ -172,11 +172,11 @@ angular.module('movement.services', [])
             distanceFilter: 50,
             disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
             locationUpdateInterval: 60000, // every minute
-            minimumActivityRecognitionConfidence: 80,   // 0-100%.  Minimum activity-confidence for a state-change 
+            minimumActivityRecognitionConfidence: 40,   // rdm - changed from 80 to 40. 0-100%.  Minimum activity-confidence for a state-change 
             fastestLocationUpdateInterval: 5000,
             activityRecognitionInterval: 10000,
             stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
-            stopTimeout: 2,  // Wait x miutes to turn off location system after stop-detection
+            stopTimeout: 10,  // rdm - changed from 2 to 10. Wait x miutes to turn off location system after stop-detection
             activityType: 'AutomotiveNavigation',
             debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. 
         };
