@@ -161,24 +161,29 @@ angular.module('movement.services', [])
 
 })
 
-
 .factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Venues, Utility){
     var bgGeo = null;
     
-    function getBGGeoSettings(){        
+    function getBGGeoSettings(){
+        // see the link below for a list of option definitions
+        // https://github.com/transistorsoft/cordova-background-geolocation/blob/master/docs/api.md#geolocation-options        
         return MovementStore.get('geoSettings') || {
             desiredAccuracy: 0,
-            stationaryRadius: 50,
-            distanceFilter: 50,
+            distanceFilter: 10,
+            stationaryRadius: 10,
             disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
-            locationUpdateInterval: 60000, // every minute
-            minimumActivityRecognitionConfidence: 40,   // rdm - changed from 80 to 40. 0-100%.  Minimum activity-confidence for a state-change 
-            fastestLocationUpdateInterval: 5000,
+            
             activityRecognitionInterval: 10000,
+            stopTimeout: 2,  // rdm - Wait x miutes to turn off location system after stop-detection
+            minimumActivityRecognitionConfidence: 40,   // Minimum activity-confidence for a state-change
+             
+            locationUpdateInterval: 5000, // every second
+            
+            fastestLocationUpdateInterval: 5000,
             stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
-            stopTimeout: 10,  // rdm - changed from 2 to 10. Wait x miutes to turn off location system after stop-detection
-            activityType: 'AutomotiveNavigation',
-            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. 
+            
+            activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
+            debug: true, // <-- enable this hear sounds for background-geolocation life-cycle. 
         };
     }
     
@@ -202,12 +207,7 @@ angular.module('movement.services', [])
         var deferred = $q.defer();
         
         // initialize the background geo tracking
-        $ionicPlatform.ready(function(){
-            console.log("Platform is ready");
-            var now = new Date();
-            var msg = "[" + now.toString() + "]: IonicPlatform is ready";
-            Utility.logEvent(msg);
-        
+        $ionicPlatform.ready(function(){        
             if(window.cordova && window.BackgroundGeolocation){
                 console.log("Cordova and BackgroundGeolocation found");
                 var now = new Date();
@@ -218,34 +218,30 @@ angular.module('movement.services', [])
                 bgGeo = window.BackgroundGeolocation;
                 
                 var callbackFn = function(location, taskId) {
-                    
-                    console.log( JSON.stringify(location) );
+                    var now = new Date();
+                    var msg = "[" + now.toString() + "]: GeoCallbackFn: " + JSON.stringify(location);
+                    Utility.logEvent(msg);
                     
                     var coords = location.coords;
                     var lat    = coords.latitude;
                     var lng    = coords.longitude;
-                    
-                    // log the events
+
                     var now = new Date();
-                    var msg = "[" + now.toString() + "]:  BG Callback Success: " + JSON.stringify(location);
+                    var msg = "[" + now.toString() + "]: is_moving: " + location.is_moving;
                     Utility.logEvent(msg);
-                    
-                    console.log("Is user moving");
-                    console.log(location.is_moving);
+
                     if(!location.is_moving){    
                         // Translate the coords to some venue
-                        console.log("About to log venue, since user is not moving");
-                        
                         Venues.logVenue( { lat: lat, lng: lng } )
                             .then(function(){
-                                console.log("Translate done");
+                                var now = new Date();
+                                var msg = "[" + now.toString() + "]: GeoCallbackFn Done";
+                                Utility.logEvent(msg);
                                 bgGeo.finish(taskId);
                             });
                     }
-
-                   
                 };
-                
+
                 var failureFn = function(error) {
                     // log the events
                     var now = new Date();
@@ -272,57 +268,36 @@ angular.module('movement.services', [])
                     activityType: geoSettings.activityType,
 
                     // Application config
-                    debug: geoSettings.debug, // <-- enable this hear sounds for background-geolocation life-cycle.
+                    debug: geoSettings.debug,            // <-- enable this hear sounds for background-geolocation life-cycle.
                     forceReloadOnLocationChange: false,  // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a new location is recorded (WARNING: possibly distruptive to user) 
                     forceReloadOnMotionChange: false,    // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when device changes stationary-state (stationary->moving or vice-versa) --WARNING: possibly distruptive to user) 
                     forceReloadOnGeofence: false,        // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a geofence crossing occurs --WARNING: possibly distruptive to user) 
                     stopOnTerminate: false,              // <-- [Android] Allow the background-service to run headless when user closes the app.
                     startOnBoot: true,                   // <-- [Android] Auto start background-service in headless mode when device is powered-up.
-
-                    // // HTTP / SQLite config
-                    // url: 'http://posttestserver.com/post.php?dir=cordova-background-geolocation',
-                    // method: 'POST',
-                    // batchSync: true,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
-                    // autoSync: true,         // <-- [Default: true] Set true to sync each location to server as it arrives.
-                    // maxDaysToPersist: 1,    // <-- Maximum days to persist a location in plugin's SQLite database when HTTP fails
-                    // headers: {
-                    //     "X-FOO": "bar"
-                    // },
-                    // params: {
-                    //     "auth_token": "maybe_your_server_authenticates_via_token_YES?"
-                    // }
                 });
                 deferred.resolve();
             }
-            
         });
-        
         return deferred.promise;
     }
-    
+
+
+
     function getCurrentCoords(){
         var deferred = $q.defer();
         $ionicPlatform.ready(function(){
             if(window.cordova && window.BackgroundGeolocation){ 
                 window.BackgroundGeolocation.getCurrentPosition(function(s){
-                    
-                    
-                    
                     var now = new Date();
-                    var msg = "[" + now.toString() + "]:  Got coords " + JSON.stringify(s);
+                    var msg = "[" + now.toString() + "]:  Passed getCurrentCoords(): " + JSON.stringify(s);
                     Utility.logEvent(msg);
-                    
                     deferred.resolve(s);
-                    
                 }, function(e){
-                    
                     var now = new Date();
-                    var msg = "[" + now.toString() + "]:  Failed to get coords";
+                    var msg = "[" + now.toString() + "]:  Failed getCurrentCoords()";
                     Utility.logEvent(msg);
-                    
                     deferred.reject(e);    
-                })
-                
+                });
             }
         });
         return deferred.promise;
@@ -392,8 +367,6 @@ angular.module('movement.services', [])
     };
 })
 
-
-
 .factory('Venues', function($q, $http, MovementStore, Utility, Accounts, API_URL) {
            
     function getCachedVenues(){
@@ -418,6 +391,10 @@ angular.module('movement.services', [])
     function logVenue( coords ){
         var deferred = $q.defer();
         
+        var now = new Date();
+        var msg = "[" + now.toString() + "]: Venues.logVenue()";
+        Utility.logEvent(msg);
+        
         $http({            
             url: API_URL + '/locations',
             method: 'POST',
@@ -426,18 +403,27 @@ angular.module('movement.services', [])
         })
         .then(function(s){
             
-            console.log("Got a venue");
-            
+            var now = new Date();
+            var msg = "[" + now.toString() + "]: Venues.logVenue() Success";
+            Utility.logEvent(msg);            
+
             var venues = getCachedVenues();
             if( venues.indexOf(s.data.id) === -1 ){
-                console.log("Logging Venue");
+                
+                var now = new Date();
+                var msg = "[" + now.toString() + "]: New venue found";
+                Utility.logEvent(msg);
+                
                 venues.push(s.data.id);
                 logVisit(s.data.id); // increment the total visit count
-                MovementStore.set('venues', venues);    
+                MovementStore.set('venues', venues);
             }
             deferred.resolve();
         }, function(e){
-            console.log("POITN FAILED")
+            
+            var now = new Date();
+            var msg = "[" + now.toString() + "]: Venues.logVenue() Failed";
+            Utility.logEvent(msg);            
             
             deferred.reject(e);
         })
@@ -447,8 +433,6 @@ angular.module('movement.services', [])
     
     function loadVenues( locationIds ){
         var deferred = $q.defer();
-        console.log("loading venues");
-        console.log(locationIds);
         if( locationIds.length > 0 ){
             console.log("get it get it")
             $http({            
@@ -567,7 +551,6 @@ angular.module('movement.services', [])
         getMyReveals: getMyReveals
     };
 })
-
 
 .factory('Activity', function($q, MovementStore, Utility){
   
