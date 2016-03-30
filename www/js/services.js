@@ -46,23 +46,13 @@ angular.module('movement.services', [])
             return re.test(email);
         },
         logEvent: function(msg){
-            var logs = MovementStore.get('logs');
-            if(!logs){
-                console.log("logs not found creating them");
-                MovementStore.set('logs', []);
-                logs = [];
-            }
-            logs.push(msg);
+            var now = new Date();
+            var logs = MovementStore.get('logs') || [];
+            logs.push( "[" + now.toString() + "]: " + msg);
             MovementStore.set('logs', logs);
         },
         retrieveLogEvents: function(){
-            var logs = MovementStore.get('logs');
-            if(!logs){
-                console.log("logs not found creating them");
-                MovementStore.set('logs', []);
-                logs = [];
-            };
-            return logs;
+            return MovementStore.get('logs') || [];
         }
     }
 })
@@ -98,63 +88,8 @@ angular.module('movement.services', [])
             return deferred.promise;
         },
         register: function(user){
+            // NOT IMPLEMENTED
             var deferred = $q.defer();
-            
-            // do some basic validation, could defer to form validation if necessary
-            if(user.firstName === '' && user.lastName === '' && user.email === ''){
-                Utility.raiseAlert("Please enter all the information.")
-                deferred.reject();    
-            }else if( !Utility.validateEmail(user.email) ){
-                Utility.raiseAlert("Please enter a valid email.")
-                deferred.reject();
-            }
-            
-            // turn the user obj to the format the server expects
-            var newUser = {
-                fullname: user.firstName + ' ' + user.lastName,
-                emailId: user.email,
-                deviceId: Utility.getDeviceId()
-            };
-            
-            
-            console.log(newUser);
-            // passed validation, go ahead and register
-            $http({
-                url: API_URL + '/users/register/',
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function(obj) {
-                    var str = [];
-                    for(var p in obj)
-                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    return str.join("&");
-                },
-                data: newUser 
-            }).then(function(r){
-                console.log(r);
-                var now = new Date();
-                var msg = "[" + now.toString() + "]:  Registering User " + JSON.stringify(r);
-               
-                if(r.data.status == 'success'){
-                    console.log('hi');
-                    MovementStore.set('authenticated', true);
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]:  Registered User";
-                    Utility.logEvent(msg);
-                    deferred.resolve();
-                }else{
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]:  Failed registering the user";
-                    Utility.logEvent(msg);
-                    Utility.raiseAlert("Sorry there was an error creating your account.")
-                    deferred.reject();
-                }
-                
-            }, function(e){
-                console.log("There was an error");
-                console.log(e);
-            })
-            
             return deferred.promise;
         }
     };
@@ -210,80 +145,74 @@ angular.module('movement.services', [])
     }
     
     function updateBGGeoSettings(settings){
-        var now = new Date();
-        var msg = "[" + now.toString() + "]:  Updating the BG Geo Configuration";
-        Utility.logEvent(msg);
-        
+        Utility.logEvent("GeoTracking.updateBGGeoSettings() PASS");
         return MovementStore.set('geoSettings', settings);
     }
     
     function resetBGGeoSettings(){
-        var now = new Date();
-        var msg = "[" + now.toString() + "]:  Resetting the BG Geo Configuration";
-        Utility.logEvent(msg);
-        
+        Utility.logEvent("GeoTracking.resetBGGeoSettings() PASS");
         return MovementStore.remove('geoSettings');
     }
     
     function initBGGeoTracking(){
+        Utility.logEvent("GeoTracking.initBGGeoTracking() START");
         var deferred = $q.defer();
-        
         // initialize the background geo tracking
-        $ionicPlatform.ready(function(){        
+        $ionicPlatform.ready(function(){
             if(window.cordova && window.BackgroundGeolocation){
-                console.log("Cordova and BackgroundGeolocation found");
-                var now = new Date();
-                var msg = "[" + now.toString() + "]: Cordova and BackgroundGeolocation found";
-                Utility.logEvent(msg);
-                
+                Utility.logEvent("GeoTracking.initBGGeoTracking() PLUGIN FOUND");
                 // Get a reference to the plugin.
                 bgGeo = window.BackgroundGeolocation;
-                
                 var callbackFn = function(location, taskId) {
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]: GeoCallbackFn: " + JSON.stringify(location);
-                    Utility.logEvent(msg);
+                    Utility.logEvent("GeoTracking.GeoCallbackFN() START");
+                    
                     
                     var coords = location.coords;
                     var lat    = coords.latitude;
                     var lng    = coords.longitude;
-
+                    Utility.logEvent("GeoTracking.GeoCallbackFN() Coords: " + lat + ":" + lng);
+                    
                     var threshold = 20; // distance (meters) used to determine if user in same place 
                     // See the previous coord. If none, get current coords and use that.
                     var lastCoords = MovementStore.get('lastCoords') || { lat: lat, lng: lng };
                     // Update the previous coord to teh current one
                     MovementStore.set('lastCoords', { lat: lat, lng: lng });
                     // calculate distance bw current coords and prev ones
-                    var dist = distance(lastCoords.lat, lastCoords.lon, lat, lon, 'K');
+                    var dist = distance(lastCoords.lat, lastCoords.lng, lat, lng, 'K');
                     
                     // if the app determines the user is stationary OR
                     // if the use has moved within *threshold meters
                     // we deem them to be at a venue and check them in.
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]: GeoCallbackFn: dist: " + dist / 1000.0;
-                    Utility.logEvent(msg);
-                    if( !location.is_moving || dist / 1000.0 <= threshold ){
-                        Venues.logVenue( { lat: lat, lng: lng } )
-                            .then(function(){
-                                var now = new Date();
-                                var msg = "[" + now.toString() + "]: GeoCallbackFn Done";
-                                Utility.logEvent(msg);
-                                bgGeo.finish(taskId);
-                            });    
-                    }else{
-                        // user has moved more than *threshold meters so they are not stationary
-                        var now = new Date();
-                        var msg = "[" + now.toString() + "]: GeoCallbackFn: dist: " + dist / 1000.0 + " PASS";
-                        Utility.logEvent(msg);
-                    }
-
+                    Utility.logEvent("GeoTracking.GeoCallbackFN() Distance from previous location: " + dist + "km");
+                    
+                    Venues.logVenue( { lat: lat, lng: lng } )
+                        .then(function(){
+                            // pass
+                        })
+                        .catch(function(){
+                            // pass
+                        })
+                        .finally(function(){
+                            Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
+                            bgGeo.finish(taskId);
+                        });
+                            
+                    // if( !location.is_moving || dist / 1000.0 <= threshold ){
+                    //     Venues.logVenue( { lat: lat, lng: lng } )
+                    //         .then(function(){
+                    //             bgGeo.finish(taskId);
+                    //         });    
+                    // }else{
+                    //     // user has moved more than *threshold meters so they are not stationary
+                    //     Utility.logEvent("GeoTracking.GeoCallbackFN()");
+                    // }
+                    
                 };
 
                 var failureFn = function(error) {
                     // log the events
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]:  BG Callback Error: " + JSON.stringify(error);
-                    Utility.logEvent(msg);
+                    Utility.logEvent("GeoTracking.GeoCallbackFN() Error");
+                    Utility.logEvent( JSON.stringify(error) );
                     deferred.reject();
                 };
                 
@@ -318,80 +247,53 @@ angular.module('movement.services', [])
         return deferred.promise;
     }
 
-
-
     function getCurrentCoords(){
         var deferred = $q.defer();
         $ionicPlatform.ready(function(){
             if(window.cordova && window.BackgroundGeolocation){ 
                 window.BackgroundGeolocation.getCurrentPosition(function(s){
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]:  Passed getCurrentCoords(): " + JSON.stringify(s);
-                    Utility.logEvent(msg);
+                    Utility.logEvent("GeoTracking.getCurrentCoords() Current Coords: " + s.coords.latitude + ":" + s.coords.longitude);;
                     deferred.resolve(s);
                 }, function(e){
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]:  Failed getCurrentCoords()";
-                    Utility.logEvent(msg);
+                    Utility.logEvent("GeoTracking.getCurrentCoords() FAIL");
+                    Utility.logEvent(JSON.stringify(e));
                     deferred.reject(e);    
                 });
             }
         });
         return deferred.promise;
     }
-    
-    
-    
+
     return{
         startBGGeoTracking: function(){
             var deferred = $q.defer();
-            
-            var now = new Date();
-            var msg = "[" + now.toString() + "]:  Starting BG Geo Tracking Service";
-            Utility.logEvent(msg);
-            
+            Utility.logEvent("GeoTracking Starting");
             initBGGeoTracking().then(function(){
                 bgGeo.start();
-
                 MovementStore.set('tracking', true);
-                
-                var now = new Date();
-                var msg = "[" + now.toString() + "]:  Started BG Geo Tracking Service";
-                Utility.logEvent(msg);
-                
+                Utility.logEvent("GeoTracking Started");
                 deferred.resolve();
             }, function(){
+                Utility.logEvent("GeoTracking Failed to start");
                 deferred.reject();
             })
-            
             return deferred.promise;
         },
         stopBGGeoTracking: function(){
             var deferred = $q.defer();
-            
-            var now = new Date();
-            var msg = "[" + now.toString() + "]:  Stopping BG Geo Tracking Service";
-            Utility.logEvent(msg);
-
+            Utility.logEvent("GeoTracking Stopping");
             $ionicPlatform.ready(function(){
                if(window.cordova && window.BackgroundGeolocation){ 
                     var bgGeo = window.BackgroundGeolocation;
-
                     bgGeo.stop();
                     MovementStore.set('tracking', false);
-                    
-                    var now = new Date();
-                    var msg = "[" + now.toString() + "]:  Stopped BG Geo Tracking Service";
-                    Utility.logEvent(msg);
-                    
+                    Utility.logEvent("GeoTracking Stopped");
                     deferred.resolve();
-                           
                }else{
+                   Utility.logEvent("GeoTracking Failed to stop");
                    deferred.reject();
-               } 
+               }
             });
-            
-            
             return deferred.promise;
         },
         isTrackingEnabled: function(){
@@ -411,6 +313,7 @@ angular.module('movement.services', [])
     }
     
     function logVisit( venueId ){
+        Utility.logEvent("Venues.logVisit() for venueId: " + venueId);
         var deferred = $q.defer();   
         $http({
             url: API_URL + '/locations/' + venueId + '/visits',
@@ -418,20 +321,18 @@ angular.module('movement.services', [])
             headers: { Authorization: 'Token ' + Accounts.getToken() } 
         })
         .then(function(s){
+            Utility.logEvent("Venue Visit Logged");
             deferred.resolve();
         }, function(e){
+            Utility.logEvent("Venue Visit Failed to log");
             deferred.reject(e);    
         })
         return deferred.promise;
     }
     
     function logVenue( coords ){
+        Utility.logEvent("Venues.logVenue() for coords: " + coords.lat + ":" + coords.lng);
         var deferred = $q.defer();
-        
-        var now = new Date();
-        var msg = "[" + now.toString() + "]: Venues.logVenue()";
-        Utility.logEvent(msg);
-        
         $http({            
             url: API_URL + '/locations',
             method: 'POST',
@@ -439,29 +340,18 @@ angular.module('movement.services', [])
             data: coords 
         })
         .then(function(s){
-            
-            var now = new Date();
-            var msg = "[" + now.toString() + "]: Venues.logVenue() Success";
-            Utility.logEvent(msg);            
-
+            Utility.logEvent("Venue Logged: " + s.data.id);
             var venues = getCachedVenues();
             if( venues.indexOf(s.data.id) === -1 ){
-                
-                var now = new Date();
-                var msg = "[" + now.toString() + "]: New venue found";
-                Utility.logEvent(msg);
-                
+                Utility.logEvent("Venue is new");
                 venues.push(s.data.id);
                 logVisit(s.data.id); // increment the total visit count
                 MovementStore.set('venues', venues);
             }
             deferred.resolve();
         }, function(e){
-            
-            var now = new Date();
-            var msg = "[" + now.toString() + "]: Venues.logVenue() Failed";
-            Utility.logEvent(msg);            
-            
+            Utility.logEvent("Venue Logged Failed");
+            Utility.logEvent(JSON.stringify(e));
             deferred.reject(e);
         })
         
