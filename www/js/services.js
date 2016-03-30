@@ -167,6 +167,12 @@ angular.module('movement.services', [])
     function distance(lat1, lon1, lat2, lon2, unit) {
         // Calculate the distance b/w two points
         // ref; https://www.geodatasource.com/developers/javascript
+        
+        lat1 = parseFloat(lat1);
+        lon1 = parseFloat(lon1);
+        lat2 = parseFloat(lat2);
+        lon2 = parseFloat(lon2);
+        
         var radlat1 = Math.PI * lat1/180
         var radlat2 = Math.PI * lat2/180
         var theta = lon1-lon2
@@ -245,6 +251,8 @@ angular.module('movement.services', [])
                     var threshold = 20; // distance (meters) used to determine if user in same place 
                     // See the previous coord. If none, get current coords and use that.
                     var lastCoords = MovementStore.get('lastCoords') || { lat: lat, lng: lng };
+                    // Update the previous coord to teh current one
+                    MovementStore.set('lastCoords', { lat: lat, lng: lng });
                     // calculate distance bw current coords and prev ones
                     var dist = distance(lastCoords.lat, lastCoords.lon, lat, lon, 'K');
                     
