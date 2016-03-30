@@ -76,11 +76,6 @@ angular.module('movement.controllers', [])
                    loc.longitude = loc.lng;
                    return loc; 
                 });
-                
-                var now = new Date();
-                var msg = "[" + now.toString() + "]: Loaded venues";
-                Utility.logEvent(msg);
-                                
                 initMap();
                 $scope.$broadcast('scroll.refreshComplete');
                 
@@ -89,9 +84,6 @@ angular.module('movement.controllers', [])
                 console.log(e);
                 $scope.venuesLoading = false;
                 $scope.$broadcast('scroll.refreshComplete');
-                var now = new Date();
-                var msg = "[" + now.toString() + "]:  Issue fetching venues " + JSON.stringify(e);
-                Utility.logEvent(msg);
             });    
     };
     
@@ -135,15 +127,9 @@ angular.module('movement.controllers', [])
                             // reveal userself to the server
                             Venues.revealVenue( venue )
                                 .then(function(){
-                                    var now = new Date();
-                                    var msg = "[" + now.toString() + "]: Revealed venue";
-                                    Utility.logEvent(msg);
                                     $state.go('tab.venue-detail', {venueId: venue.id})
                                     return true;        
                                 }, function(e){
-                                    var now = new Date();
-                                    var msg = "[" + now.toString() + "]: Error revealing " + JSON.stringify(e);
-                                    Utility.logEvent(msg);
                                     return false;
                                 })
                             
