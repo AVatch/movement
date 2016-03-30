@@ -164,6 +164,22 @@ angular.module('movement.services', [])
 .factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Venues, Utility){
     var bgGeo = null;
     
+    function distance(lat1, lon1, lat2, lon2, unit) {
+        // Calculate the distance b/w two points
+        // ref; https://www.geodatasource.com/developers/javascript
+        var radlat1 = Math.PI * lat1/180
+        var radlat2 = Math.PI * lat2/180
+        var theta = lon1-lon2
+        var radtheta = Math.PI * theta/180
+        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+        dist = Math.acos(dist)
+        dist = dist * 180/Math.PI
+        dist = dist * 60 * 1.1515
+        if (unit=="K") { dist = dist * 1.609344 }
+        if (unit=="N") { dist = dist * 0.8684 }
+        return dist
+    }
+    
     function getBGGeoSettings(){
         // see the link below for a list of option definitions
         // https://github.com/transistorsoft/cordova-background-geolocation/blob/master/docs/api.md#geolocation-options        
@@ -226,20 +242,33 @@ angular.module('movement.services', [])
                     var lat    = coords.latitude;
                     var lng    = coords.longitude;
 
+                    var threshold = 20; // distance (meters) used to determine if user in same place 
+                    // See the previous coord. If none, get current coords and use that.
+                    var lastCoords = MovementStore.get('lastCoords') || { lat: lat, lng: lng };
+                    // calculate distance bw current coords and prev ones
+                    var dist = distance(lastCoords.lat, lastCoords.lon, lat, lon, 'K');
+                    
+                    // if the app determines the user is stationary OR
+                    // if the use has moved within *threshold meters
+                    // we deem them to be at a venue and check them in.
                     var now = new Date();
-                    var msg = "[" + now.toString() + "]: is_moving: " + location.is_moving;
+                    var msg = "[" + now.toString() + "]: GeoCallbackFn: dist: " + dist / 1000.0;
                     Utility.logEvent(msg);
-
-                    if(!location.is_moving){    
-                        // Translate the coords to some venue
+                    if( !location.is_moving || dist / 1000.0 <= threshold ){
                         Venues.logVenue( { lat: lat, lng: lng } )
                             .then(function(){
                                 var now = new Date();
                                 var msg = "[" + now.toString() + "]: GeoCallbackFn Done";
                                 Utility.logEvent(msg);
                                 bgGeo.finish(taskId);
-                            });
+                            });    
+                    }else{
+                        // user has moved more than *threshold meters so they are not stationary
+                        var now = new Date();
+                        var msg = "[" + now.toString() + "]: GeoCallbackFn: dist: " + dist / 1000.0 + " PASS";
+                        Utility.logEvent(msg);
                     }
+
                 };
 
                 var failureFn = function(error) {
@@ -368,7 +397,7 @@ angular.module('movement.services', [])
 })
 
 .factory('Venues', function($q, $http, MovementStore, Utility, Accounts, API_URL) {
-           
+  
     function getCachedVenues(){
         return MovementStore.get('venues') || [];
     }
