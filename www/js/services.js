@@ -245,6 +245,8 @@ angular.module('movement.services', [])
                     }else{
                         Utility.logEvent("User is moving, so we won't log this venue");
                         Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
+                        
+                        bgGeo.finish(taskId);
                     }
                     
                             
