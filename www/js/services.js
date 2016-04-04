@@ -105,7 +105,7 @@ angular.module('movement.services', [])
             Utility.logEvent("Notifications.scheduleBGGeoReminderNotification() START");
             $ionicPlatform.ready(function(){
                 // clear all the local notifications queued up
-                if(window.cordova && window.plugins.notification){
+                if(window.cordova && window.cordova.plugins.notification){
                     $cordovaLocalNotification.clearAll()
                         .then(function( ){
                             Utility.logEvent("Cleared queued up notifications");
