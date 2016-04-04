@@ -45,6 +45,9 @@ angular.module('movement.services', [])
             var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(email);
         },
+        clearLogs: function( ){
+            MovementStore.set('logs', []);
+        },
         logEvent: function(msg){
             var now = new Date();
             var logs = MovementStore.get('logs') || [];
@@ -96,39 +99,42 @@ angular.module('movement.services', [])
 
 })
 
-.factory('Notifications', function($q, $cordovaLocalNotification, Utility){
+.factory('Notifications', function($q, $ionicPlatform, $cordovaLocalNotification, Utility){
     return {
         scheduleBGGeoReminderNotification: function( ){
             Utility.logEvent("Notifications.scheduleBGGeoReminderNotification() START");
             $ionicPlatform.ready(function(){
                 // clear all the local notifications queued up
-                $cordovaLocalNotification.clearAll()
-                    .then(function( ){
-                        Utility.logEvent("Cleared queued up notifications");
-                        // schedule a notification a day from now
-                        var notificationDate = moment().add(1, 'days').calendar();
-                        Utility.logEvent("Notification set for: ");
-                        Utility.logEvent(notificationDate.toString());
-                        $cordovaLocalNotification.schedule(
-                            {
-                                id: 1,
-                                title: "Movement Tracking Stopped",
-                                text: "Tap to turn background tracking back on :)",
-                                at: notificationDate
-                            }
-                        ).then(function( ){
-                            Utility.logEvent("Scheduled Notification");
+                if(window.cordova && window.plugins.notification){
+                    $cordovaLocalNotification.clearAll()
+                        .then(function( ){
+                            Utility.logEvent("Cleared queued up notifications");
+                            // schedule a notification a day from now
+                            var notificationDate = moment().add(1, 'days').calendar();
+                            Utility.logEvent("Notification set for: ");
+                            Utility.logEvent(notificationDate.toString());
+                            $cordovaLocalNotification.schedule(
+                                {
+                                    id: 1,
+                                    title: "Movement Tracking Stopped",
+                                    text: "Tap to turn background tracking back on :)",
+                                    at: notificationDate
+                                }
+                            ).then(function( ){
+                                Utility.logEvent("Scheduled Notification");
+                            })
+                            .catch(function(e){
+                                Utility.logEvent("Issue scheduling notification");
+                                Utility.logEvent(JSON.stringify(e));
+                            });
+                            
                         })
                         .catch(function(e){
-                            Utility.logEvent("Issue scheduling notification");
+                            Utility.logEvent("Issue clearing notifications");
                             Utility.logEvent(JSON.stringify(e));
                         });
-                        
-                    })
-                    .catch(function(e){
-                        Utility.logEvent("Issue clearing notifications");
-                        Utility.logEvent(JSON.stringify(e));
-                    });
+                }
+                
             });
         }    
     };

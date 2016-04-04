@@ -32,6 +32,11 @@ angular.module('movement.controllers', [])
         $scope.logs = Utility.retrieveLogEvents();
     });
     
+    $scope.clearLogs = function( ){
+        Utility.clearLogs();
+        $scope.logs = [];
+    };
+    
     $scope.doRefresh = function(){
         $scope.logs = Utility.retrieveLogEvents();
         $scope.$broadcast('scroll.refreshComplete');
@@ -39,7 +44,7 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
-    $ionicScrollDelegate, uiGmapGoogleMapApi, Venues, Utility, GeoTracking) {
+    $ionicScrollDelegate, uiGmapGoogleMapApi, Venues, Utility, GeoTracking, Notifications) {
 
     $scope.mapCtrl = {};
     $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
