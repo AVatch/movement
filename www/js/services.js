@@ -96,6 +96,10 @@ angular.module('movement.services', [])
 
 })
 
+.factory('Notifications', function($q, Utility){
+    
+})
+
 .factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Venues, Utility){
     var bgGeo = null;
     

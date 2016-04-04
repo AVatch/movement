@@ -1,6 +1,7 @@
 // Ionic Movement App
 angular.module('movement', ['ionic', 
-                            'angular-storage', 
+                            'angular-storage',
+                            'ngCordova', 
                             'uiGmapgoogle-maps', 
                             'movement.controllers', 
                             'movement.services'])
