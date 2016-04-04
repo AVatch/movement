@@ -229,17 +229,24 @@ angular.module('movement.services', [])
                     // we deem them to be at a venue and check them in.
                     Utility.logEvent("GeoTracking.GeoCallbackFN() Distance from previous location: " + dist + "km");
                     
-                    Venues.logVenue( { lat: lat, lng: lng } )
-                        .then(function(){
-                            // pass
-                        })
-                        .catch(function(){
-                            // pass
-                        })
-                        .finally(function(){
-                            Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
-                            bgGeo.finish(taskId);
-                        });
+                    
+                    if( !location.is_moving ){
+                        Venues.logVenue( { lat: lat, lng: lng } )
+                            .then(function(){
+                                // pass
+                            })
+                            .catch(function(){
+                                // pass
+                            })
+                            .finally(function(){
+                                Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
+                                bgGeo.finish(taskId);
+                            });    
+                    }else{
+                        Utility.logEvent("User is moving, so we won't log this venue");
+                        Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
+                    }
+                    
                             
                     // if( !location.is_moving || dist / 1000.0 <= threshold ){
                     //     Venues.logVenue( { lat: lat, lng: lng } )
