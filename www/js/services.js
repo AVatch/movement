@@ -97,7 +97,18 @@ angular.module('movement.services', [])
 })
 
 .factory('Notifications', function($q, Utility){
-    
+    return {
+        scheduleBGGeoReminderNotification: function( ){
+            
+            $ionicPlatform.ready(function(){
+                if(window.cordova && window.BackgroundGeolocation){ 
+                    var now = new Date();
+                }
+            });
+            
+            
+        }    
+    };
 })
 
 .factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Venues, Utility){
