@@ -216,18 +216,18 @@ angular.module('movement.services', [])
                     var lng    = coords.longitude;
                     Utility.logEvent("GeoTracking.GeoCallbackFN() Coords: " + lat + ":" + lng);
                     
-                    var threshold = 20; // distance (meters) used to determine if user in same place 
-                    // See the previous coord. If none, get current coords and use that.
-                    var lastCoords = MovementStore.get('lastCoords') || { lat: lat, lng: lng };
-                    // Update the previous coord to teh current one
-                    MovementStore.set('lastCoords', { lat: lat, lng: lng });
-                    // calculate distance bw current coords and prev ones
-                    var dist = distance(lastCoords.lat, lastCoords.lng, lat, lng, 'K');
+                    // var threshold = 20; // distance (meters) used to determine if user in same place 
+                    // // See the previous coord. If none, get current coords and use that.
+                    // var lastCoords = MovementStore.get('lastCoords') || { lat: lat, lng: lng };
+                    // // Update the previous coord to teh current one
+                    // MovementStore.set('lastCoords', { lat: lat, lng: lng });
+                    // // calculate distance bw current coords and prev ones
+                    // var dist = distance(lastCoords.lat, lastCoords.lng, lat, lng, 'K');
                     
-                    // if the app determines the user is stationary OR
-                    // if the use has moved within *threshold meters
-                    // we deem them to be at a venue and check them in.
-                    Utility.logEvent("GeoTracking.GeoCallbackFN() Distance from previous location: " + dist + "km");
+                    // // if the app determines the user is stationary OR
+                    // // if the use has moved within *threshold meters
+                    // // we deem them to be at a venue and check them in.
+                    // Utility.logEvent("GeoTracking.GeoCallbackFN() Distance from previous location: " + dist + "km");
                     
                     
                     if( !location.is_moving ){

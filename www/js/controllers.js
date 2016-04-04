@@ -84,15 +84,17 @@ angular.module('movement.controllers', [])
                    loc.longitude = loc.lng;
                    return loc; 
                 });
-                initMap();
-                $scope.$broadcast('scroll.refreshComplete');
-                
-            }, function(e){
+                initMap();   
+            })
+            .catch(function(e){
                 console.log("there was an error");
                 console.log(e);
+            })
+            .finally(function(){
+                centerMap()
                 $scope.venuesLoading = false;
                 $scope.$broadcast('scroll.refreshComplete');
-            });    
+            })
     };
     
     
@@ -162,6 +164,19 @@ angular.module('movement.controllers', [])
         });
     };
     
+    function centerMap( ){
+        GeoTracking.getCurrentCoords()
+                .then(function(location){
+                    // center map
+                    $scope.mapObj.center.latitude = location.coords.latitude;
+                    $scope.mapObj.center.longitude = location.coords.longitude;
+                    
+                    // render you are here pin
+                    $scope.meMarker.center.latitude = location.coords.latitude;
+                    $scope.meMarker.center.longitude = location.coords.longitude;
+                })
+    }
+    
     $scope.$on('$ionicView.enter', function(e) {
         // load venues on entering view
         console.log("View init");
@@ -176,16 +191,20 @@ angular.module('movement.controllers', [])
         }else{
             // center map on coords
             console.log("centering map");
-            GeoTracking.getCurrentCoords()
-                .then(function(location){
-                    // center map
-                    $scope.mapObj.center.latitude = location.coords.latitude;
-                    $scope.mapObj.center.longitude = location.coords.longitude;
-                    
-                    // render you are here pin
-                    $scope.meMarker.center.latitude = location.coords.latitude;
-                    $scope.meMarker.center.longitude = location.coords.longitude;
-                })  
+            
+            // toggle tracking
+            $timeout(function(){
+                GeoTracking.stopBGGeoTracking()
+                    .then(function(){
+                        
+                        $timeout(function(){
+                            GeoTracking.startBGGeoTracking()    
+                        }, 1000);
+
+                    });
+            }, 1000);
+            
+            centerMap();
         }
     });
     
