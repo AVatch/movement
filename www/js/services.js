@@ -110,7 +110,7 @@ angular.module('movement.services', [])
                         .then(function( ){
                             Utility.logEvent("Cleared queued up notifications");
                             // schedule a notification a day from now
-                            var notificationDate = moment().add(1, 'days').calendar();
+                            var notificationDate = new Date( moment().add(1, 'days') );
                             Utility.logEvent("Notification set for: ");
                             Utility.logEvent(notificationDate.toString());
                             $cordovaLocalNotification.schedule(
