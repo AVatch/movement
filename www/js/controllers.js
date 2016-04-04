@@ -60,6 +60,9 @@ angular.module('movement.controllers', [])
         // });
     };
     
+    function scheduleReminder( ){
+        Notifications.scheduleBGGeoReminderNotification( );
+    }
     
     $scope.venues = [];
     var loadVenues = function(){
@@ -158,6 +161,7 @@ angular.module('movement.controllers', [])
         // load venues on entering view
         console.log("View init");
         loadVenues();
+        scheduleReminder();
         
         if(!GeoTracking.isTrackingEnabled()){
             showTrackingPermissionPopup()
