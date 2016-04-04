@@ -96,17 +96,39 @@ angular.module('movement.services', [])
 
 })
 
-.factory('Notifications', function($q, Utility){
+.factory('Notifications', function($q, $cordovaLocalNotification, Utility){
     return {
         scheduleBGGeoReminderNotification: function( ){
-            
+            Utility.logEvent("Notifications.scheduleBGGeoReminderNotification() START");
             $ionicPlatform.ready(function(){
-                if(window.cordova && window.BackgroundGeolocation){ 
-                    var now = new Date();
-                }
+                // clear all the local notifications queued up
+                $cordovaLocalNotification.clearAll()
+                    .then(function( ){
+                        Utility.logEvent("Cleared queued up notifications");
+                        // schedule a notification a day from now
+                        var notificationDate = moment().add(1, 'days').calendar();
+                        
+                        $cordovaLocalNotification.schedule(
+                            {
+                                id: 1,
+                                title: "Movement Tracking Stopped",
+                                text: "Tap to turn background tracking back on :)",
+                                at: notificationDate
+                            }
+                        ).then(function( ){
+                            Utility.logEvent("Scheduled Notification");
+                        })
+                        .catch(function(e){
+                            Utility.logEvent("Issue scheduling notification");
+                            Utility.logEvent(JSON.stringify(e));
+                        });
+                        
+                    })
+                    .catch(function(e){
+                        Utility.logEvent("Issue clearing notifications");
+                        Utility.logEvent(JSON.stringify(e));
+                    });
             });
-            
-            
         }    
     };
 })
