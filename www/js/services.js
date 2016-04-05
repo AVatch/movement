@@ -51,6 +51,7 @@ angular.module('movement.services', [])
         logEvent: function(msg){
             var now = new Date();
             var logs = MovementStore.get('logs') || [];
+            console.log(now.toLocaleString() + ': ' + msg);
             logs.push( "[" + now.toString() + "]: " + msg);
             MovementStore.set('logs', logs);
         },
