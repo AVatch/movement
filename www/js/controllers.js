@@ -218,7 +218,11 @@ angular.module('movement.controllers', [])
                         });
                 });
         }else{
-            centerMap();
+            // give time for plugin to init
+            // need to come up with better way
+            $timeout(function(){
+                centerMap();
+            }, 50000);
         }
     });
     
