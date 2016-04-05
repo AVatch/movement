@@ -91,14 +91,6 @@ angular.module('movement.controllers', [])
         disableDefaultUI: true,
         styles: mapStyle 
     };
-
-    var initMap = function( ){
-        // console.log('initializing maps');
-        // uiGmapGoogleMapApi.then(function(maps) {
-        //     console.log("map was initiated");
-        //     $scope.mapObj.loading = false;
-        // });
-    };
     
     function scheduleReminder( ){
         Notifications.scheduleBGGeoReminderNotification( );
@@ -109,8 +101,6 @@ angular.module('movement.controllers', [])
         $scope.venuesLoading = true;
         Venues.all()
             .then(function(v){
-                
-                Utility.logEvent('Loaded all venues');
                 $scope.venuesLoading = false;
 
                 $scope.venues = v.map(function(loc){
@@ -118,17 +108,17 @@ angular.module('movement.controllers', [])
                    loc.longitude = loc.lng;
                    return loc; 
                 });
-                initMap();   
             })
             .catch(function(e){
                 Utility.logEvent('There was an error loading venues');
                 Utility.logEvent(JSON.stringify(e));
             })
             .finally(function(){
-                centerMap()
+                
                 $scope.venuesLoading = false;
                 $scope.$broadcast('scroll.refreshComplete');
-            })
+
+            });
     };
     
     
@@ -220,21 +210,14 @@ angular.module('movement.controllers', [])
             showTrackingPermissionPopup()
                 .then(function(){
                     GeoTracking.startBGGeoTracking()
+                        .then(function(){
+                            centerMap();
+                        })
+                        .catch(function(){
+                            alert('There was an issue starting background tracking');
+                        });
                 });
         }else{
-            Utility.logEvent('Toggling BGGeo');
-            // toggle tracking
-            $timeout(function(){
-                GeoTracking.stopBGGeoTracking()
-                    .then(function(){
-                        
-                        $timeout(function(){
-                            GeoTracking.startBGGeoTracking()    
-                        }, 1000);
-
-                    });
-            }, 1000);
-            
             centerMap();
         }
     });

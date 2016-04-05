@@ -219,7 +219,7 @@ angular.module('movement.services', [])
             stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
             
             activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
-            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. 
+            debug: true, // <-- enable this hear sounds for background-geolocation life-cycle. 
         };
     }
     
