@@ -41,7 +41,7 @@ angular.module('movement', ['ionic',
     uiGmapGoogleMapApiProvider.configure({
         key: 'AIzaSyBiTGJkXnuwIHMbg0keDrhP--hBClpNMAA', // yolo
         v: '3.22', //defaults to latest 3.X anyhow
-        libraries: 'weather,geometry,visualization,marker'
+        libraries: 'drawing,visualization'
     });
 })
 
