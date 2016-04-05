@@ -151,8 +151,8 @@ angular.module('movement.services', [])
                             $cordovaLocalNotification.schedule(
                                 {
                                     id: 1,
-                                    title: "Movement Tracking Stopped",
-                                    text: "Tap to turn background tracking back on :)",
+                                    title: "Movement misses you!",
+                                    text: "See who’s signed the guestbook since you last checked.",
                                     at: notificationDate
                                 }
                             ).then(function( ){
@@ -209,8 +209,8 @@ angular.module('movement.services', [])
             stationaryRadius: 10,
             disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
             
-            activityRecognitionInterval: 10000,
-            stopTimeout: 2,  // rdm - Wait x miutes to turn off location system after stop-detection
+            activityRecognitionInterval: 1000,
+            stopTimeout: 5,  // rdm - Wait x miutes to turn off location system after stop-detection
             minimumActivityRecognitionConfidence: 20,   // Minimum activity-confidence for a state-change
              
             locationUpdateInterval: 5000, // every second
