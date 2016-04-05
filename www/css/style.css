@@ -78,3 +78,10 @@ a.button-block {
     flex-direction: column;
     justify-content: center;
 }
+
+.h-center{
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

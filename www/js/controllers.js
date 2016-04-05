@@ -75,7 +75,11 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
-    $ionicScrollDelegate, uiGmapGoogleMapApi, Venues, Utility, GeoTracking, Notifications) {
+    $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
+        
+        if( !Accounts.isAuthenticated() ){
+            $state.go('authenticate');
+        }
 
     $scope.mapCtrl = {};
     $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };

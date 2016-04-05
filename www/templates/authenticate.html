@@ -24,7 +24,7 @@
   </ion-content>
 </ion-view>-->
 
-<ion-view view-title="Welcome!">
+<ion-view view-title="Welcome!" hide-back-button="true">
 
         <ion-content scroll="false" class="has-header">
             
@@ -45,6 +45,13 @@
                 <button class="button button-block button-positive"
                         ng-click="authenticate()">
                     Sign in
+                </button>
+            </div>
+            
+            <div class="row h-center">
+                <button class="button button-small button-clear button-clear"
+                        ui-sref="register">
+                    Register
                 </button>
             </div>
             

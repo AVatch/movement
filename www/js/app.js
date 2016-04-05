@@ -21,17 +21,17 @@ angular.module('movement', ['ionic',
     }
   });  
   
-   // check if the user is authenticated
-  $rootScope.$on('$locationChangeSuccess', function(evt) {
-     // Halt state change from even starting
-     evt.preventDefault();
-     // Verify the user has a session token
-     if( Accounts.isAuthenticated() ){
-        $urlRouter.sync();
-     }else{
-        $state.go('authenticate');
-     }
-   });
+//    // check if the user is authenticated
+//   $rootScope.$on('$locationChangeSuccess', function(evt) {
+//      // Halt state change from even starting
+//      evt.preventDefault();
+//      // Verify the user has a session token
+//      if( Accounts.isAuthenticated() ){
+//         $urlRouter.sync();
+//      }else{
+//         $state.go('authenticate');
+//      }
+//    });
 })
 
 .constant('API_URL', 'http://52.23.168.18/api/v1')
