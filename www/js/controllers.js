@@ -106,12 +106,11 @@ angular.module('movement.controllers', [])
     
     $scope.venues = [];
     var loadVenues = function(){
-        console.log("Starting to load venues");
         $scope.venuesLoading = true;
         Venues.all()
             .then(function(v){
                 
-                console.log("Loaded all the venues");
+                Utility.logEvent('Loaded all venues');
                 $scope.venuesLoading = false;
 
                 $scope.venues = v.map(function(loc){
@@ -122,8 +121,8 @@ angular.module('movement.controllers', [])
                 initMap();   
             })
             .catch(function(e){
-                console.log("there was an error");
-                console.log(e);
+                Utility.logEvent('There was an error loading venues');
+                Utility.logEvent(JSON.stringify(e));
             })
             .finally(function(){
                 centerMap()
@@ -143,7 +142,6 @@ angular.module('movement.controllers', [])
 
     // refresh venue list
     $scope.doRefresh = function(){
-        console.log("Do refresh");
         loadVenues();
     };
     
@@ -200,6 +198,7 @@ angular.module('movement.controllers', [])
     };
     
     function centerMap( ){
+        Utility.logEvent('Centering Maps');
         GeoTracking.getCurrentCoords()
                 .then(function(location){
                     // center map
@@ -214,7 +213,6 @@ angular.module('movement.controllers', [])
     
     $scope.$on('$ionicView.enter', function(e) {
         // load venues on entering view
-        console.log("View init");
         loadVenues();
         scheduleReminder();
         
@@ -224,9 +222,7 @@ angular.module('movement.controllers', [])
                     GeoTracking.startBGGeoTracking()
                 });
         }else{
-            // center map on coords
-            console.log("centering map");
-            
+            Utility.logEvent('Toggling BGGeo');
             // toggle tracking
             $timeout(function(){
                 GeoTracking.stopBGGeoTracking()
@@ -293,7 +289,7 @@ angular.module('movement.controllers', [])
     $scope.emailLogs = function(){
         GeoTracking.emailLogs()
             .then(function(s){
-                console.log('emailed');
+                Utility.logEvent('Sent email logs');
             });
     };
     
@@ -301,7 +297,6 @@ angular.module('movement.controllers', [])
         
         if($scope.trackingEnabled){
             // stop
-            console.log("Stopping traccking");
             GeoTracking.stopBGGeoTracking()
                 .then(function(){
                     $ionicPopup.alert({
@@ -312,7 +307,6 @@ angular.module('movement.controllers', [])
                 });
         }else{
             // start
-            console.log("Starting traccking");
             GeoTracking.startBGGeoTracking()
                 .then(function(){
                     $ionicPopup.alert({
