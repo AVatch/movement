@@ -351,6 +351,21 @@ angular.module('movement.services', [])
     }
 
     return{
+        emailLogs: function(){
+            var deferred = $q.defer();
+            Utility.logEvent("Emailing Logs");
+            $ionicPlatform.ready(function(){
+               if(window.cordova && window.BackgroundGeolocation){ 
+                    var bgGeo = window.BackgroundGeolocation;
+                    bgGeo.emailLog('akv36@cornell.edu');
+                    deferred.resolve();
+               }else{
+                   Utility.logEvent("Email Logs Fail");
+                   deferred.reject();
+               }
+            });
+            return deferred.promise;
+        },
         startBGGeoTracking: function(){
             var deferred = $q.defer();
             Utility.logEvent("GeoTracking Starting");

@@ -290,6 +290,13 @@ angular.module('movement.controllers', [])
     $scope.geoSettings = GeoTracking.getBGGeoSettings();
     $scope.trackingEnabled = GeoTracking.isTrackingEnabled();
     
+    $scope.emailLogs = function(){
+        GeoTracking.emailLogs()
+            .then(function(s){
+                console.log('emailed');
+            });
+    };
+    
     $scope.toggleTracking = function(){
         
         if($scope.trackingEnabled){
