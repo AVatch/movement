@@ -70,3 +70,11 @@ a.button-block {
 .map-loader{
     text-align: center;    
 }
+
+
+.v-center{
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

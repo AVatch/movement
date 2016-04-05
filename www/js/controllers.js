@@ -2,15 +2,30 @@ angular.module('movement.controllers', [])
 
 .controller('RegisterCtrl', function($scope, $state, Accounts){
     $scope.user = {
-        firstName: '',
-        lastName: '',
-        email: ''
+        username: '',
+        email: '',
+        password: ''
     };
     $scope.register = function(){
         Accounts.register($scope.user)
             .then(function(){
-                $state.go('tab.venue');
-            }, function(){ })
+                
+                Accounts.authenticate({
+                    username: $scope.user.username,
+                    password: $scope.user.password 
+                }).then(function(){
+                    
+                    $state.go('join');
+                    
+                }).catch(function( ){
+                    
+                    alert("There was an issue signing in, please try again.");
+                     
+                });
+                
+            }).catch(function(){
+                alert("There was an issue creating your account, please try again.");
+            })
     };
 })
 
@@ -25,6 +40,18 @@ angular.module('movement.controllers', [])
                 $state.go('tab.venue');
             })
     };
+})
+
+.controller('JoinCtrl', function($scope, $state, Accounts){
+    $scope.join = function(){
+        Accounts.joinCohort( $scope.cohort )
+            .then(function(){
+                $state.go('tab.venue');
+            })
+            .catch(function(){
+                alert('Sorry, that cohort is not valid');
+            });
+    }
 })
 
 .controller('LogCtrl', function($scope, Utility){

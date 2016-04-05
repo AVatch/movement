@@ -75,6 +75,8 @@ angular.module('movement.services', [])
         authenticate: function( credentials ){
             var deferred = $q.defer();
             
+            credentials.username = credentials.username.toLowerCase(); 
+            
             $http({
                 url: API_URL + '/api-token-auth',
                 method: 'POST',
@@ -90,9 +92,40 @@ angular.module('movement.services', [])
 
             return deferred.promise;
         },
-        register: function(user){
-            // NOT IMPLEMENTED
+        register: function( userInfo ){
             var deferred = $q.defer();
+            
+            userInfo.username = credentials.username.toLowerCase();
+            
+            $http({
+                url: API_URL + '/accounts',
+                method: 'POST',
+                data: userInfo
+            })
+            .then(function(r){
+                deferred.resolve();
+            }, function(e){
+                deferred.reject(e);
+            });
+
+            return deferred.promise;
+        },
+        joinCohort: function( cohort ){
+            var deferred = $q.defer();
+            
+            $http({
+                url: API_URL + '/cohorts',
+                method: 'POST',
+                data: {
+                    name: cohort.toLowerCase()
+                }
+            })
+            .then(function(r){
+                deferred.resolve();
+            }, function(e){
+                deferred.reject(e);
+            });
+
             return deferred.promise;
         }
     };
@@ -176,7 +209,7 @@ angular.module('movement.services', [])
             
             activityRecognitionInterval: 10000,
             stopTimeout: 2,  // rdm - Wait x miutes to turn off location system after stop-detection
-            minimumActivityRecognitionConfidence: 40,   // Minimum activity-confidence for a state-change
+            minimumActivityRecognitionConfidence: 20,   // Minimum activity-confidence for a state-change
              
             locationUpdateInterval: 5000, // every second
             
@@ -184,7 +217,7 @@ angular.module('movement.services', [])
             stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
             
             activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
-            debug: true, // <-- enable this hear sounds for background-geolocation life-cycle. 
+            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. 
         };
     }
     
@@ -209,8 +242,7 @@ angular.module('movement.services', [])
                 bgGeo = window.BackgroundGeolocation;
                 var callbackFn = function(location, taskId) {
                     Utility.logEvent("GeoTracking.GeoCallbackFN() START");
-                    
-                    
+     
                     var coords = location.coords;
                     var lat    = coords.latitude;
                     var lng    = coords.longitude;
