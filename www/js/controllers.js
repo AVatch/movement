@@ -43,8 +43,12 @@ angular.module('movement.controllers', [])
 })
 
 .controller('JoinCtrl', function($scope, $state, Accounts){
+    $scope.cohort = {
+        name: ''
+    };
     $scope.join = function(){
-        Accounts.joinCohort( $scope.cohort )
+
+        Accounts.joinCohort( $scope.cohort.name )
             .then(function(){
                 $state.go('tab.venue');
             })

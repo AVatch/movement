@@ -61,11 +61,11 @@ angular.module('movement.services', [])
 })
 
 .factory('Accounts', function($q, $http, API_URL, Utility, MovementStore){
-    
+    function getToken( ){
+        return MovementStore.get('token');
+    }
     return {
-        getToken: function( ){
-            return MovementStore.get('token');
-        },
+        getToken: getToken,
         logout: function(){
             return MovementStore.set('authenticated', false);
         },
@@ -95,7 +95,7 @@ angular.module('movement.services', [])
         register: function( userInfo ){
             var deferred = $q.defer();
             
-            userInfo.username = credentials.username.toLowerCase();
+            userInfo.username = userInfo.username.toLowerCase();
             
             $http({
                 url: API_URL + '/accounts',
@@ -116,6 +116,7 @@ angular.module('movement.services', [])
             $http({
                 url: API_URL + '/cohorts',
                 method: 'POST',
+                headers: { Authorization: 'Token ' + getToken() },
                 data: {
                     name: cohort.toLowerCase()
                 }
