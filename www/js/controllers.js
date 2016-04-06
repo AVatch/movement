@@ -232,7 +232,7 @@ angular.module('movement.controllers', [])
 
                             })
                             .catch(function(){
-                                alert('There was an issue starting background tracking');
+                                // alert('There was an issue starting background tracking');
                             });
                     });
             }else{
