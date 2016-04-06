@@ -24,8 +24,6 @@ angular.module('movement', ['ionic',
     var push = new Ionic.Push({
       "debug": false
     });
-
-    console.log('hi there push');
     
     push.register(function(token) {
 
@@ -50,8 +48,8 @@ angular.module('movement', ['ionic',
 //    });
 })
 
-// .constant('API_URL', 'http://52.23.168.18/api/v1')
-.constant('API_URL', 'http://127.0.0.1:8000/api/v1')
+.constant('API_URL', 'http://52.23.168.18/api/v1')
+// .constant('API_URL', 'http://127.0.0.1:8000/api/v1')
 
 // Configure Google Maps
 .config(function(uiGmapGoogleMapApiProvider) {

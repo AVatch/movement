@@ -83,15 +83,15 @@ angular.module('movement.controllers', [])
 
     $scope.mapCtrl = {};
     
-    // $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
-    // // ref: https://snazzymaps.com/style/25/blue-water
-    // var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
-    // $scope.mapOptions = { 
-    //     scrollwheel: false,
-    //     disableDefaultUI: true,
-    //     styles: mapStyle 
-    // };
-    // $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
+    $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
+    // ref: https://snazzymaps.com/style/25/blue-water
+    var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
+    $scope.mapOptions = { 
+        scrollwheel: false,
+        disableDefaultUI: true,
+        styles: mapStyle 
+    };
+    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
     
     // uiGmapGoogleMapApi.then(function(maps) {
     //     console.log("Google maps loaded");
@@ -198,17 +198,17 @@ angular.module('movement.controllers', [])
     };
     
     function centerMap( ){
-        // Utility.logEvent('Centering Maps');
-        // GeoTracking.getCurrentCoords()
-        //         .then(function(location){
-        //             // center map
-        //             $scope.mapObj.center.latitude = location.coords.latitude;
-        //             $scope.mapObj.center.longitude = location.coords.longitude;
+        Utility.logEvent('Centering Maps');
+        GeoTracking.getCurrentCoords()
+                .then(function(location){
+                    // center map
+                    $scope.mapObj.center.latitude = location.coords.latitude;
+                    $scope.mapObj.center.longitude = location.coords.longitude;
                     
-        //             // render you are here pin
-        //             $scope.meMarker.center.latitude = location.coords.latitude;
-        //             $scope.meMarker.center.longitude = location.coords.longitude;
-        //         })
+                    // render you are here pin
+                    $scope.meMarker.center.latitude = location.coords.latitude;
+                    $scope.meMarker.center.longitude = location.coords.longitude;
+                });
     }
     
     $scope.$on('$ionicView.enter', function(e) {
@@ -224,7 +224,12 @@ angular.module('movement.controllers', [])
                             
                             console.log("BGGeo tracking promise resolvd")
                             
-                            // centerMap();
+                            // give time for plugin to init
+                            // need to come up with better way
+                            $timeout(function(){
+                                centerMap();
+                            }, 10000);
+
                         })
                         .catch(function(){
                             alert('There was an issue starting background tracking');
@@ -233,9 +238,9 @@ angular.module('movement.controllers', [])
         }else{
             // give time for plugin to init
             // need to come up with better way
-            // $timeout(function(){
-            //     centerMap();
-            // }, 50000);
+            $timeout(function(){
+                centerMap();
+            }, 10000);
         }
     });
     
