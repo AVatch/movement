@@ -27,7 +27,7 @@
                 <ion-item ng-if="!venuesLoading && venues.length==0" style="text-align:center;">
                     <h2>No venues yet</h2>
                 </ion-item>
-                <ion-item ng-repeat="venue in venues" ng-click="showPopup(venue)">
+                <ion-item ng-repeat="venue in venues | reverse" ng-click="showPopup(venue)">
                     <h2>{{ venue.name }}</h2>
                     <span class="badge badge-positive">{{ venue.total_reveals }} reveals / {{ venue.total_visits }} visits</span>
                     <ion-option-button class="button-assertive" 
