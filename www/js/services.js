@@ -65,7 +65,15 @@ angular.module('movement.services', [])
     function getToken( ){
         return MovementStore.get('token');
     }
+    function setDeviceToken( token ){
+        return MovementStore.set('deviceToken', token);
+    }
+    function getDeviceToken( ){
+        return MovementStore.get('deviceToken')
+    }
     return {
+        setDeviceToken: setDeviceToken,
+        getDeviceToken: getDeviceToken,
         getToken: getToken,
         logout: function(){
             return MovementStore.set('authenticated', false);
@@ -97,6 +105,7 @@ angular.module('movement.services', [])
             var deferred = $q.defer();
             
             userInfo.username = userInfo.username.toLowerCase();
+            userInfo.device_token = getDeviceToken( );
             
             $http({
                 url: API_URL + '/accounts',

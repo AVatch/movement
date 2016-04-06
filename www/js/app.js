@@ -19,6 +19,18 @@ angular.module('movement', ['ionic','ionic.service.core',
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+    
+    var push = new Ionic.Push({
+      "debug": true
+    });
+
+    push.register(function(token) {
+      console.log("Device token:",token.token);
+      Accounts.setDeviceToken( token.token );
+      
+      push.saveToken(token);  // persist the token in the Ionic Platform
+    });
+    
   });  
   
 //    // check if the user is authenticated
