@@ -108,10 +108,12 @@ angular.module('movement.controllers', [])
                 $scope.venuesLoading = false;
 
                 $scope.venues = v.map(function(loc){
-                   loc.latitude = loc.lat;
-                   loc.longitude = loc.lng;
+                   loc.latitude = loc.lat / 10000.;
+                   loc.longitude = loc.lng / 10000.;
                    return loc; 
                 });
+                
+                console.log( $scope.venues )
             })
             .catch(function(e){
                 Utility.logEvent('There was an error loading venues');

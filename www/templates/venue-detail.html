@@ -3,11 +3,11 @@
     
     <ion-spinner ng-if="loading" class="full-height flexcontainer-center" icon="spiral"></ion-spinner>
     
-    <ion-refresher
+    <!--<ion-refresher
         pulling-text="Pull to refresh..."
         on-refresh="doRefresh()">
     </ion-refresher>
-    
+    -->
     <ion-list ng-show="!loading">
         <ion-item class="item-divider">Revealed Guestbook</ion-item>
         <ion-item ng-if="visitors.length==0">No One yet</ion-item>
