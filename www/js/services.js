@@ -226,7 +226,7 @@ angular.module('movement.services', [])
             locationUpdateInterval: 5000, // every second
             
             fastestLocationUpdateInterval: 5000,
-            stopDetectionDelay: 1,  // Wait x minutes to engage stop-detection system
+            stopDetectionDelay: 0,  // Wait x minutes to engage stop-detection system
             
             activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
             debug: true, // <-- enable this hear sounds for background-geolocation life-cycle. 
