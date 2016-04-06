@@ -47,9 +47,14 @@
                      </div>
                      <div class="row">
                         
-                        <button class="button button-full button-positive no-padding"
+                        <button ng-if="hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
                                 ng-click="showPopup(venue)">
-                             <span>Guestbook </span>
+                             <span> View Guestbook </span>
+                        </button>
+                        
+                        <button ng-if="!hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
+                                ng-click="showPopup(venue)">
+                             <span> Sign Guestbook </span>
                         </button>
                      </div>
                  
