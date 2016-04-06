@@ -1,5 +1,10 @@
 <ion-view view-title="Venues">
-    <ion-content class="has-header" scroll="false">
+    
+    <div class="bar bar-subheader">
+      <h2 class="title">Visited Venues</h2>
+    </div>
+    
+    <ion-content class="has-subheader">
         
         <!--UI Issue, should look for another map renderer-->
         <!--<div>
@@ -17,13 +22,14 @@
             </ui-gmap-google-map>
         </div>-->
 
-        <ion-item class="item-divider">Visited Venues</ion-item>
-        <ion-scroll>
+        
+        <!--<ion-scroll>-->
             <ion-refresher
                 pulling-text="Pull to refresh..."
                 on-refresh="doRefresh()">
             </ion-refresher>
             <ion-list>
+                
                 <!--<ion-item ng-if="venuesLoading" style="text-align:center;"><ion-spinner></ion-spinner></ion-item>-->
                 <ion-item ng-if="!venuesLoading && venues.length==0" style="text-align:center;">
                     <h2>No venues yet</h2>
@@ -37,7 +43,7 @@
                     </ion-option-button>
                 </ion-item>
             </ion-list>
-        </ion-scroll>
+        <!--</ion-scroll>-->
         
     </ion-content>
 </ion-view>
