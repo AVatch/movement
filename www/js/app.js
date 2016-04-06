@@ -1,13 +1,14 @@
 // Ionic Movement App
 angular.module('movement', ['ionic',
-                            'ionic.service.core', 
+                            'ionic.service.core',
+                            'ionic.service.analytics', 
                             'angular-storage',
                             'ngCordova', 
                             'uiGmapgoogle-maps', 
                             'movement.controllers', 
                             'movement.services'])
 
-.run(function($rootScope, $ionicPlatform, $urlRouter, $state, Accounts, Notifications) {
+.run(function($rootScope, $ionicPlatform, $ionicAnalytics, Accounts) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -24,28 +25,16 @@ angular.module('movement', ['ionic',
     var push = new Ionic.Push({
       "debug": false
     });
-    
     push.register(function(token) {
-
-      console.log("Device token:",token.token);
-      Accounts.setDeviceToken( token.token );
-      
-      push.saveToken(token);  // persist the token in the Ionic Platform
+        console.log("Device token:",token.token);
+        Accounts.setDeviceToken( token.token );
+        push.saveToken(token);  // persist the token in the Ionic Platform
     });
     
-  });  
+    $ionicAnalytics.register();
+    
+  });
   
-//    // check if the user is authenticated
-//   $rootScope.$on('$locationChangeSuccess', function(evt) {
-//      // Halt state change from even starting
-//      evt.preventDefault();
-//      // Verify the user has a session token
-//      if( Accounts.isAuthenticated() ){
-//         $urlRouter.sync();
-//      }else{
-//         $state.go('authenticate');
-//      }
-//    });
 })
 
 .constant('API_URL', 'http://52.23.168.18/api/v1')

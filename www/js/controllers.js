@@ -1,6 +1,6 @@
 angular.module('movement.controllers', [])
 
-.controller('RegisterCtrl', function($scope, $state, Accounts){
+.controller('RegisterCtrl', function($scope, $state, $ionicAnalytics, Accounts){
     $scope.user = {
         username: '',
         email: '',
@@ -15,16 +15,32 @@ angular.module('movement.controllers', [])
                     password: $scope.user.password 
                 }).then(function(){
                     
+                    var now = new Date();
+                    $ionicAnalytics.track('Account Creation Success', {
+                        item: {
+                            time_stamp: now.toUTCString()
+                        },
+                    });
+                    
                     $state.go('join');
+                    
                     
                 }).catch(function( ){
                     
                     alert("There was an issue signing in, please try again.");
+                    
                      
                 });
                 
             }).catch(function(){
                 alert("There was an issue creating your account, please try again.");
+                
+                var now = new Date();
+                $ionicAnalytics.track('Account Creation Fail', {
+                    item: {
+                        time_stamp: now.toUTCString()
+                    },
+                });
             })
     };
 })
@@ -37,7 +53,25 @@ angular.module('movement.controllers', [])
     $scope.authenticate = function(){
           Accounts.authenticate($scope.user)
             .then(function(){
+                var now = new Date();
+                $ionicAnalytics.track('Account Authentication Success', {
+                    item: {
+                        time_stamp: now.toUTCString()
+                    },
+                });
+                
                 $state.go('tab.venue');
+            })
+            .catch(function(){
+                alert('There was an issue signing you in, please try again.')
+                
+                var now = new Date();
+                $ionicAnalytics.track('Account Authentication Fail', {
+                    item: {
+                        time_stamp: now.toUTCString()
+                    },
+                });
+                
             })
     };
 })
@@ -50,6 +84,15 @@ angular.module('movement.controllers', [])
 
         Accounts.joinCohort( $scope.cohort.name )
             .then(function(){
+                
+                var now = new Date();
+                $ionicAnalytics.track('Cohort Join Success', {
+                    item: {
+                        cohort: $scope.cohort.name,
+                        time_stamp: now.toUTCString()
+                    },
+                });
+                
                 $state.go('tab.venue');
             })
             .catch(function(){
@@ -76,6 +119,14 @@ angular.module('movement.controllers', [])
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
     $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
+        
+        
+    var now = new Date();
+    $ionicAnalytics.track('Application opened', {
+        item: {
+            time_stamp: now.toUTCString()
+        },
+    });
        
     $scope.mapCtrl = {loaded: false};
     
@@ -129,10 +180,18 @@ angular.module('movement.controllers', [])
     
     
     $scope.removeVenue = function( venue ){
-      Venues.removeVenue(venue.id);
-      $scope.venues = $scope.venues.filter(function(obj){
-         return venue.id != obj.id; 
-      });
+        Venues.removeVenue(venue.id);
+        $scope.venues = $scope.venues.filter(function(obj){
+            return venue.id != obj.id; 
+        });
+      
+        var now = new Date();
+        $ionicAnalytics.track('Venue Removed', {
+            item: {
+                time_stamp: now.toUTCString()
+            },
+        });
+      
     };
 
 
@@ -166,9 +225,27 @@ angular.module('movement.controllers', [])
                             // reveal userself to the server
                             Venues.revealVenue( venue )
                                 .then(function(){
+                                    
+                                    var now = new Date();
+                                    $ionicAnalytics.track('User Revealed Checkin', {
+                                        item: {
+                                            venue: venue.id,
+                                            time_stamp: now.toUTCString()
+                                        },
+                                    });
+                                    
                                     $state.go('tab.venue-detail', {venueId: venue.id})
                                     return true;        
                                 }, function(e){
+                                    
+                                    var now = new Date();
+                                    $ionicAnalytics.track('User Declined To Reveal Checkin', {
+                                        item: {
+                                            venue: venue.id,
+                                            time_stamp: now.toUTCString()
+                                        },
+                                    });
+                                    
                                     return false;
                                 })
                             
@@ -267,6 +344,15 @@ angular.module('movement.controllers', [])
         
     $scope.$on('$ionicView.enter', function(e) {
         loadVenue();
+        
+        var now = new Date();
+        $ionicAnalytics.track('User Entered Venue Details', {
+            item: {
+                venue: $stateParams.venueId,
+                time_stamp: now.toUTCString()
+            },
+        });
+        
     });
 
 })
