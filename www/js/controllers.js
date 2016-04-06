@@ -76,12 +76,8 @@ angular.module('movement.controllers', [])
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
     $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
-        
-        if( !Accounts.isAuthenticated() ){
-            $state.go('authenticate');
-        }
-
-    $scope.mapCtrl = {};
+       
+    $scope.mapCtrl = {loaded: false};
     
     $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
     // ref: https://snazzymaps.com/style/25/blue-water
@@ -93,11 +89,9 @@ angular.module('movement.controllers', [])
     };
     $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
     
-    // uiGmapGoogleMapApi.then(function(maps) {
-    //     console.log("Google maps loaded");
-    //     console.log(maps);
-        
-    // });
+    uiGmapGoogleMapApi.then(function(maps) {
+        $scope.mapCtrl.loaded = true;
+    });
     
     
     function scheduleReminder( ){
@@ -212,36 +206,43 @@ angular.module('movement.controllers', [])
     }
     
     $scope.$on('$ionicView.enter', function(e) {
-        // load venues on entering view
-        loadVenues();
-        scheduleReminder();
         
-        if(!GeoTracking.isTrackingEnabled()){
-            showTrackingPermissionPopup()
-                .then(function(){
-                    GeoTracking.startBGGeoTracking()
-                        .then(function(){
-                            
-                            console.log("BGGeo tracking promise resolvd")
-                            
-                            // give time for plugin to init
-                            // need to come up with better way
-                            $timeout(function(){
-                                centerMap();
-                            }, 10000);
-
-                        })
-                        .catch(function(){
-                            alert('There was an issue starting background tracking');
-                        });
-                });
+        if( !Accounts.isAuthenticated() ){
+            $state.go('authenticate');
         }else{
-            // give time for plugin to init
-            // need to come up with better way
-            $timeout(function(){
-                centerMap();
-            }, 10000);
+            // load venues on entering view
+            loadVenues();
+            scheduleReminder();
+            
+            if(!GeoTracking.isTrackingEnabled()){
+                showTrackingPermissionPopup()
+                    .then(function(){
+                        GeoTracking.startBGGeoTracking()
+                            .then(function(){
+                                
+                                console.log("BGGeo tracking promise resolvd")
+                                
+                                // give time for plugin to init
+                                // need to come up with better way
+                                $timeout(function(){
+                                    centerMap();
+                                }, 10000);
+
+                            })
+                            .catch(function(){
+                                alert('There was an issue starting background tracking');
+                            });
+                    });
+            }else{
+                // give time for plugin to init
+                // need to come up with better way
+                $timeout(function(){
+                    centerMap();
+                }, 10000);
+            }
         }
+        
+        
     });
     
 })

@@ -2,17 +2,18 @@
     <ion-content class="has-header" scroll="false">
 
         <div>
-            <!--<div ng-if="mapObj.loading" class="map-loader">
+            <div ng-if="!mapCtrl.loaded" class="map-loader v-center" style="height:50vh;">
                 <ion-spinner></ion-spinner>
-            </div>-->
-            <!--<ui-gmap-google-map 
+            </div>
+
+            <ui-gmap-google-map
+                    ng-if="mapCtrl.loaded" 
                     center=mapObj.center
-                    control=mapCtrl
                     zoom=mapObj.zoom
                     options=mapOptions>
                 <ui-gmap-marker coords="meMarker.center" idkey="meMarker.id" options="meMarker.options"></ui-gmap-marker>
                 <ui-gmap-markers models="venues" coords="'self'" icon="'icon'"></ui-gmap-markers>
-            </ui-gmap-google-map>-->
+            </ui-gmap-google-map>
         </div>
 
         <ion-item class="item-divider">Visited Venues</ion-item>
