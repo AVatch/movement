@@ -105,7 +105,7 @@ angular.module('movement.services', [])
             var deferred = $q.defer();
             
             userInfo.username = userInfo.username.toLowerCase();
-            userInfo.device_token = getDeviceToken( );
+            userInfo.device_token = getDeviceToken( ) || "";
             
             $http({
                 url: API_URL + '/accounts',
@@ -115,6 +115,7 @@ angular.module('movement.services', [])
             .then(function(r){
                 deferred.resolve();
             }, function(e){
+                console.log(e)
                 deferred.reject(e);
             });
 

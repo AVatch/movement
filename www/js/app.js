@@ -1,5 +1,6 @@
 // Ionic Movement App
-angular.module('movement', ['ionic','ionic.service.core', 
+angular.module('movement', ['ionic',
+                            'ionic.service.core', 
                             'angular-storage',
                             'ngCordova', 
                             'uiGmapgoogle-maps', 
@@ -21,10 +22,13 @@ angular.module('movement', ['ionic','ionic.service.core',
     }
     
     var push = new Ionic.Push({
-      "debug": true
+      "debug": false
     });
 
+    console.log('hi there push');
+    
     push.register(function(token) {
+
       console.log("Device token:",token.token);
       Accounts.setDeviceToken( token.token );
       
@@ -46,7 +50,8 @@ angular.module('movement', ['ionic','ionic.service.core',
 //    });
 })
 
-.constant('API_URL', 'http://52.23.168.18/api/v1')
+// .constant('API_URL', 'http://52.23.168.18/api/v1')
+.constant('API_URL', 'http://127.0.0.1:8000/api/v1')
 
 // Configure Google Maps
 .config(function(uiGmapGoogleMapApiProvider) {
