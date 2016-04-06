@@ -22,15 +22,6 @@ angular.module('movement', ['ionic',
       StatusBar.styleDefault();
     }
     
-    var push = new Ionic.Push({
-      "debug": false
-    });
-    push.register(function(token) {
-        console.log("Device token:",token.token);
-        Accounts.setDeviceToken( token.token );
-        push.saveToken(token);  // persist the token in the Ionic Platform
-    });
-    
     $ionicAnalytics.register();
     
   });
