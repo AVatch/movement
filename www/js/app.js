@@ -2,6 +2,7 @@
 angular.module('movement', ['ionic',
                             'ionic.service.core',
                             'ionic.service.analytics', 
+                            'ionic.service.push',
                             'angular-storage',
                             'ngCordova', 
                             'uiGmapgoogle-maps', 
@@ -9,6 +10,7 @@ angular.module('movement', ['ionic',
                             'movement.services'])
 
 .run(function($rootScope, $ionicPlatform, $ionicAnalytics, Accounts) {
+  
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -22,6 +24,14 @@ angular.module('movement', ['ionic',
       StatusBar.styleDefault();
     }
     
+    // var push = new Ionic.Push({
+    //   "debug": true
+    // });
+    // push.register(function(token) {
+    //     console.log("Device token:",token.token);
+    //     Accounts.setDeviceToken( token.token );
+    //     push.saveToken(token);  // persist the token in the Ionic Platform
+    // });
     $ionicAnalytics.register();
     
   });

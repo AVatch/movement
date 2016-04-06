@@ -150,15 +150,6 @@ angular.module('movement.controllers', [])
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicAnalytics,
     $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
-    
-    var push = new Ionic.Push({
-      "debug": false
-    });
-    push.register(function(token) {
-        console.log("Device token:",token.token);
-        Accounts.setDeviceToken( token.token );
-        push.saveToken(token);  // persist the token in the Ionic Platform
-    });
         
     var now = new Date();
     $ionicAnalytics.track('Application opened', {
