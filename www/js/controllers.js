@@ -78,7 +78,7 @@ angular.module('movement.controllers', [])
 
 .controller('JoinCtrl', function($scope, $state, $ionicAnalytics, Accounts){
     $scope.cohort = {
-        name: ''
+        name: '#'
     };
     $scope.join = function(){
 
@@ -88,7 +88,7 @@ angular.module('movement.controllers', [])
                 var now = new Date();
                 $ionicAnalytics.track('Cohort Join Success', {
                     item: {
-                        cohort: $scope.cohort.name,
+                        cohort: $scope.cohort.name.replace('#', '').trim(),
                         time_stamp: now.toUTCString()
                     },
                 });
