@@ -34,28 +34,25 @@
                 <ion-item ng-if="!venuesLoading && venues.length==0" style="text-align:center;">
                     <h2>No venues yet</h2>
                 </ion-item>
-                <!--<ion-item ng-repeat="venue in venues | reverse" ng-click="showPopup(venue)">
-                    <h2>{{ venue.name }}</h2>
-                    <span class="badge badge-positive">{{ venue.total_reveals }} reveals / {{ venue.total_visits }} visits</span>-->
                 
-                  <div class="row">
-                    <div class="col col-67">
+                <ion-item ng-repeat="venue in venues | reverse" ng-click="showPopup(venue)">
+                     <div class="row">
                         <h2>{{ venue.name }}</h2>
-                        
-                       <p class="venue-visits">{{ venue.total_visits }} Other Visitors</p>
-                      <p class="venue-visits">{{ venue.total_reveals}} Guestbook Signatures</p>
                     </div>
                     
-                      <div class="col">
+                     <div class="row">
+                        <p class="venue-visits">{{ venue.total_visits }} Other Visitors | {{ venue.total_reveals}} Guestbook Signatures</p>
+                       
+                     
+                     </div>
+                     <div class="row">
                         
-                        <button class="button button-positive"
+                        <button class="button button-full button-positive no-padding"
                                 ng-click="showPopup(venue)">
-                             <span>Guestbook</span>
-                           
-                           
+                             <span>Guestbook </span>
                         </button>
-                
-                
+                     </div>
+                 
                     <ion-option-button class="button-assertive" 
                                     ng-click="removeVenue(venue)">
                         I Wasn't There
