@@ -195,7 +195,8 @@ angular.module('movement.controllers', [])
     
     function centerMap( ){
         Utility.logEvent('Centering Maps');
-        GeoTracking.getCurrentCoords()
+        if( GeoTracking.isTrackingEnabled() ){
+            GeoTracking.getCurrentCoords()
                 .then(function(location){
                     // center map
                     $scope.mapObj.center.latitude = location.coords.latitude;
@@ -204,7 +205,9 @@ angular.module('movement.controllers', [])
                     // render you are here pin
                     $scope.meMarker.center.latitude = location.coords.latitude;
                     $scope.meMarker.center.longitude = location.coords.longitude;
-                });
+                });    
+        }
+        
     }
     
     $scope.$on('$ionicView.enter', function(e) {
@@ -222,13 +225,8 @@ angular.module('movement.controllers', [])
                         GeoTracking.startBGGeoTracking()
                             .then(function(){
                                 
-                                console.log("BGGeo tracking promise resolvd")
+                                centerMap();
                                 
-                                // give time for plugin to init
-                                // need to come up with better way
-                                $timeout(function(){
-                                    centerMap();
-                                }, 10000);
 
                             })
                             .catch(function(){
@@ -236,11 +234,7 @@ angular.module('movement.controllers', [])
                             });
                     });
             }else{
-                // give time for plugin to init
-                // need to come up with better way
-                $timeout(function(){
-                    centerMap();
-                }, 10000);
+                centerMap();
             }
         }
         
