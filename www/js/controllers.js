@@ -1,12 +1,13 @@
 angular.module('movement.controllers', [])
 
-.controller('RegisterCtrl', function($scope, $state, $ionicAnalytics, Accounts){
+.controller('RegisterCtrl', function($scope, $state, $ionicAnalytics,$ionicLoading, Accounts){
     $scope.user = {
         username: '',
         email: '',
         password: ''
     };
     $scope.register = function(){
+        showLoading();
         Accounts.register($scope.user)
             .then(function(){
                 
@@ -21,18 +22,19 @@ angular.module('movement.controllers', [])
                             time_stamp: now.toUTCString()
                         },
                     });
-                    
+                    doneLoading();
                     $state.go('join');
                     
                     
                 }).catch(function( ){
-                    
+                    doneLoading();
                     alert("There was an issue signing in, please try again.");
                     
                      
                 });
                 
             }).catch(function(){
+                doneLoading();
                 alert("There was an issue creating your account, please try again.");
                 
                 var now = new Date();
@@ -43,14 +45,24 @@ angular.module('movement.controllers', [])
                 });
             })
     };
+    
+    function showLoading(){
+        $ionicLoading.show({
+            template: 'One moment please...'
+        });    
+    }
+    function doneLoading(){
+        $ionicLoading.hide();
+    }
 })
 
-.controller('AuthenticateCtrl', function($scope, $state, $ionicAnalytics, Accounts){
+.controller('AuthenticateCtrl', function($scope, $state, $ionicAnalytics, $ionicLoading, Accounts){
     
     $scope.slider;
     $scope.user = { username: '', password: '' };
     
     $scope.authenticate = function(){
+        showLoading();
           Accounts.authenticate($scope.user)
             .then(function(){
                 var now = new Date();
@@ -59,10 +71,11 @@ angular.module('movement.controllers', [])
                         time_stamp: now.toUTCString()
                     },
                 });
-                
+                doneLoading();
                 $state.go('tab.venue');
             })
             .catch(function(){
+                doneLoading();
                 alert('There was an issue signing you in, please try again.')
                 
                 var now = new Date();
@@ -71,17 +84,25 @@ angular.module('movement.controllers', [])
                         time_stamp: now.toUTCString()
                     },
                 });
-                
             })
     };
+    
+    function showLoading(){
+        $ionicLoading.show({
+            template: 'One moment please...'
+        });    
+    }
+    function doneLoading(){
+        $ionicLoading.hide();
+    }
 })
 
-.controller('JoinCtrl', function($scope, $state, $ionicAnalytics, Accounts){
+.controller('JoinCtrl', function($scope, $state, $ionicAnalytics, $ionicLoading, Accounts){
     $scope.cohort = {
         name: '#'
     };
     $scope.join = function(){
-
+        showLoading();
         Accounts.joinCohort( $scope.cohort.name )
             .then(function(){
                 
@@ -92,12 +113,22 @@ angular.module('movement.controllers', [])
                         time_stamp: now.toUTCString()
                     },
                 });
-                
+                doneLoading();
                 $state.go('tab.venue');
             })
             .catch(function(){
+                doneLoading();
                 alert('Sorry, that cohort is not valid');
             });
+    };
+    
+    function showLoading(){
+        $ionicLoading.show({
+            template: 'One moment please...'
+        });    
+    }
+    function doneLoading(){
+        $ionicLoading.hide();
     }
 })
 
@@ -271,20 +302,21 @@ angular.module('movement.controllers', [])
     };
     
     function centerMap( ){
-        Utility.logEvent('Centering Maps');
-        if( GeoTracking.isTrackingEnabled() ){
-            GeoTracking.getCurrentCoords()
-                .then(function(location){
-                    // center map
-                    $scope.mapObj.center.latitude = location.coords.latitude;
-                    $scope.mapObj.center.longitude = location.coords.longitude;
-                    
-                    // render you are here pin
-                    $scope.meMarker.center.latitude = location.coords.latitude;
-                    $scope.meMarker.center.longitude = location.coords.longitude;
-                });    
-        }
+        // pass centering map it breaks the plugin this way
         
+        // Utility.logEvent('Centering Maps');
+        // if( GeoTracking.isTrackingEnabled() ){
+        //     GeoTracking.getCurrentCoords()
+        //         .then(function(location){
+        //             // center map
+        //             $scope.mapObj.center.latitude = location.coords.latitude;
+        //             $scope.mapObj.center.longitude = location.coords.longitude;
+                    
+        //             // render you are here pin
+        //             $scope.meMarker.center.latitude = location.coords.latitude;
+        //             $scope.meMarker.center.longitude = location.coords.longitude;
+        //         });    
+        // }
     }
     
     $scope.$on('$ionicView.enter', function(e) {

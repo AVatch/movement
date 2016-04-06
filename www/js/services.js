@@ -285,7 +285,7 @@ angular.module('movement.services', [])
                             .finally(function(){
                                 Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
                                 bgGeo.finish(taskId);
-                            });    
+                            });
                     }else{
                         Utility.logEvent("User is moving, so we won't log this venue");
                         Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
