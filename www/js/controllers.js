@@ -195,6 +195,19 @@ angular.module('movement.controllers', [])
                    return loc; 
                 });
                 
+                var ignoreList = [
+                    'Cities',
+                    'Counties',
+                    'Countries',
+                    'Neighborhoods',
+                    'States',
+                    'Towns',
+                    'Villages'
+                ];
+                $scope.venues = $scope.venues.filter(function(v){
+                    return ignoreList.indexOf(v.categories[0].name) == -1
+                });
+                
                 console.log( $scope.venues )
             })
             .catch(function(e){
