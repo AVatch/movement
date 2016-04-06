@@ -45,7 +45,7 @@ angular.module('movement.controllers', [])
     };
 })
 
-.controller('AuthenticateCtrl', function($scope, $state, Accounts){
+.controller('AuthenticateCtrl', function($scope, $state, $ionicAnalytics, Accounts){
     
     $scope.slider;
     $scope.user = { username: '', password: '' };
@@ -76,7 +76,7 @@ angular.module('movement.controllers', [])
     };
 })
 
-.controller('JoinCtrl', function($scope, $state, Accounts){
+.controller('JoinCtrl', function($scope, $state, $ionicAnalytics, Accounts){
     $scope.cohort = {
         name: ''
     };
@@ -117,7 +117,7 @@ angular.module('movement.controllers', [])
     };
 })
 
-.controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, 
+.controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicAnalytics,
     $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
         
         
@@ -320,7 +320,7 @@ angular.module('movement.controllers', [])
     
 })
 
-.controller('VenuesDetailCtrl', function($scope, $stateParams, Venues) {
+.controller('VenuesDetailCtrl', function($scope, $stateParams, $ionicAnalytics, Venues) {
     $scope.loading = true;
     
     function loadVenue(){
