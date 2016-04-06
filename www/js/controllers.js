@@ -103,7 +103,7 @@ angular.module('movement.controllers', [])
     };
     $scope.join = function(){
         showLoading();
-        Accounts.joinCohort( $scope.cohort.name )
+        Accounts.joinCohort( $scope.cohort.name.replace('#', '').trim() )
             .then(function(){
                 
                 var now = new Date();
