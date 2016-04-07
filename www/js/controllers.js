@@ -149,7 +149,7 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicAnalytics,
-    $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
+    $ionicScrollDelegate, $compile, Accounts, Venues, Utility, GeoTracking, Notifications) {
         
     var now = new Date();
     $ionicAnalytics.track('Application opened', {
@@ -157,22 +157,46 @@ angular.module('movement.controllers', [])
             time_stamp: now.toUTCString()
         },
     });
-       
-    $scope.mapCtrl = {loaded: false};
     
-    $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
+
     // ref: https://snazzymaps.com/style/25/blue-water
     var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
-    $scope.mapOptions = { 
-        scrollwheel: false,
-        disableDefaultUI: true,
-        styles: mapStyle 
-    };
-    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
     
-    uiGmapGoogleMapApi.then(function(maps) {
-        $scope.mapCtrl.loaded = true;
-    });
+    function initializeMap() {
+        // var myLatlng = new google.maps.LatLng(40.732501, -73.995311);
+        // var mapOptions = {
+        //   center: myLatlng,
+        //   scrollwheel: false,
+        //   disableDefaultUI: true,
+        //   zoom: 13,
+        //   styles: mapStyle
+        // };
+        // var map = new google.maps.Map(document.getElementById("map"),
+        //     mapOptions);
+        // var marker = new google.maps.Marker({
+        //   position: myLatlng,
+        //   icon: 'img/here.png'
+        // });
+        // $scope.map = map;
+        // $scope.meMarker = marker;
+        // $scope.meMarker.setMap($scope.map);
+        
+      }
+    //   google.maps.event.addDomListener(window, 'load', initializeMap);
+      
+      $scope.centerOnMe = function() {
+        // if(!$scope.map) {
+        //   return;
+        // }
+
+        // navigator.geolocation.getCurrentPosition(function(pos) {
+        //   $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+        //   $scope.meMarker.position = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+        //   $scope.meMarker.setMap($scope.map);
+        // }, function(error) {
+        //   alert('Unable to get location: ' + error.message);
+        // });
+      };
     
     
     function scheduleReminder( ){
@@ -206,6 +230,17 @@ angular.module('movement.controllers', [])
                 $scope.venues = $scope.venues.filter(function(v){
                     return ignoreList.indexOf(v.categories[0].name) == -1
                 });
+                
+                // make markers
+                $scope.venues.forEach(function(v){
+                    // var markers = new google.maps.Marker({
+                    //     position: new google.maps.LatLng(v.latitude, v.longitude),
+                    //     map: $scope.map    
+                    // });
+                })
+                
+                $scope.centerOnMe();
+                
                 
                 console.log( $scope.venues )
             })

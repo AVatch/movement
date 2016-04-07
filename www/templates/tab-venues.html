@@ -1,29 +1,16 @@
-<ion-view view-title="Venues">
-    
+<ion-view view-title="Visited Venues">
+<!--    
     <div class="bar bar-subheader">
       <h2 class="title">Visited Venues</h2>
     </div>
-    
-    <ion-content class="has-subheader">
+    -->
+    <ion-content>
         
-        <!--UI Issue, should look for another map renderer-->
-        <!--<div>
-            <div ng-if="!mapCtrl.loaded" class="map-loader v-center" style="height:50vh;">
-                <ion-spinner></ion-spinner>
-            </div>
-
-            <ui-gmap-google-map
-                    ng-if="mapCtrl.loaded" 
-                    center=mapObj.center
-                    zoom=mapObj.zoom
-                    options=mapOptions>
-                <ui-gmap-marker coords="meMarker.center" idkey="meMarker.id" options="meMarker.options"></ui-gmap-marker>
-                <ui-gmap-markers models="venues" coords="'self'" icon="'icon'"></ui-gmap-markers>
-            </ui-gmap-google-map>
-        </div>-->
-
         
-        <!--<ion-scroll>-->
+        <div id="map" data-tap-disabled="true" style="height:30vh;"></div>
+        
+        
+        <!--<ion-scroll style="height: 65vh;">-->
             <ion-refresher
                 pulling-text="Pull to refresh..."
                 on-refresh="doRefresh()">
@@ -42,12 +29,10 @@
                     
                      <div class="row">
                         <p class="venue-visits">{{ venue.total_visits }} Other Visitors | {{ venue.total_reveals}} Guestbook Signatures</p>
-                       
-                     
                      </div>
                      <div class="row">
                         
-                        <button ng-if="hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
+                        <button ng-if="hasItBeenRevealed(venue)" class="button button-full button-positive"
                                 ng-click="showPopup(venue)">
                              <span> View Guestbook </span>
                         </button>
@@ -59,7 +44,7 @@
                      </div>
                  
                     <ion-option-button class="button-assertive" 
-                                    ng-click="removeVenue(venue)">
+                                       ng-click="removeVenue(venue)">
                         I Wasn't There
                     </ion-option-button>
                 </ion-item>
