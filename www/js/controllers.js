@@ -201,6 +201,15 @@ angular.module('movement.controllers', [])
                    loc.coords = {}
                    loc.coords.latitude = loc.lat / 10000.;
                    loc.coords.longitude = loc.lng / 10000.;
+                   
+                   loc.events = {
+                       click: function( marker, eventName, args ) {
+                           console.log('clicked marker')
+                           console.log(marker)
+                           console.log(eventName)
+                           console.log(args)
+                       }
+                   }
                    return loc; 
                 });
                 
