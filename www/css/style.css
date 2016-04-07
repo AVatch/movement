@@ -85,3 +85,7 @@ a.button-block {
     flex-direction: row;
     justify-content: center;
 }
+
+.item-content{
+    padding-right: 16px !important;
+}

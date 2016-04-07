@@ -149,7 +149,7 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicAnalytics,
-    $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
+    $ionicScrollDelegate, Accounts, Venues, Utility, GeoTracking, Notifications) {
         
     var now = new Date();
     $ionicAnalytics.track('Application opened', {
@@ -158,21 +158,22 @@ angular.module('movement.controllers', [])
         },
     });
        
-    $scope.mapCtrl = {loaded: false};
+    // $scope.mapCtrl = {loaded: false};
     
-    $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
+    // $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
     // ref: https://snazzymaps.com/style/25/blue-water
     var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
-    $scope.mapOptions = { 
-        scrollwheel: false,
-        disableDefaultUI: true,
-        styles: mapStyle 
-    };
+
     $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
     
-    uiGmapGoogleMapApi.then(function(maps) {
-        $scope.mapCtrl.loaded = true;
-    });
+    var latLng = new google.maps.LatLng(40.740883, -74.002228);
+    var mapOptions = {
+      center: latLng,
+      zoom: 13,
+      styles: mapStyle,
+      disableDefaultUI: true
+    };
+    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     
     
     function scheduleReminder( ){
@@ -208,6 +209,29 @@ angular.module('movement.controllers', [])
                 });
                 
                 console.log( $scope.venues )
+                
+                
+                google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+                    $scope.venues.forEach(function(v){
+                        var latLng = new google.maps.LatLng(v.latitude, v.longitude);
+                        var marker = new google.maps.Marker({
+                            map: $scope.map,
+                            animation: google.maps.Animation.DROP,
+                            position: latLng
+                        });      
+                
+                        var infoWindow = new google.maps.InfoWindow({
+                            content: v.name
+                        });
+                
+                        google.maps.event.addListener(marker, 'click', function () {
+                            $scope.showPopup(v);
+                        });    
+                    });
+
+                });
+                
+                
             })
             .catch(function(e){
                 Utility.logEvent('There was an error loading venues');
@@ -255,8 +279,8 @@ angular.module('movement.controllers', [])
             $state.go('tab.venue-detail', {venueId: venue.id})
         }else{        
             $ionicPopup.show({
-                template: '<p>When you sign the guestbook, your signature will only be visible to other people who also signed. And then you can see who\'s worthy of talking to at CSCW... Ready to sign?</p>',
-                title: 'Cool! Let\'s see who\'s been there?',
+                template: '<p>When you sign the guestbook, your signature will only be visible to other people who also signed.</p><p>So far there are <b>' + venue.total_reveals + ' people</b> who have signed the guestbook for <b>' + venue.name + '</b></p><p style="text-align:center;">Ready to sign?</p>',
+                title: 'Cool! Let\'s see who\'s been at ' + venue.name,
                 scope: $scope,
                 buttons: [
                     { text: 'Not Now' },

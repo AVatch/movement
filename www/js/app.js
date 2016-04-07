@@ -4,8 +4,7 @@ angular.module('movement', ['ionic',
                             'ionic.service.analytics', 
                             'ionic.service.push',
                             'angular-storage',
-                            'ngCordova', 
-                            'uiGmapgoogle-maps', 
+                            'ngCordova',  
                             'movement.controllers', 
                             'movement.services'])
 
@@ -40,15 +39,6 @@ angular.module('movement', ['ionic',
 
 .constant('API_URL', 'http://52.23.168.18/api/v1')
 // .constant('API_URL', 'http://127.0.0.1:8000/api/v1')
-
-// Configure Google Maps
-.config(function(uiGmapGoogleMapApiProvider) {
-    uiGmapGoogleMapApiProvider.configure({
-        key: 'AIzaSyBiTGJkXnuwIHMbg0keDrhP--hBClpNMAA', // yolo
-        v: '3.22', //defaults to latest 3.X anyhow
-        libraries: 'drawing,visualization'
-    });
-})
 
 .config(function($stateProvider, $urlRouterProvider) {
 

@@ -5,23 +5,8 @@
     </div>
     
     <ion-content class="has-subheader">
+        <div id="map" data-tap-disabled="true" style="width: 100%; height:30vh;"></div>
         
-        <!--UI Issue, should look for another map renderer-->
-        <!--<div>
-            <div ng-if="!mapCtrl.loaded" class="map-loader v-center" style="height:50vh;">
-                <ion-spinner></ion-spinner>
-            </div>
-
-            <ui-gmap-google-map
-                    ng-if="mapCtrl.loaded" 
-                    center=mapObj.center
-                    zoom=mapObj.zoom
-                    options=mapOptions>
-                <ui-gmap-marker coords="meMarker.center" idkey="meMarker.id" options="meMarker.options"></ui-gmap-marker>
-                <ui-gmap-markers models="venues" coords="'self'" icon="'icon'"></ui-gmap-markers>
-            </ui-gmap-google-map>
-        </div>-->
-
         
         <!--<ion-scroll>-->
             <ion-refresher
