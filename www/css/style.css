@@ -89,3 +89,5 @@ a.button-block {
 .item-content{
     padding-right: 16px !important;
 }
+
+.angular-google-map-container { height: 30vh; }

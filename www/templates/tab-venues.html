@@ -1,55 +1,63 @@
-<ion-view view-title="Venues">
-    
-    <div class="bar bar-subheader">
-      <h2 class="title">Visited Venues</h2>
-    </div>
-    
-    <ion-content class="has-subheader">
-        <div id="map" data-tap-disabled="true" style="width: 100%; height:30vh;"></div>
+<ion-view view-title="Visited Venues">
+    <ion-content>
         
+        <!--<div id="map" data-tap-disabled="true" style="width: 100%; height:30vh;"></div>-->
+        <ui-gmap-google-map 
+                    center="map.center" 
+                    zoom="map.zoom"
+                    control="map.control"
+                    options='mapOptions'>
+
+            <!-- other ui-gmap-directives here -->
+            <ui-gmap-marker
+                    ng-repeat="venue in venues"
+                    idkey='venue.id'
+                    coords="venue.coords"
+                    ng-click="showPopup(venue)"
+                    >
+            </ui-gmap-marker>
+        </ui-gmap-google-map>
         
-        <!--<ion-scroll>-->
-            <ion-refresher
-                pulling-text="Pull to refresh..."
-                on-refresh="doRefresh()">
-            </ion-refresher>
-            <ion-list>
+        <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="doRefresh()">
+        </ion-refresher>
+        <ion-list>
+            
+            <ion-item ng-if="venuesLoading" style="text-align:center;"><ion-spinner></ion-spinner></ion-item>
+            <ion-item ng-if="!venuesLoading && venues.length==0" style="text-align:center;">
+                <h2>No venues yet</h2>
+            </ion-item>
+            
+            <ion-item ng-repeat="venue in venues | reverse">
+                    <div class="row">
+                    <h2>{{ venue.name }}</h2>
+                </div>
                 
-                <!--<ion-item ng-if="venuesLoading" style="text-align:center;"><ion-spinner></ion-spinner></ion-item>-->
-                <ion-item ng-if="!venuesLoading && venues.length==0" style="text-align:center;">
-                    <h2>No venues yet</h2>
-                </ion-item>
-                
-                <ion-item ng-repeat="venue in venues | reverse" ng-click="showPopup(venue)">
-                     <div class="row">
-                        <h2>{{ venue.name }}</h2>
-                    </div>
+                    <div class="row">
+                    <p class="venue-visits">{{ venue.total_visits }} Other Visitors | {{ venue.total_reveals}} Guestbook Signatures</p>
                     
-                     <div class="row">
-                        <p class="venue-visits">{{ venue.total_visits }} Other Visitors | {{ venue.total_reveals}} Guestbook Signatures</p>
-                       
-                     
-                     </div>
-                     <div class="row">
-                        
-                        <button ng-if="hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
-                                ng-click="showPopup(venue)">
-                             <span> View Guestbook </span>
-                        </button>
-                        
-                        <button ng-if="!hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
-                                ng-click="showPopup(venue)">
-                             <span> Sign Guestbook </span>
-                        </button>
-                     </div>
-                 
-                    <ion-option-button class="button-assertive" 
-                                    ng-click="removeVenue(venue)">
-                        I Wasn't There
-                    </ion-option-button>
-                </ion-item>
-            </ion-list>
-        <!--</ion-scroll>-->
-        
+                    
+                    </div>
+                    <div class="row">
+                    
+                    <button ng-if="hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
+                            ng-click="showPopup(venue)">
+                            <span> View Guestbook </span>
+                    </button>
+                    
+                    <button ng-if="!hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
+                            ng-click="showPopup(venue)">
+                            <span> Sign Guestbook </span>
+                    </button>
+                    </div>
+                
+                <ion-option-button class="button-assertive" 
+                                ng-click="removeVenue(venue)">
+                    I Wasn't There
+                </ion-option-button>
+            </ion-item>
+        </ion-list>
+    
     </ion-content>
 </ion-view>

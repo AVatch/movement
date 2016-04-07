@@ -3,6 +3,7 @@ angular.module('movement', ['ionic',
                             'ionic.service.core',
                             'ionic.service.analytics', 
                             'ionic.service.push',
+                            'uiGmapgoogle-maps',
                             'angular-storage',
                             'ngCordova',  
                             'movement.controllers', 
@@ -39,6 +40,13 @@ angular.module('movement', ['ionic',
 
 .constant('API_URL', 'http://52.23.168.18/api/v1')
 // .constant('API_URL', 'http://127.0.0.1:8000/api/v1')
+
+.config(function(uiGmapGoogleMapApiProvider) {
+    uiGmapGoogleMapApiProvider.configure({
+        key: 'AIzaSyBa7UgG0KAlZShxva2Dyhg1Hhu7lh0BLSc',
+        libraries: 'geometry,visualization'
+    });
+})
 
 .config(function($stateProvider, $urlRouterProvider) {
 

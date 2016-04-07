@@ -149,7 +149,7 @@ angular.module('movement.controllers', [])
 })
 
 .controller('VenuesCtrl', function($scope, $state, $ionicPopup, $ionicPlatform, $ionicAnalytics,
-    $ionicScrollDelegate, Accounts, Venues, Utility, GeoTracking, Notifications) {
+    $ionicScrollDelegate, uiGmapGoogleMapApi, Accounts, Venues, Utility, GeoTracking, Notifications) {
         
     var now = new Date();
     $ionicAnalytics.track('Application opened', {
@@ -163,18 +163,26 @@ angular.module('movement.controllers', [])
     // $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
     // ref: https://snazzymaps.com/style/25/blue-water
     var mapStyle = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]}]
-
-    $scope.mapObj = {center: {latitude: 40.740883, longitude: -74.002228 }, zoom: 15, loading: true };
-    
-    var latLng = new google.maps.LatLng(40.740883, -74.002228);
-    var mapOptions = {
-      center: latLng,
+    $scope.map = {
+      center: { latitude: 40.740883, longitude: -74.002228 },
       zoom: 13,
+      control: {}  
+    };
+    $scope.mapOptions = {
       styles: mapStyle,
       disableDefaultUI: true
     };
-    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    
+    $scope.markers = {
+        events: {
+            click: function( marker, eventName, args ){
+                console.log('click')
+                console.log(marker)
+                console.log(eventName)
+                console.log(args)
+            }
+        }
+    }
+
     
     function scheduleReminder( ){
         Notifications.scheduleBGGeoReminderNotification( );
@@ -190,8 +198,9 @@ angular.module('movement.controllers', [])
                 $scope.venuesLoading = false;
 
                 $scope.venues = v.map(function(loc){
-                   loc.latitude = loc.lat / 10000.;
-                   loc.longitude = loc.lng / 10000.;
+                   loc.coords = {}
+                   loc.coords.latitude = loc.lat / 10000.;
+                   loc.coords.longitude = loc.lng / 10000.;
                    return loc; 
                 });
                 
@@ -211,25 +220,25 @@ angular.module('movement.controllers', [])
                 console.log( $scope.venues )
                 
                 
-                google.maps.event.addListenerOnce($scope.map, 'idle', function(){
-                    $scope.venues.forEach(function(v){
-                        var latLng = new google.maps.LatLng(v.latitude, v.longitude);
-                        var marker = new google.maps.Marker({
-                            map: $scope.map,
-                            animation: google.maps.Animation.DROP,
-                            position: latLng
-                        });      
+                // google.maps.event.addListenerOnce($scope.map, 'idle', function(){
+                //     $scope.venues.forEach(function(v){
+                //         var latLng = new google.maps.LatLng(v.latitude, v.longitude);
+                //         var marker = new google.maps.Marker({
+                //             map: $scope.map,
+                //             animation: google.maps.Animation.DROP,
+                //             position: latLng
+                //         });      
                 
-                        var infoWindow = new google.maps.InfoWindow({
-                            content: v.name
-                        });
+                //         var infoWindow = new google.maps.InfoWindow({
+                //             content: v.name
+                //         });
                 
-                        google.maps.event.addListener(marker, 'click', function () {
-                            $scope.showPopup(v);
-                        });    
-                    });
+                //         google.maps.event.addListener(marker, 'click', function () {
+                //             $scope.showPopup(v);
+                //         });    
+                //     });
 
-                });
+                // });
                 
                 
             })
