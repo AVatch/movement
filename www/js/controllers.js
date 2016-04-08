@@ -301,7 +301,9 @@ angular.module('movement.controllers', [])
                 title: 'Cool! Let\'s see who\'s been at ' + venue.name,
                 scope: $scope,
                 buttons: [
-                    { text: 'Not Now' },
+                    { text: 'Not Now',
+                      type: 'button-stable'
+                    },
                     {
                         text: '<b>Sign</b>',
                         type: 'button-positive',
