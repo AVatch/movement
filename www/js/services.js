@@ -214,23 +214,28 @@ angular.module('movement.services', [])
         // see the link below for a list of option definitions
         // https://github.com/transistorsoft/cordova-background-geolocation/blob/master/docs/api.md#geolocation-options        
         return MovementStore.get('geoSettings') || {
-            desiredAccuracy: 0,
-            distanceFilter: 10,
-            stationaryRadius: 10,
+            desiredAccuracy: 10,
+            distanceFilter: 5,
+            stationaryRadius: 5,
             disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
             
-            activityRecognitionInterval: 5000,
-            stopTimeout: 10,  // Wait x miutes to turn off location system after stop-detection
+
+            activityRecognitionInterval: 1000,
+            stopTimeout: 5,  // rdm - Wait x miutes to turn off location system after stop-detection
             minimumActivityRecognitionConfidence: 20,   // Minimum activity-confidence for a state-change
              
-            locationUpdateInterval: 5000, // every second
+            locationUpdateInterval: 1000, // every second
             
             fastestLocationUpdateInterval: 5000,
             stopDetectionDelay: 0,  // Wait x minutes to engage stop-detection system
-            
+    
+            stopOnTerminate: false,
+            startOnBoot: true,
+            preventSuspend: true,
+            heartbeatInterval: 60,
+                        
             activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
             debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
-            preventSuspend: true,
         };
     }
     
