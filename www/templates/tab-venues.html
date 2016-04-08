@@ -30,28 +30,24 @@
             </ion-item>
             
             <ion-item ng-repeat="venue in venues | reverse">
-                    <div class="row">
+               <div class="row">
+                    <div class="col">
                     <h2>{{ venue.name }}</h2>
-                </div>
-                
-                     <div class="row">
-                        <p class="venue-visits">{{ venue.total_visits }} Other Visitors</p>
-                       
-                     
+                      <p class="venue-visits">{{ venue.total_visits }} Other Visitors</p>
                      </div>
-                     <div class="row">
-                        
-                        <button ng-if="hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
+                    
+                      <div class="col">
+                        <button ng-if="hasItBeenRevealed(venue)" class="button button-positive"
                                 ng-click="showPopup(venue)">
                              <span> View Guestbook ({{ venue.total_reveals}}) </span>
                         </button>
                         
-                        <button ng-if="!hasItBeenRevealed(venue)" class="button button-full button-positive no-padding"
+                        <button ng-if="!hasItBeenRevealed(venue)" class="button button-positive"
                                 ng-click="showPopup(venue)">
                              <span> Sign Guestbook ({{ venue.total_reveals}}) </span>
                         </button>
                      </div>
-                 
+               </div>
                     <ion-option-button class="button-assertive" 
                                     ng-click="removeVenue(venue)">
                         I Wasn't There
