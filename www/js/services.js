@@ -234,7 +234,7 @@ angular.module('movement.services', [])
             heartbeatInterval: 60,
                         
             activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
-            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle. 
+            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
         };
     }
     
@@ -342,7 +342,9 @@ angular.module('movement.services', [])
                     forceReloadOnGeofence: false,        // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a geofence crossing occurs --WARNING: possibly distruptive to user) 
                     stopOnTerminate: false,              // <-- [Android] Allow the background-service to run headless when user closes the app.
                     startOnBoot: true,                   // <-- [Android] Auto start background-service in headless mode when device is powered-up.
+                    preventSuspend: true,
                 });
+                
                 deferred.resolve();
             }
         });
