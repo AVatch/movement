@@ -376,7 +376,7 @@ angular.module('movement.controllers', [])
     $scope.$on('$ionicView.enter', function(e) {
         
         if( !Accounts.isAuthenticated() ){
-            $state.go('authenticate');
+            $state.go('register');
         }else{
             // load venues on entering view
             loadVenues();
