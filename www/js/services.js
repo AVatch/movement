@@ -219,6 +219,7 @@ angular.module('movement.services', [])
             stationaryRadius: 5,
             disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
             
+
             activityRecognitionInterval: 1000,
             stopTimeout: 5,  // rdm - Wait x miutes to turn off location system after stop-detection
             minimumActivityRecognitionConfidence: 20,   // Minimum activity-confidence for a state-change
