@@ -218,7 +218,6 @@ angular.module('movement.services', [])
             distanceFilter: 5,
             stationaryRadius: 5,
             disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
-            
 
             activityRecognitionInterval: 1000,
             stopTimeout: 5,  // rdm - Wait x miutes to turn off location system after stop-detection
@@ -228,12 +227,15 @@ angular.module('movement.services', [])
             
             fastestLocationUpdateInterval: 5000,
             stopDetectionDelay: 0,  // Wait x minutes to engage stop-detection system
-    
-            stopOnTerminate: false,
-            startOnBoot: true,
-            preventSuspend: true,
             heartbeatInterval: 60,
-                        
+            
+            forceReloadOnLocationChange: false,  // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a new location is recorded (WARNING: possibly distruptive to user) 
+            forceReloadOnMotionChange: false,    // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when device changes stationary-state (stationary->moving or vice-versa) --WARNING: possibly distruptive to user) 
+            forceReloadOnGeofence: false,        // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a geofence crossing occurs --WARNING: possibly distruptive to user) 
+            stopOnTerminate: false,              // <-- [Android] Allow the background-service to run headless when user closes the app.
+            startOnBoot: true,                   // <-- [Android] Auto start background-service in headless mode when device is powered-up.
+            preventSuspend: true,
+                
             activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
             debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
         };
@@ -322,29 +324,7 @@ angular.module('movement.services', [])
                 // BackgroundGeoLocation is highly configurable.
                 var geoSettings = getBGGeoSettings();
                 
-                bgGeo.configure(callbackFn, failureFn, {
-                    // Geolocation config
-                    desiredAccuracy: geoSettings.desiredAccuracy,
-                    stationaryRadius: geoSettings.stationaryRadius,
-                    distanceFilter: geoSettings.distanceFilter,
-                    disableElasticity: geoSettings.disableElasticity,
-                    locationUpdateInterval: geoSettings.locationUpdateInterval,
-                    minimumActivityRecognitionConfidence: geoSettings.minimumActivityRecognitionConfidence, 
-                    fastestLocationUpdateInterval: geoSettings.fastestLocationUpdateInterval,
-                    activityRecognitionInterval: geoSettings.activityRecognitionInterval,
-                    stopDetectionDelay: geoSettings.stopDetectionDelay,
-                    stopTimeout: geoSettings.stopTimeout,
-                    activityType: geoSettings.activityType,
-
-                    // Application config
-                    debug: geoSettings.debug,            // <-- enable this hear sounds for background-geolocation life-cycle.
-                    forceReloadOnLocationChange: false,  // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a new location is recorded (WARNING: possibly distruptive to user) 
-                    forceReloadOnMotionChange: false,    // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when device changes stationary-state (stationary->moving or vice-versa) --WARNING: possibly distruptive to user) 
-                    forceReloadOnGeofence: false,        // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a geofence crossing occurs --WARNING: possibly distruptive to user) 
-                    stopOnTerminate: false,              // <-- [Android] Allow the background-service to run headless when user closes the app.
-                    startOnBoot: true,                   // <-- [Android] Auto start background-service in headless mode when device is powered-up.
-                    preventSuspend: true,
-                });
+                bgGeo.configure(callbackFn, failureFn, geoSettings);
                 
                 deferred.resolve();
             }
