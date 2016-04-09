@@ -2,7 +2,7 @@
 angular.module('movement', ['ionic',
                             'ionic.service.core',
                             'ionic.service.analytics', 
-                            'ionic.service.push',
+                            // 'ionic.service.push',
                             'uiGmapgoogle-maps',
                             'angular-storage',
                             'ngCordova',  
