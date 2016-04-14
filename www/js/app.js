@@ -1,8 +1,6 @@
 // Ionic Movement App
-angular.module('movement', ['ionic',
-                            'ionic.service.core',
-                            'ionic.service.analytics', 
-                            // 'ionic.service.push',
+angular.module('movement', ['ionic','ionic.service.core',
+                            'ionic.service.analytics',
                             'uiGmapgoogle-maps',
                             'angular-storage',
                             'ngCordova',  
@@ -24,28 +22,37 @@ angular.module('movement', ['ionic',
       StatusBar.styleDefault();
     }
     
-    // var push = new Ionic.Push({
-    //   "debug": true
-    // });
-    // push.register(function(token) {
-    //     console.log("Device token:",token.token);
-    //     Accounts.setDeviceToken( token.token );
-    //     push.saveToken(token);  // persist the token in the Ionic Platform
-    // });
-    $ionicAnalytics.register();
     
-    $timeout(function(){
-        if( GeoTracking.isTrackingEnabled ){
+    try {
+        var push = new Ionic.Push({
+        "debug": false
+        });
+
+        push.register(function(token) {
+            console.log("Device token:",token.token);
+            Accounts.setDeviceToken( token.token );
+            push.saveToken(token);  // persist the token in the Ionic Platform
+        });
+    }
+    catch(err) {
+        console.log(JSON.stringify(err));
+    }
+    
+    
+    // $ionicAnalytics.register();
+    
+    // $timeout(function(){
+    //     if( GeoTracking.isTrackingEnabled ){
             
-            GeoTracking.stopBGGeoTracking()
-                .then(function(){
+    //         GeoTracking.stopBGGeoTracking()
+    //             .then(function(){
                     
-                    GeoTracking.startBGGeoTracking()
+    //                 GeoTracking.startBGGeoTracking()
                                 
-                })
+    //             })
             
-        }
-    }, 1000)
+    //     }
+    // }, 1000);
     
   });
   

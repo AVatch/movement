@@ -157,7 +157,7 @@ angular.module('movement.controllers', [])
             time_stamp: now.toUTCString()
         },
     });
-       
+           
     // $scope.mapCtrl = {loaded: false};
     
     // $scope.meMarker = { center: {latitude: 40.740883, longitude: -74.002228 }, options: { icon:'img/here.png' }, id:0 };
@@ -226,8 +226,6 @@ angular.module('movement.controllers', [])
                     return ignoreList.indexOf(v.categories[0].name) == -1
                 });
                 
-                console.log( $scope.venues )
-                
                 
                 // google.maps.event.addListenerOnce($scope.map, 'idle', function(){
                 //     $scope.venues.forEach(function(v){
@@ -278,7 +276,6 @@ angular.module('movement.controllers', [])
         });
       
     };
-
 
     // refresh venue list
     $scope.doRefresh = function(){
@@ -357,25 +354,15 @@ angular.module('movement.controllers', [])
         });
     };
     
-    function centerMap( ){
+    function centerMap( coords ){
         // pass centering map it breaks the plugin this way
-        
-        // Utility.logEvent('Centering Maps');
-        // if( GeoTracking.isTrackingEnabled() ){
-        //     GeoTracking.getCurrentCoords()
-        //         .then(function(location){
-        //             // center map
-        //             $scope.mapObj.center.latitude = location.coords.latitude;
-        //             $scope.mapObj.center.longitude = location.coords.longitude;
-                    
-        //             // render you are here pin
-        //             $scope.meMarker.center.latitude = location.coords.latitude;
-        //             $scope.meMarker.center.longitude = location.coords.longitude;
-        //         });    
-        // }
+        $scope.map.center.latitude = coords.latitude;
+        $scope.map.center.longitude = coords.longitude;
     }
+    $scope.centerMap = centerMap;
     
     $scope.$on('$ionicView.enter', function(e) {
+        console.log("ionicView enter");
         
         if( !Accounts.isAuthenticated() ){
             $state.go('register');
@@ -384,6 +371,10 @@ angular.module('movement.controllers', [])
             loadVenues();
             scheduleReminder();
             
+            // register app token
+            console.log("about to register");
+            Accounts.registerForPush();
+            
             if(!GeoTracking.isTrackingEnabled()){
                 showTrackingPermissionPopup()
                     .then(function(){
@@ -391,7 +382,6 @@ angular.module('movement.controllers', [])
                             .then(function(){
                                 
                                 centerMap();
-                                
 
                             })
                             .catch(function(){

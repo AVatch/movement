@@ -30,12 +30,15 @@
       "id": "de.appplant.cordova.plugin.local-notification"
     },
     {
-      "locator": "https://github.com/transistorsoft/cordova-background-geolocation.git",
+      "variables": {
+        "SENDER_ID": "111"
+      },
+      "locator": "phonegap-plugin-push",
       "id": "phonegap-plugin-push"
     }
   ],
   "cordovaPlatforms": [
-    "ios",
-    "android"
+    "android",
+    "ios"
   ]
 }

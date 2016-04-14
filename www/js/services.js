@@ -69,7 +69,7 @@ angular.module('movement.services', [])
         return MovementStore.set('deviceToken', token);
     }
     function getDeviceToken( ){
-        return MovementStore.get('deviceToken')
+        return MovementStore.get('deviceToken');
     }
     return {
         setDeviceToken: setDeviceToken,
@@ -120,6 +120,28 @@ angular.module('movement.services', [])
             });
 
             return deferred.promise;
+        },
+        registerForPush: function( ){
+            console.log('registering for push');
+            if( getDeviceToken() ){
+                $http({
+                    url: API_URL + '/device',
+                    method: 'POST',
+                    headers: { Authorization: 'Token ' + getToken() },
+                    data: {
+                        "device_token":  getDeviceToken()
+                    }
+                }).then(function(r){
+                    console.log('registered device token');
+                    console.log(JSON.stringify(r));
+                }).catch(function(e){
+                    console.log('failed to register device token')
+                    console.log(JSON.stringify(e));
+                });    
+            }else{
+                console.log('no device token');
+            }
+            
         },
         joinCohort: function( cohort ){
             var deferred = $q.defer();
