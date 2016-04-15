@@ -235,15 +235,15 @@ angular.module('movement.services', [])
     function getBGGeoSettings(){
         // see the link below for a list of option definitions
         // https://github.com/transistorsoft/cordova-background-geolocation/blob/master/docs/api.md#geolocation-options        
-        return MovementStore.get('geoSettings') || {
-            desiredAccuracy: 10,
+        return {
+            desiredAccuracy: 0,
             distanceFilter: 5,
             stationaryRadius: 5,
             disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
 
             activityRecognitionInterval: 1000,
             stopTimeout: 5,  // rdm - Wait x miutes to turn off location system after stop-detection
-            minimumActivityRecognitionConfidence: 20,   // Minimum activity-confidence for a state-change
+            minimumActivityRecognitionConfidence: 10,   // Minimum activity-confidence for a state-change
              
             locationUpdateInterval: 1000, // every second
             
@@ -290,20 +290,6 @@ angular.module('movement.services', [])
                     var lng    = coords.longitude;
                     Utility.logEvent("GeoTracking.GeoCallbackFN() Coords: " + lat + ":" + lng);
                     
-                    // var threshold = 20; // distance (meters) used to determine if user in same place 
-                    // // See the previous coord. If none, get current coords and use that.
-                    // var lastCoords = MovementStore.get('lastCoords') || { lat: lat, lng: lng };
-                    // // Update the previous coord to teh current one
-                    // MovementStore.set('lastCoords', { lat: lat, lng: lng });
-                    // // calculate distance bw current coords and prev ones
-                    // var dist = distance(lastCoords.lat, lastCoords.lng, lat, lng, 'K');
-                    
-                    // // if the app determines the user is stationary OR
-                    // // if the use has moved within *threshold meters
-                    // // we deem them to be at a venue and check them in.
-                    // Utility.logEvent("GeoTracking.GeoCallbackFN() Distance from previous location: " + dist + "km");
-                    
-                    
                     if( !location.is_moving ){
                         Venues.logVenue( { lat: lat, lng: lng } )
                             .then(function(){
@@ -323,16 +309,6 @@ angular.module('movement.services', [])
                         bgGeo.finish(taskId);
                     }
                     
-                            
-                    // if( !location.is_moving || dist / 1000.0 <= threshold ){
-                    //     Venues.logVenue( { lat: lat, lng: lng } )
-                    //         .then(function(){
-                    //             bgGeo.finish(taskId);
-                    //         });    
-                    // }else{
-                    //     // user has moved more than *threshold meters so they are not stationary
-                    //     Utility.logEvent("GeoTracking.GeoCallbackFN()");
-                    // }
                     
                 };
 
@@ -345,6 +321,17 @@ angular.module('movement.services', [])
                 
                 // BackgroundGeoLocation is highly configurable.
                 var geoSettings = getBGGeoSettings();
+                
+                if( MovementStore.get('battery') ){
+                    geoSettings.preventSuspend = false;
+                    MovementStore.set('battery', true);
+                }else{
+                    geoSettings.preventSuspend = true;
+                    MovementStore.set('battery', false);
+                }
+                
+                console.log("Inititing with the following settings");
+                console.log(JSON.stringify(geoSettings));
                 
                 bgGeo.configure(callbackFn, failureFn, geoSettings);
                 

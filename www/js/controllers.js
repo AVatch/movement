@@ -448,9 +448,27 @@ angular.module('movement.controllers', [])
 
 })
 
-.controller('SettingsCtrl', function($scope, $state, $ionicPopup, GeoTracking, Accounts) {
+.controller('SettingsCtrl', function($scope, $state, $ionicPopup, GeoTracking, Accounts, MovementStore) {
     $scope.geoSettings = GeoTracking.getBGGeoSettings();
     $scope.trackingEnabled = GeoTracking.isTrackingEnabled();
+    
+    
+    $scope.batterySaving = MovementStore.get('battery');
+    if( $scope.batterySaving == undefined ){
+        $scope.batterySaving = false;
+        MovementStore.set('battery', false);
+    }
+    
+    $scope.toggleBatterySaving = function(){
+        $scope.batterySaving = !$scope.batterySaving;
+        MovementStore.set('battery', $scope.batterySaving);
+        
+        GeoTracking.stopBGGeoTracking()
+            .then(function(){
+                GeoTracking.startBGGeoTracking();
+            });
+    }
+    
     
     $scope.emailLogs = function(){
         GeoTracking.emailLogs()
