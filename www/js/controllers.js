@@ -213,18 +213,18 @@ angular.module('movement.controllers', [])
                    return loc; 
                 });
                 
-                var ignoreList = [
-                    'Cities',
-                    'Counties',
-                    'Countries',
-                    'Neighborhoods',
-                    'States',
-                    'Towns',
-                    'Villages'
-                ];
-                $scope.venues = $scope.venues.filter(function(v){
-                    return ignoreList.indexOf(v.categories[0].name) == -1
-                });
+                // var ignoreList = [
+                //     'Cities',
+                //     'Counties',
+                //     'Countries',
+                //     'Neighborhoods',
+                //     'States',
+                //     'Towns',
+                //     'Villages'
+                // ];
+                // $scope.venues = $scope.venues.filter(function(v){
+                //     return ignoreList.indexOf(v.categories[0].name) == -1
+                // });
                 
                 
                 // google.maps.event.addListenerOnce($scope.map, 'idle', function(){
@@ -354,10 +354,21 @@ angular.module('movement.controllers', [])
         });
     };
     
-    function centerMap( coords ){
-        // pass centering map it breaks the plugin this way
-        $scope.map.center.latitude = coords.latitude;
-        $scope.map.center.longitude = coords.longitude;
+    function centerMap( ){
+        
+        try {
+            GeoTracking.getCurrentCoords()
+                .then(function(coords){
+                    $scope.map.center.latitude = coords.lat;
+                    $scope.map.center.longitude = coords.lng;        
+                });    
+        } catch (error) {
+            console.log("there was an error centering map");
+            console.log(JSON.stringify(error));
+            $scope.map.center.latitude = 40.740883;
+            $scope.map.center.longitude = -74.002228;
+        }
+
     }
     $scope.centerMap = centerMap;
     
@@ -378,7 +389,7 @@ angular.module('movement.controllers', [])
             if(!GeoTracking.isTrackingEnabled()){
                 showTrackingPermissionPopup()
                     .then(function(){
-                        GeoTracking.startBGGeoTracking()
+                        GeoTracking.startTracking()
                             .then(function(){
                                 
                                 centerMap();
@@ -389,7 +400,13 @@ angular.module('movement.controllers', [])
                             });
                     });
             }else{
-                centerMap();
+                GeoTracking.stopTracking()
+                    .then(function(){
+                        GeoTracking.startTracking()
+                            .then(function(){
+                                centerMap();
+                            });
+                    });
             }
         }
         
@@ -449,25 +466,25 @@ angular.module('movement.controllers', [])
 })
 
 .controller('SettingsCtrl', function($scope, $state, $ionicPopup, GeoTracking, Accounts, MovementStore) {
-    $scope.geoSettings = GeoTracking.getBGGeoSettings();
+    $scope.geoSettings = {};
     $scope.trackingEnabled = GeoTracking.isTrackingEnabled();
     
     
     $scope.batterySaving = MovementStore.get('battery');
     if( $scope.batterySaving == undefined ){
-        $scope.batterySaving = false;
-        MovementStore.set('battery', false);
+        $scope.batterySaving = true;
+        MovementStore.set('battery', $scope.batterySaving);
     }
     
     $scope.toggleBatterySaving = function(){
         $scope.batterySaving = !$scope.batterySaving;
         MovementStore.set('battery', $scope.batterySaving);
         
-        GeoTracking.stopBGGeoTracking()
+        GeoTracking.stopTracking()
             .then(function(){
-                GeoTracking.startBGGeoTracking();
+                GeoTracking.startTracking();
             });
-    }
+    };
     
     
     $scope.emailLogs = function(){
@@ -481,7 +498,7 @@ angular.module('movement.controllers', [])
         
         if($scope.trackingEnabled){
             // stop
-            GeoTracking.stopBGGeoTracking()
+            GeoTracking.stopTracking()
                 .then(function(){
                     $ionicPopup.alert({
                         title: 'Success',
@@ -491,7 +508,7 @@ angular.module('movement.controllers', [])
                 });
         }else{
             // start
-            GeoTracking.startBGGeoTracking()
+            GeoTracking.startTracking()
                 .then(function(){
                     $ionicPopup.alert({
                         title: 'Success',
@@ -505,20 +522,20 @@ angular.module('movement.controllers', [])
     };
     
     $scope.updateBGGeoSettings = function(){
-        GeoTracking.updateBGGeoSettings($scope.geoSettings);
-        $scope.geoSettings = GeoTracking.getBGGeoSettings();
-        $ionicPopup.alert({
-            title: 'Success',
-            template: 'Configuration was updated'
-        });
+        // GeoTracking.updateBGGeoSettings($scope.geoSettings);
+        // $scope.geoSettings = GeoTracking.getBGGeoSettings();
+        // $ionicPopup.alert({
+        //     title: 'Success',
+        //     template: 'Configuration was updated'
+        // });
     };
     $scope.resetBGGeoSettings = function(){
-        GeoTracking.resetBGGeoSettings();
-        $scope.geoSettings = GeoTracking.getBGGeoSettings();
-        $ionicPopup.alert({
-            title: 'Success',
-            template: 'Configuration was reset'
-        });
+        // GeoTracking.resetBGGeoSettings();
+        // $scope.geoSettings = GeoTracking.getBGGeoSettings();
+        // $ionicPopup.alert({
+        //     title: 'Success',
+        //     template: 'Configuration was reset'
+        // });
     };
     
     $scope.logout = function(){

@@ -7,7 +7,7 @@ angular.module('movement', ['ionic','ionic.service.core',
                             'movement.controllers', 
                             'movement.services'])
 
-.run(function($rootScope, $ionicPlatform, $ionicAnalytics, $timeout,  Accounts, GeoTracking) {
+.run(function($rootScope, $ionicPlatform, $ionicAnalytics, $timeout,  Accounts) {
   
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -37,23 +37,7 @@ angular.module('movement', ['ionic','ionic.service.core',
     catch(err) {
         console.log(JSON.stringify(err));
     }
-    
-    
-    // $ionicAnalytics.register();
-    
-    // $timeout(function(){
-    //     if( GeoTracking.isTrackingEnabled ){
-            
-    //         GeoTracking.stopBGGeoTracking()
-    //             .then(function(){
-                    
-    //                 GeoTracking.startBGGeoTracking()
-                                
-    //             })
-            
-    //     }
-    // }, 1000);
-    
+
   });
   
 })

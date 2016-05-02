@@ -133,7 +133,7 @@ angular.module('movement.services', [])
                     }
                 }).then(function(r){
                     console.log('registered device token');
-                    console.log(JSON.stringify(r));
+                    // console.log(JSON.stringify(r));
                 }).catch(function(e){
                     console.log('failed to register device token')
                     console.log(JSON.stringify(e));
@@ -208,7 +208,7 @@ angular.module('movement.services', [])
 })
 
 .factory('GeoTracking', function($q, $ionicPlatform, MovementStore, Venues, Utility){
-    var bgGeo = null;
+    var geotrackingService = undefined;
     
     function distance(lat1, lon1, lat2, lon2, unit) {
         // Calculate the distance b/w two points
@@ -232,187 +232,184 @@ angular.module('movement.services', [])
         return dist
     }
     
-    function getBGGeoSettings(){
-        // see the link below for a list of option definitions
-        // https://github.com/transistorsoft/cordova-background-geolocation/blob/master/docs/api.md#geolocation-options        
-        return {
-            desiredAccuracy: 0,
-            distanceFilter: 5,
-            stationaryRadius: 5,
-            disableElasticity: false, // <-- [iOS] Default is 'false'.  Set true to disable speed-based distanceFilter elasticity
-
-            activityRecognitionInterval: 1000,
-            stopTimeout: 5,  // rdm - Wait x miutes to turn off location system after stop-detection
-            minimumActivityRecognitionConfidence: 10,   // Minimum activity-confidence for a state-change
-             
-            locationUpdateInterval: 1000, // every second
+    
+    return {
+        isTrackingEnabled: function( ){
+            // if( window.cordova && window.BackgroundGeolocation){
+            //     window.BackgroundGeolocation.getState(function(state){
+            //         console.log(JSON.stringify(state));
+            //         return state.enabled;
+            //     });
+            // }else{
+            //     return false;
+            // }
+            return MovementStore.get('tracking') || false;
             
-            fastestLocationUpdateInterval: 5000,
-            stopDetectionDelay: 0,  // Wait x minutes to engage stop-detection system
-            heartbeatInterval: 60,
-            
-            forceReloadOnLocationChange: false,  // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a new location is recorded (WARNING: possibly distruptive to user) 
-            forceReloadOnMotionChange: false,    // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when device changes stationary-state (stationary->moving or vice-versa) --WARNING: possibly distruptive to user) 
-            forceReloadOnGeofence: false,        // <-- [Android] If the user closes the app **while location-tracking is started** , reboot app when a geofence crossing occurs --WARNING: possibly distruptive to user) 
-            stopOnTerminate: false,              // <-- [Android] Allow the background-service to run headless when user closes the app.
-            startOnBoot: true,                   // <-- [Android] Auto start background-service in headless mode when device is powered-up.
-            preventSuspend: true,
+        },
+        getCoordinates: function(){
+            var deferred = $q.defer();
+            if( window.cordova && window.BackgroundGeolocation){
+                geotrackingService = window.BackgroundGeolocation;
                 
-            activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
-            debug: false, // <-- enable this hear sounds for background-geolocation life-cycle.
-        };
-    }
-    
-    function updateBGGeoSettings(settings){
-        Utility.logEvent("GeoTracking.updateBGGeoSettings() PASS");
-        return MovementStore.set('geoSettings', settings);
-    }
-    
-    function resetBGGeoSettings(){
-        Utility.logEvent("GeoTracking.resetBGGeoSettings() PASS");
-        return MovementStore.remove('geoSettings');
-    }
-    
-    function initBGGeoTracking(){
-        Utility.logEvent("GeoTracking.initBGGeoTracking() START");
-        var deferred = $q.defer();
-        // initialize the background geo tracking
-        $ionicPlatform.ready(function(){
-            if(window.cordova && window.BackgroundGeolocation){
-                Utility.logEvent("GeoTracking.initBGGeoTracking() PLUGIN FOUND");
-                // Get a reference to the plugin.
-                bgGeo = window.BackgroundGeolocation;
-                var callbackFn = function(location, taskId) {
-                    Utility.logEvent("GeoTracking.GeoCallbackFN() START");
-     
-                    var coords = location.coords;
-                    var lat    = coords.latitude;
-                    var lng    = coords.longitude;
-                    Utility.logEvent("GeoTracking.GeoCallbackFN() Coords: " + lat + ":" + lng);
+                geotrackingService.getCurrentPosition(function(location, taskId){
+                    console.log('Got the location on motion change');
+                    console.log(JSON.stringify(location));
                     
-                    if( !location.is_moving ){
-                        Venues.logVenue( { lat: lat, lng: lng } )
-                            .then(function(){
-                                // pass
-                            })
-                            .catch(function(){
-                                // pass
-                            })
-                            .finally(function(){
-                                Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
-                                bgGeo.finish(taskId);
-                            });
-                    }else{
-                        Utility.logEvent("User is moving, so we won't log this venue");
-                        Utility.logEvent("GeoTracking.GeoCallbackFN() DONE");
+                    deferred.resolve(location);
+                    geotrackingService.finish(taskId);
+                    
+                }, function(e){
+                    console.log("error");
+                    deferred.reject();
+                });
+                
+            }else{
+                console.log("no plugin");
+                deferred.reject();     
+            }
+            
+            return deferred.promise;
+        },
+        startTracking: function(){
+            var deferred = $q.defer();
+            
+            if( window.cordova && window.BackgroundGeolocation){
+                console.log("starting background tracking");
+                geotrackingService = window.BackgroundGeolocation;
+                
+                
+                var backgroundCallbackSuccessFn = function(location, taskId){
+                      
+                      console.log('bg success');
+                      console.log(JSON.stringify(location));
                         
-                        bgGeo.finish(taskId);
+                      // signal task is done
+                      geotrackingService.finish(taskId);
+                };
+                
+                var backgroundCallbackFailureFn = function(error){
+                    console.log("There was an error");
+                };
+                
+                // listen to location events and errors
+                geotrackingService.on('location', backgroundCallbackSuccessFn, backgroundCallbackFailureFn);
+                
+                // Fired whenever state changes from moving->stationary or vice-versa.
+                geotrackingService.on('motionchange', function(isMoving) {
+                    // ref: https://github.com/transistorsoft/cordova-background-geolocation/tree/master/docs#getcurrentpositionsuccessfn-failurefn-options
+
+                    try {
+                        window.BackgroundGeolocation.getCurrentPosition(function(location, taskId){
+                            
+                            
+                            // try {
+                            //     // for debug purposes
+                            //     if(window.cordova && window.plugins.notification){
+                            //         cordova.plugins.notification.local.schedule({
+                            //             id: 100,
+                            //             title: "onMotionChange",
+                            //             text: "You changed! Logging with Server!",
+                            //         });
+                            //     }    
+                            // } catch (error) {
+                            //     console.log('failed to schedule notificiation');
+                            // }
+                            
+                            
+                            
+                            Venues.logVenue( { lat: location.coords.latitude, lng: location.coords.longitude } )
+                                .finally(function(){
+                                    window.BackgroundGeolocation.finish(taskId);
+                                });
+                            
+                        }, function(e){
+                            console.log("error");
+                        });
+                           
+                    } catch (error) {
+                        console.log("there was an error");
+                        console.log(JSON.stringify(error));
                     }
                     
-                    
-                };
-
-                var failureFn = function(error) {
-                    // log the events
-                    Utility.logEvent("GeoTracking.GeoCallbackFN() Error");
-                    Utility.logEvent( JSON.stringify(error) );
-                    deferred.reject();
-                };
-                
-                // BackgroundGeoLocation is highly configurable.
-                var geoSettings = getBGGeoSettings();
-                
-                if( MovementStore.get('battery') ){
-                    geoSettings.preventSuspend = false;
-                    MovementStore.set('battery', true);
-                }else{
-                    geoSettings.preventSuspend = true;
-                    MovementStore.set('battery', false);
-                }
-                
-                console.log("Inititing with the following settings");
-                console.log(JSON.stringify(geoSettings));
-                
-                bgGeo.configure(callbackFn, failureFn, geoSettings);
-                
-                deferred.resolve();
-            }
-        });
-        return deferred.promise;
-    }
-
-    function getCurrentCoords(){
-        var deferred = $q.defer();
-        $ionicPlatform.ready(function(){
-            if(window.cordova && window.BackgroundGeolocation){ 
-                window.BackgroundGeolocation.getCurrentPosition(function(s){
-                    Utility.logEvent("GeoTracking.getCurrentCoords() Current Coords: " + s.coords.latitude + ":" + s.coords.longitude);;
-                    deferred.resolve(s);
-                }, function(e){
-                    Utility.logEvent("GeoTracking.getCurrentCoords() FAIL");
-                    Utility.logEvent(JSON.stringify(e));
-                    deferred.reject(e);    
                 });
-            }
-        });
-        return deferred.promise;
-    }
+                
+                geotrackingService.configure({
+                    // Geolocation config
+                    desiredAccuracy: 0,
+                    distanceFilter: 10,
+                    stationaryRadius: 50,
+                    locationUpdateInterval: 1000,
+                    fastestLocationUpdateInterval: 5000,
+                    
+                    // Activity Recognition config
+                    activityType: 'Fitness', // http://stackoverflow.com/questions/32965705/difference-between-clactivitytype-values-ios-sdk
+                    activityRecognitionInterval: 5000,
+                    stopTimeout: 5,
+                    
+                    // Application config
+                    debug: true,
+                    stopOnTerminate: false,
+                    startOnBoot: true
+                }, function(state){
+                    console.log("BackgroundGeolocation ready: ", state);
+                    if( !state.enabled ){
+                        MovementStore.set('tracking', true);
+                        geotrackingService.start();
+                    }
+                    
+                    deferred.resolve();
+                    
+                });
 
-    return{
-        emailLogs: function(){
-            var deferred = $q.defer();
-            Utility.logEvent("Emailing Logs");
-            $ionicPlatform.ready(function(){
-               if(window.cordova && window.BackgroundGeolocation){ 
-                    var bgGeo = window.BackgroundGeolocation;
-                    bgGeo.emailLog('akv36@cornell.edu');
-                    deferred.resolve();
-               }else{
-                   Utility.logEvent("Email Logs Fail");
-                   deferred.reject();
-               }
-            });
-            return deferred.promise;
-        },
-        startBGGeoTracking: function(){
-            var deferred = $q.defer();
-            Utility.logEvent("GeoTracking Starting");
-            initBGGeoTracking().then(function(){
-                bgGeo.start();
-                MovementStore.set('tracking', true);
-                Utility.logEvent("GeoTracking Started");
-                deferred.resolve();
-            }, function(){
-                Utility.logEvent("GeoTracking Failed to start");
+            }else{
+                console.log("background tracking plugin missing");
                 deferred.reject();
-            })
+            }
+            
             return deferred.promise;
         },
-        stopBGGeoTracking: function(){
+        stopTracking: function(){
             var deferred = $q.defer();
-            Utility.logEvent("GeoTracking Stopping");
-            $ionicPlatform.ready(function(){
-               if(window.cordova && window.BackgroundGeolocation){ 
-                    var bgGeo = window.BackgroundGeolocation;
-                    bgGeo.stop();
-                    MovementStore.set('tracking', false);
-                    Utility.logEvent("GeoTracking Stopped");
-                    deferred.resolve();
-               }else{
-                   Utility.logEvent("GeoTracking Failed to stop");
-                   deferred.reject();
-               }
-            });
+            
+            if( window.cordova && window.BackgroundGeolocation){
+                console.log("stopping background tracking");
+                geotrackingService = window.BackgroundGeolocation;
+                
+                geotrackingService.stop();
+                MovementStore.set('tracking', false);
+                deferred.resolve();
+                
+            }else{
+                console.log("background tracking plugin missing");
+                deferred.reject();
+            }
+            
             return deferred.promise;
         },
-        isTrackingEnabled: function(){
-            return MovementStore.get('tracking') || false;
+        
+        getCurrentCoords: function(){ 
+            var deferred = $q.defer();
+            
+            if( window.cordova && window.BackgroundGeolocation){
+            
+                window.BackgroundGeolocation.getCurrentPosition(function(location, taskId){
+                    deferred.resolve( { lat: location.coords.latitude, lng: location.coords.longitude } );
+                    window.BackgroundGeolocation.finish(taskId);
+                }, function(e){
+                    console.log("error");
+                    deferred.reject();
+                });
+    
+            } else{
+                console.log("plugin not installed");
+                deferred.reject();
+            }
+            return deferred.promise;
+            
         },
-        getCurrentCoords: getCurrentCoords,
-        getBGGeoSettings: getBGGeoSettings,
-        updateBGGeoSettings: updateBGGeoSettings,
-        resetBGGeoSettings: resetBGGeoSettings 
-    };
+    }
+    
+    
 })
 
 .factory('Venues', function($q, $http, MovementStore, Utility, Accounts, API_URL) {
