@@ -347,7 +347,7 @@ angular.module('movement.services', [])
                     stopTimeout: 5,
                     
                     // Application config
-                    debug: true,
+                    debug: false,
                     stopOnTerminate: false,
                     startOnBoot: true
                 }, function(state){
