@@ -372,6 +372,7 @@ angular.module('movement.controllers', [])
     }
     $scope.centerMap = centerMap;
     
+    var toggle = true;
     $scope.$on('$ionicView.enter', function(e) {
         console.log("ionicView enter");
         
@@ -400,13 +401,17 @@ angular.module('movement.controllers', [])
                             });
                     });
             }else{
-                GeoTracking.stopTracking()
-                    .then(function(){
-                        GeoTracking.startTracking()
-                            .then(function(){
-                                centerMap();
-                            });
-                    });
+                if( toggle ){
+                    GeoTracking.stopTracking()
+                        .then(function(){
+                            GeoTracking.startTracking()
+                                .then(function(){
+                                    toggle = false;
+                                    centerMap();
+                                });
+                        });    
+                }
+                
             }
         }
         
